@@ -4,7 +4,7 @@ Tienda en línea de tecnología, componentes y gaming (Desarrollo Fullstack II).
 
 | Entrega | Carpeta | Tecnologías |
 | ------- | ------- | ----------- |
-| Evaluación 1 | [`nexustech-html/`](nexustech-html/index.html) (`index.html`, `css/`, `js/`, `admin/`...) | HTML, CSS, Bootstrap 5 y JavaScript |
+| Evaluación 1 | [`nexustech-html/`](https://github.com/CristobalStenger/nexus_frontend/tree/entrega-1/nexustech-html), solo en el tag `entrega-1` (ya no está en `main`) | HTML, CSS, Bootstrap 5 y JavaScript |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/README.md) | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 
 Para ejecutar la versión React:

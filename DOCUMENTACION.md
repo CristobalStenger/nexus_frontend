@@ -39,11 +39,13 @@ React y se agregaron nuevos flujos de compra y administración.
 
 | Entrega      | Carpeta                                          | Tecnologías                                               |
 | ------------ | ------------------------------------------------ | --------------------------------------------------------- |
-| Evaluación 1 | [`nexustech-html/`](nexustech-html/index.html)   | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript                |
+| Evaluación 1 | [`nexustech-html/`](https://github.com/CristobalStenger/nexus_frontend/tree/entrega-1/nexustech-html) (tag `entrega-1`) | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/)           | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 
-Los archivos de la entrega 1 se conservaron sin cambios como referencia en `nexustech-html/`. La
-versión React vive en `nexustech-react/`, igual que el proyecto de ejemplo de la guía del curso.
+La carpeta `nexustech-html/` de la entrega 1 se quitó de `main` para aligerar el repositorio. Se
+conserva sin cambios en el tag `entrega-1`; para recuperarla en local basta con
+`git checkout entrega-1 -- nexustech-html`. La versión React vive en `nexustech-react/`, igual que
+el proyecto de ejemplo de la guía del curso.
 
 ### Tecnologías de la entrega 2
 
@@ -120,6 +122,8 @@ Para volver a los datos iniciales, borra las claves `*_NEXUSTECH` y `USUARIO_ACT
 ## 3. Punto de partida: la entrega 1 en HTML, CSS y JS
 
 ### 3.1 Estructura original
+
+Esta carpeta ya no está en `main`; se puede ver en el tag `entrega-1`.
 
 ```
 nexustech-html/
@@ -228,7 +232,7 @@ nexustech-react/
 
 ### 4.3 Correspondencia entre la entrega 1 y la entrega 2
 
-Las rutas de la columna izquierda son relativas a `nexustech-html/`; las de la derecha, a
+Las rutas de la columna izquierda son relativas a `nexustech-html/` (tag `entrega-1`); las de la derecha, a
 `nexustech-react/src/`.
 
 | Entrega 1 (HTML / JS)                              | Entrega 2 (React)                                                             |
