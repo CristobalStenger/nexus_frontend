@@ -21,7 +21,7 @@ export default function TablaItemsCompra({ items }) {
             <tr key={item.id}>
               <td>
                 <div className="mini-imagen">
-                  <img src={item.imagen} alt="" />
+                  <img src={item.imagen || undefined} alt="" />
                 </div>
               </td>
               <td>{item.nombre}</td>

@@ -70,7 +70,7 @@ export default function MostrarProducto() {
         <Col md={4}>
           <div className="caja-vidrio p-3">
             <div className="caja-imagen-grande">
-              <img src={producto.imagen} alt={producto.nombre} />
+              <img src={producto.imagen || undefined} alt={producto.nombre} />
             </div>
           </div>
         </Col>

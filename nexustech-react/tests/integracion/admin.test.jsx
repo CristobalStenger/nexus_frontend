@@ -211,9 +211,11 @@ describe('CRUD de usuarios y perfil', () => {
   it('cerrar sesión desde el panel vuelve a la tienda', async () => {
     iniciarSesionComo('Administrador');
     const user = userEvent.setup();
-    renderApp('/admin');
+    renderApp('/admin/perfil');
     await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
-    expect(await screen.findByRole('link', { name: 'Iniciar sesión' })).toBeInTheDocument();
+    // Debe llegar al inicio de la tienda, no al login recordando la ruta del panel
+    expect(await screen.findByRole('heading', { name: 'Nuestras categorías' })).toBeInTheDocument();
+    expect(screen.queryByText('Inicia sesión para continuar.')).not.toBeInTheDocument();
     expect(localStorage.getItem(CLAVES.sesion)).toBeNull();
   });
 });
