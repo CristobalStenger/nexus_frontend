@@ -91,7 +91,7 @@ export default function ProductosAdmin() {
                 </td>
                 <td className={esStockCritico(p) ? 'aviso-stock' : undefined}>
                   {p.stock}
-                  {esStockCritico(p) && <i className="bi bi-exclamation-triangle ms-1" aria-label="Stock crítico"></i>}
+                  {esStockCritico(p) && <i className="bi bi-exclamation-triangle ms-1" role="img" aria-label="Stock crítico"></i>}
                 </td>
                 <td>{p.stockCritico}</td>
                 <td className="text-nowrap">
@@ -126,8 +126,8 @@ export default function ProductosAdmin() {
         abierto={eliminando !== null}
         titulo="Eliminar producto"
         textoConfirmar="Eliminar"
-        confirmar={confirmarEliminar}
-        cancelar={() => setEliminando(null)}
+        onConfirmar={confirmarEliminar}
+        onCancelar={() => setEliminando(null)}
       >
         ¿Seguro que quieres eliminar "{eliminando?.nombre}"? También se retirará de los carritos.
       </ConfirmarModal>

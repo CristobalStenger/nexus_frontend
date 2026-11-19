@@ -40,19 +40,19 @@ export default function DetalleProducto() {
         key={producto.id}
         producto={producto}
         enCarrito={obtener(estado.carrito, producto.id)?.cantidad ?? 0}
-        alAgregar={(cantidad) => dispatch({ type: 'AGREGAR', id: producto.id, cantidad })}
+        onAgregar={(cantidad) => dispatch({ type: 'AGREGAR', id: producto.id, cantidad })}
       />
       {relacionados.length > 0 && (
         <section className="mt-5">
           <h2 className="titulo-seccion">También te puede interesar</h2>
-          <ProductoGrid productos={relacionados} alAgregar={(pid) => dispatch({ type: 'AGREGAR', id: pid })} />
+          <ProductoGrid productos={relacionados} onAgregar={(pid) => dispatch({ type: 'AGREGAR', id: pid })} />
         </section>
       )}
     </>
   );
 }
 
-function FichaProducto({ producto, enCarrito, alAgregar }) {
+function FichaProducto({ producto, enCarrito, onAgregar }) {
   const [elegida, setElegida] = useState(1);
   const disponible = producto.stock - enCarrito;
   // Nunca se ofrece más de lo que queda disponible
@@ -117,7 +117,7 @@ function FichaProducto({ producto, enCarrito, alAgregar }) {
             </Button>
           </InputGroup>
 
-          <Button variant="nexus" className="w-100 py-2" disabled={disponible < 1} onClick={() => alAgregar(cantidad)}>
+          <Button variant="nexus" className="w-100 py-2" disabled={disponible < 1} onClick={() => onAgregar(cantidad)}>
             <i className="bi bi-cart-plus me-1" aria-hidden="true"></i>
             {producto.stock === 0 ? 'Sin stock' : disponible < 1 ? 'Ya tienes todo el stock en tu carrito' : 'Agregar al carrito'}
           </Button>

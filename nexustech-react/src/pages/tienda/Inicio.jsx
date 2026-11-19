@@ -38,7 +38,7 @@ export default function Inicio() {
       {ofertas.length > 0 && (
         <section className="mb-5">
           <h2 className="titulo-seccion">Productos en oferta</h2>
-          <ProductoGrid productos={ofertas} alAgregar={agregar} />
+          <ProductoGrid productos={ofertas} onAgregar={agregar} />
           <div className="text-center mt-4">
             <Link to="/ofertas" className="btn btn-nexus-claro px-4">
               Ver todas las ofertas
@@ -49,7 +49,7 @@ export default function Inicio() {
 
       <section className="mb-4">
         <h2 className="titulo-seccion">Productos destacados</h2>
-        <ProductoGrid productos={destacados} alAgregar={agregar} mensajeVacio="Aún no hay productos disponibles." />
+        <ProductoGrid productos={destacados} onAgregar={agregar} mensajeVacio="Aún no hay productos disponibles." />
         <div className="text-center mt-4">
           <Link to="/productos" className="btn btn-nexus px-5 py-2 fs-5 text-uppercase">
             Ver todos los productos

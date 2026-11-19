@@ -21,7 +21,7 @@ const producto = {
 const mostrar = (props) =>
   render(
     <MemoryRouter>
-      <ProductoCard producto={producto} alAgregar={vi.fn()} {...props} />
+      <ProductoCard producto={producto} onAgregar={vi.fn()} {...props} />
     </MemoryRouter>,
   );
 
@@ -36,21 +36,21 @@ describe('ProductoCard (props y eventos)', () => {
   });
 
   it('llama a la función onClick recibida con el id del producto', async () => {
-    const alAgregar = vi.fn();
-    mostrar({ alAgregar });
+    const onAgregar = vi.fn();
+    mostrar({ onAgregar });
     await userEvent.click(screen.getByRole('button', { name: 'Agregar Mouse Gamer al carrito' }));
-    expect(alAgregar).toHaveBeenCalledTimes(1);
-    expect(alAgregar).toHaveBeenCalledWith(7);
+    expect(onAgregar).toHaveBeenCalledTimes(1);
+    expect(onAgregar).toHaveBeenCalledWith(7);
   });
 
   it('deshabilita el botón cuando no hay stock', async () => {
-    const alAgregar = vi.fn();
-    mostrar({ producto: { ...producto, stock: 0 }, alAgregar });
+    const onAgregar = vi.fn();
+    mostrar({ producto: { ...producto, stock: 0 }, onAgregar });
     const boton = screen.getByRole('button', { name: 'Mouse Gamer sin stock' });
     expect(boton).toBeDisabled();
     expect(boton).toHaveTextContent('Sin stock');
     await userEvent.click(boton);
-    expect(alAgregar).not.toHaveBeenCalled();
+    expect(onAgregar).not.toHaveBeenCalled();
   });
 });
 

@@ -31,15 +31,7 @@ export default function ProductoForm({ producto = null, productos, categorias, o
     validarProducto(v, productos, id, categorias),
   );
   const { valores } = form;
-  const campo = (nombre) => ({
-    id: `producto-${nombre}`,
-    name: nombre,
-    value: valores[nombre],
-    onChange: form.cambiar,
-    error: form.error(nombre),
-    valido: form.valido(nombre),
-    className: '',
-  });
+  const campo = (nombre) => ({ ...form.campo(nombre), id: `producto-${nombre}`, className: '' });
   const vistaPrevia = {
     precio: Number(valores.precio) || 0,
     descuento: Number(valores.descuento) || 0,

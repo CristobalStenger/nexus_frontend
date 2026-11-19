@@ -61,7 +61,7 @@ export default function Productos() {
         resultados={visibles.length}
       />
 
-      <ProductoGrid productos={visibles} alAgregar={(id) => dispatch({ type: 'AGREGAR', id })} />
+      <ProductoGrid productos={visibles} onAgregar={(id) => dispatch({ type: 'AGREGAR', id })} />
     </>
   );
 }

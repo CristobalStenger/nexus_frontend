@@ -21,30 +21,23 @@ export default function CategoriaForm({ categoria = null, categorias, onGuardar,
   return (
     <Form noValidate onSubmit={form.enviar((datos) => onGuardar(datos, id))}>
       <CampoFormulario
+        {...form.campo('nombre')}
         id="categoria-nombre"
-        name="nombre"
         etiqueta="Nombre de la categoría"
         ayuda="entre 3 y 50"
         maxLength={50}
-        value={valores.nombre}
-        onChange={form.cambiar}
-        error={form.error('nombre')}
-        valido={form.valido('nombre')}
       />
       <p className="small text-muted">
         Dirección en la tienda: /categorias/{crearSlug(valores.nombre) || '...'}
       </p>
       <CampoFormulario
+        {...form.campo('descripcion')}
         id="categoria-descripcion"
-        name="descripcion"
         etiqueta="Descripción"
         ayuda="opcional, máx. 200"
         as="textarea"
         rows={2}
         maxLength={200}
-        value={valores.descripcion}
-        onChange={form.cambiar}
-        error={form.error('descripcion')}
       />
       <fieldset className="mb-3">
         <legend className="form-label fw-bold fs-6">Ícono</legend>

@@ -113,14 +113,7 @@ export default function Checkout() {
     navigate(`/compra/${rechazo ? 'error' : 'exitosa'}/${numero}`);
   });
 
-  const campo = (nombre) => ({
-    id: `checkout-${nombre}`,
-    name: nombre,
-    value: valores[nombre],
-    onChange: cambiar,
-    error: form.error(nombre),
-    className: '',
-  });
+  const campo = (nombre) => ({ ...form.campo(nombre), id: `checkout-${nombre}`, className: '' });
 
   return (
     <Row className="justify-content-center">

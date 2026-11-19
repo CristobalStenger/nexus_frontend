@@ -5,8 +5,8 @@ import PrecioProducto from './PrecioProducto.jsx';
 import StockBadge from './StockBadge.jsx';
 
 // Tarjeta de un producto. No guarda su propio carrito:
-// avisa al padre con alAgregar(id) para que todos compartan el mismo.
-export default function ProductoCard({ producto, alAgregar }) {
+// avisa al padre con onAgregar(id) para que todos compartan el mismo.
+export default function ProductoCard({ producto, onAgregar }) {
   const agotado = producto.stock === 0;
   const ruta = `/productos/${producto.id}`;
 
@@ -29,7 +29,7 @@ export default function ProductoCard({ producto, alAgregar }) {
           variant="nexus"
           className="w-100"
           disabled={agotado}
-          onClick={() => alAgregar(producto.id)}
+          onClick={() => onAgregar(producto.id)}
           aria-label={agotado ? `${producto.nombre} sin stock` : `Agregar ${producto.nombre} al carrito`}
         >
           <i className="bi bi-cart-plus me-1" aria-hidden="true"></i>

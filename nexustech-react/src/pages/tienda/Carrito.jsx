@@ -22,34 +22,29 @@ export default function Carrito() {
   const { estado, dispatch } = useTienda();
   const navigate = useNavigate();
   const [codigo, setCodigo] = useState('');
-  const [mensajeCupon, setMensajeCupon] = useState(null);
+  const [errorCupon, setErrorCupon] = useState('');
   const [confirmarVaciar, setConfirmarVaciar] = useState(false);
 
   const detalle = detalleCarrito(estado);
   const resumen = resumenCarrito(estado);
   const stockCambio = detalle.some((p) => p.cantidad > p.stock);
 
+  // El error es local; el cupón aplicado se lee del estado global (sobrevive a recargas)
   function aplicarCupon(evento) {
     evento.preventDefault();
-    const { cupon, error } = buscarCupon(codigo, estado.carrito);
-    if (error) {
-      setMensajeCupon({ tipo: 'danger', texto: error });
-      return;
-    }
-    dispatch({ type: 'APLICAR_CUPON', codigo: cupon.codigo });
-    setMensajeCupon({ tipo: 'success', texto: `Cupón ${cupon.codigo} aplicado: ${cupon.descuento}% de descuento.` });
+    const { error } = buscarCupon(codigo, estado.carrito);
+    setErrorCupon(error ?? '');
+    if (!error) dispatch({ type: 'APLICAR_CUPON', codigo });
   }
 
   function quitarCupon() {
     dispatch({ type: 'QUITAR_CUPON' });
     setCodigo('');
-    setMensajeCupon(null);
   }
 
   function vaciar() {
     dispatch({ type: 'VACIAR' });
     setConfirmarVaciar(false);
-    setMensajeCupon(null);
   }
 
   return (
@@ -86,8 +81,8 @@ export default function Carrito() {
                     <FilaCarrito
                       key={item.id}
                       item={item}
-                      alCambiar={(cantidad) => dispatch({ type: 'CANTIDAD', id: item.id, cantidad })}
-                      alQuitar={() => dispatch({ type: 'QUITAR', id: item.id })}
+                      onCambiar={(cantidad) => dispatch({ type: 'CANTIDAD', id: item.id, cantidad })}
+                      onQuitar={() => dispatch({ type: 'QUITAR', id: item.id })}
                     />
                   ))}
                 </tbody>
@@ -118,15 +113,20 @@ export default function Carrito() {
                     Aplicar
                   </Button>
                 </InputGroup>
-                {mensajeCupon && (
-                  <Alert variant={mensajeCupon.tipo} className="mt-2 mb-0 py-2">
-                    {mensajeCupon.texto}
+                {errorCupon && (
+                  <Alert variant="danger" className="mt-2 mb-0 py-2">
+                    {errorCupon}
                   </Alert>
                 )}
                 {estado.cupon && (
-                  <Button variant="link" size="sm" className="p-0 mt-1" onClick={quitarCupon}>
-                    Quitar cupón
-                  </Button>
+                  <>
+                    <Alert variant="success" className="mt-2 mb-0 py-2">
+                      Cupón {estado.cupon.codigo} aplicado: {estado.cupon.descuento}% de descuento.
+                    </Alert>
+                    <Button variant="link" size="sm" className="p-0 mt-1" onClick={quitarCupon}>
+                      Quitar cupón
+                    </Button>
+                  </>
                 )}
               </Form>
 
@@ -150,8 +150,8 @@ export default function Carrito() {
         abierto={confirmarVaciar}
         titulo="Vaciar carrito"
         textoConfirmar="Vaciar"
-        confirmar={vaciar}
-        cancelar={() => setConfirmarVaciar(false)}
+        onConfirmar={vaciar}
+        onCancelar={() => setConfirmarVaciar(false)}
       >
         ¿Deseas retirar todos los productos del carrito?
       </ConfirmarModal>

@@ -42,39 +42,28 @@ export default function Contacto() {
             <h2 className="h4 fw-bold mb-4">Enviar un mensaje</h2>
             <Form noValidate onSubmit={enviar} onChange={() => setEnviado('')}>
               <CampoFormulario
+                {...form.campo('nombre')}
                 id="contacto-nombre"
-                name="nombre"
                 etiqueta="Nombre"
                 ayuda="obligatorio, máx. 100"
                 maxLength={100}
-                value={form.valores.nombre}
-                onChange={form.cambiar}
-                error={form.error('nombre')}
-                valido={form.valido('nombre')}
               />
               <CampoFormulario
+                {...form.campo('correo')}
                 id="contacto-correo"
-                name="correo"
                 etiqueta="Correo electrónico"
                 ayuda={`opcional, ${TEXTO_CORREOS}`}
                 type="email"
                 maxLength={100}
-                value={form.valores.correo}
-                onChange={form.cambiar}
-                error={form.error('correo')}
               />
               <CampoFormulario
+                {...form.campo('comentario')}
                 id="contacto-comentario"
-                name="comentario"
                 etiqueta="Comentario"
                 ayuda="obligatorio, máx. 500"
                 as="textarea"
                 rows={4}
                 maxLength={500}
-                value={form.valores.comentario}
-                onChange={form.cambiar}
-                error={form.error('comentario')}
-                valido={form.valido('comentario')}
               />
               <Form.Text className="d-block mb-3" aria-live="polite">
                 Te quedan {500 - form.valores.comentario.length} caracteres.

@@ -28,7 +28,7 @@ export default function DetalleBlog() {
         <img src={blog.imagen} alt={blog.titulo} />
       </div>
       {blog.parrafos.map((parrafo) => (
-        <p key={parrafo.slice(0, 30)}>{parrafo}</p>
+        <p key={parrafo}>{parrafo}</p>
       ))}
       <h2 className="h4 fw-bold mt-4">{blog.subtitulo}</h2>
       <ul>

@@ -92,7 +92,7 @@ describe('reglas del carrito', () => {
 
   it('aplica y quita cupones válidos', () => {
     const conProductos = iniciar({ carrito: [{ id: 1, cantidad: 1 }] });
-    const conCupon = tiendaReducer(conProductos, { type: 'APLICAR_CUPON', codigo: 'xavicris' });
+    const conCupon = tiendaReducer(conProductos, { type: 'APLICAR_CUPON', codigo: ' xavicris ' });
     expect(conCupon.cupon).toEqual({ codigo: 'XAVICRIS', descuento: 15 });
     expect(tiendaReducer(conCupon, { type: 'QUITAR_CUPON' }).cupon).toBeNull();
     expect(tiendaReducer(conProductos, { type: 'APLICAR_CUPON', codigo: 'FALSO' }).cupon).toBeNull();

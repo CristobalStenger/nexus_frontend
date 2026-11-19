@@ -63,7 +63,7 @@ versión React vive en `nexustech-react/`, igual que el proyecto de ejemplo de l
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **159 aprobadas** en 17 archivos                  |
+| Pruebas automatizadas     | **160 aprobadas** en 17 archivos                  |
 | Cobertura de líneas       | **96,97 %**                                       |
 | Cobertura de ramas        | **92,26 %**                                       |
 | ESLint                    | Sin errores ni advertencias                       |
@@ -76,7 +76,7 @@ versión React vive en `nexustech-react/`, igual que el proyecto de ejemplo de l
 | Páginas o vistas              | 21 archivos HTML                    | 35 páginas (16 de tienda + 19 de administración)    |
 | Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 101 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
 | Componentes reutilizables     | 0 (cabecera y pie copiados 21 veces) | 37 componentes + 5 hooks propios                   |
-| Pruebas automatizadas         | 0                                   | 159 (≈1.700 líneas)                                |
+| Pruebas automatizadas         | 0                                   | 160 (≈1.700 líneas)                                |
 
 ---
 
@@ -101,7 +101,7 @@ npm run dev     # abre http://localhost:5173
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 159 pruebas una vez                        |
+| `npm run test:run`      | Ejecuta las 160 pruebas una vez                        |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -202,7 +202,7 @@ nexustech-react/
                                por sección (ordenes/, productos/, categorias/, usuarios/)
 └── tests/                     Pruebas, separadas por nivel (sección 6.2)
     ├── setup.js               Limpieza antes y después de cada prueba
-    ├── utilidades.jsx         renderApp, renderConProviders, iniciarSesionComo...
+    ├── utilidades.jsx         renderApp, iniciarSesionComo, guardarCarrito...
     ├── unitarias/             Funciones puras: reducers, servicios y utils
     ├── componentes/           Un componente con props controladas
     └── integracion/           La aplicación completa recorrida como una persona
@@ -303,13 +303,13 @@ listaAfectada.forEach(producto => {
 accidente.
 
 ```jsx
-export default function ProductoGrid({ productos, alAgregar, mensajeVacio = '...' }) {
+export default function ProductoGrid({ productos, onAgregar, mensajeVacio = '...' }) {
   if (!productos.length) return <EstadoVacio titulo={mensajeVacio} />;
   return (
     <Row className="g-4">
       {productos.map((producto) => (
         <Col xs={12} sm={6} lg={3} key={producto.id}>
-          <ProductoCard producto={producto} alAgregar={alAgregar} />
+          <ProductoCard producto={producto} onAgregar={onAgregar} />
         </Col>
       ))}
     </Row>
@@ -319,7 +319,7 @@ export default function ProductoGrid({ productos, alAgregar, mensajeVacio = '...
 
 #### c) Funciones globales en `onclick` → props y eventos
 
-La tarjeta **recibe por props** el producto y la función `alAgregar`. No guarda su propio carrito:
+La tarjeta **recibe por props** el producto y la función `onAgregar`. No guarda su propio carrito:
 avisa al padre para que todos compartan el mismo.
 
 ```jsx
@@ -327,7 +327,7 @@ avisa al padre para que todos compartan el mismo.
 <Button
   variant="nexus"
   disabled={agotado}
-  onClick={() => alAgregar(producto.id)}
+  onClick={() => onAgregar(producto.id)}
   aria-label={agotado ? `${producto.nombre} sin stock` : `Agregar ${producto.nombre} al carrito`}
 >
   {agotado ? 'Sin stock' : 'Agregar al carrito'}
@@ -424,8 +424,11 @@ export function useFormulario(inicial, validar) {
   const errores = validar(valores);              // se recalculan en cada render
   const mostrar = (campo) => Boolean(tocados[campo] || intentado);
   ...
-  return { valores, errores, error: (c) => (mostrar(c) ? errores[c] : undefined), cambiar, enviar, ... };
+  return { valores, errores, error: (c) => (mostrar(c) ? errores[c] : undefined), cambiar, enviar, campo, ... };
 }
+
+// form.campo('correo') entrega name, value, onChange, error y valido de una vez:
+<CampoFormulario {...form.campo('correo')} id="contacto-correo" etiqueta="Correo electrónico" />
 ```
 
 El mismo validador (`validarUsuario`) sirve para el registro, para el administrador y para el
@@ -471,7 +474,7 @@ son componentes), **5 hooks propios** y **2 providers**.
 | Concepto               | Qué es                                                                                       | Ejemplo en NexusTech                                                                     |
 | ---------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | **Componente**         | Una función con nombre en mayúscula que devuelve JSX (lo que se dibuja)                      | `ProductoCard` dibuja un producto                                                        |
-| **Props**              | Datos y funciones que el componente **recibe del padre**. Son de solo lectura               | `<ProductoCard producto={p} alAgregar={agregar} />`                                      |
+| **Props**              | Datos y funciones que el componente **recibe del padre**. Son de solo lectura               | `<ProductoCard producto={p} onAgregar={agregar} />`                                      |
 | **Estado** (`useState`) | Datos que el componente **recuerda** y que, al cambiar, vuelven a dibujarlo                | `BuscadorHeader` recuerda el texto que escribes                                          |
 | **Composición**        | Un componente usa a otros dentro de su JSX                                                   | `ProductoGrid` usa `ProductoCard`, que usa `PrecioProducto` y `StockBadge`               |
 | **`children`**         | Contenido que el padre escribe entre las etiquetas del componente                            | `<ConfirmarModal>¿Seguro?</ConfirmarModal>`                                              |
@@ -532,8 +535,8 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 
 | Componente         | Responsabilidad                                                                           | Props                                                                                       | Estado propio | Se usa en                                        |
 | ------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------ |
-| `ProductoCard`     | Tarjeta de un producto; avisa al padre cuando se pulsa "Agregar"                          | `producto`, `alAgregar(id)`                                                                 | No            | `ProductoGrid`                                   |
-| `ProductoGrid`     | Convierte un arreglo de productos en una grilla de tarjetas, o muestra el mensaje vacío   | `productos`, `alAgregar`, `mensajeVacio = '...'`                                            | No            | Inicio, Productos, Categorías, Ofertas, Detalle  |
+| `ProductoCard`     | Tarjeta de un producto; avisa al padre cuando se pulsa "Agregar"                          | `producto`, `onAgregar(id)`                                                                 | No            | `ProductoGrid`                                   |
+| `ProductoGrid`     | Convierte un arreglo de productos en una grilla de tarjetas, o muestra el mensaje vacío   | `productos`, `onAgregar`, `mensajeVacio = '...'`                                            | No            | Inicio, Productos, Categorías, Ofertas, Detalle  |
 | `FiltrosCatalogo`  | Barra de filtros **controlada**: informa cada cambio al padre                             | `filtros`, `onCambio(campo, valor)`, `onLimpiar`, `categorias = []`, `tipos = []`, `mostrarCategoria = true`, `resultados` | No (el estado vive en el padre) | Productos, Categorías |
 | `PrecioProducto`   | Precio final; con oferta agrega el precio anterior tachado y el porcentaje                | `producto`, `className = 'fs-5'`                                                            | No            | Tarjeta, Detalle, Panel (ficha y formulario)     |
 | `StockBadge`       | Insignia verde, amarilla o roja según el stock                                            | `producto`                                                                                  | No            | Tarjeta, Detalle, Panel                          |
@@ -543,7 +546,7 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 
 | Componente          | Responsabilidad                                                                       | Props                                                                      | Estado propio | Se usa en                              |
 | ------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------- | -------------------------------------- |
-| `FilaCarrito`       | Fila del carrito con los botones `−` y `+` y eliminar; marca en rojo si el stock bajó | `item`, `alCambiar(cantidad)`, `alQuitar()`                                | No            | `Carrito`                              |
+| `FilaCarrito`       | Fila del carrito con los botones `−` y `+` y eliminar; marca en rojo si el stock bajó | `item`, `onCambiar(cantidad)`, `onQuitar()`                                | No            | `Carrito`                              |
 | `TablaItemsCompra`  | Tabla de solo lectura con los productos de una compra                                 | `items`                                                                    | No            | Checkout, `ResultadoCompra`            |
 | `ResumenCompra`     | Subtotal, descuento del cupón, envío y total                                          | `subtotal`, `descuento = 0`, `envio`, `total`, `cupon`, `textoTotal = 'TOTAL'` | No        | Carrito, Checkout, `ResultadoCompra`   |
 | `DatosOrden`        | Datos del cliente y de la entrega de una orden, en campos de solo lectura             | `orden`                                                                    | No            | `ResultadoCompra`                      |
@@ -574,7 +577,7 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 
 | Componente         | Responsabilidad                                                                                  | Props                                                                                | Estado propio | Se usa en                                          |
 | ------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------- | -------------------------------------------------- |
-| `ConfirmarModal`   | Modal de confirmación: se abre con una prop y avisa con `confirmar` o `cancelar`                 | `abierto`, `titulo`, `children`, `textoConfirmar = 'Confirmar'`, `variante = 'danger'`, `confirmar`, `cancelar` | No (lo abre el padre) | Carrito, listados del panel |
+| `ConfirmarModal`   | Modal de confirmación: se abre con una prop y avisa con `onConfirmar` o `onCancelar`                 | `abierto`, `titulo`, `children`, `textoConfirmar = 'Confirmar'`, `variante = 'danger'`, `onConfirmar`, `onCancelar` | No (lo abre el padre) | Carrito, listados del panel |
 | `EstadoVacio`      | Mensaje con ícono cuando una lista no tiene elementos                                            | `icono = 'bi-search'`, `titulo`, `children`                                          | No            | `ProductoGrid`, Carrito, páginas "no existe"       |
 | `EncabezadoPagina` | Caja de título de las páginas de la tienda                                                       | `icono`, `titulo`, `children`                                                        | No            | Páginas de la tienda                               |
 | `AvisosGlobales`   | Notificaciones `Toast` (reemplazan los `alert()`) y aviso si no se pudo guardar en el navegador  | —                                                                                    | No (lee los avisos del estado global) | `Layout`, `AdminLayout`    |
@@ -618,15 +621,15 @@ muestran, sin estado propio. Eso los hace simples de entender, de reutilizar y d
 ```jsx
 // 1) Página (Productos.jsx): lee el estado global y entrega una función al hijo
 const { estado, dispatch } = useTienda();
-<ProductoGrid productos={visibles} alAgregar={(id) => dispatch({ type: 'AGREGAR', id })} />
+<ProductoGrid productos={visibles} onAgregar={(id) => dispatch({ type: 'AGREGAR', id })} />
 
 // 2) ProductoGrid: recorre el arreglo y pasa las props a cada tarjeta
 {productos.map((producto) => (
-  <Col key={producto.id}><ProductoCard producto={producto} alAgregar={alAgregar} /></Col>
+  <Col key={producto.id}><ProductoCard producto={producto} onAgregar={onAgregar} /></Col>
 ))}
 
 // 3) ProductoCard: el clic llama a la función recibida por props
-<Button disabled={agotado} onClick={() => alAgregar(producto.id)}>Agregar al carrito</Button>
+<Button disabled={agotado} onClick={() => onAgregar(producto.id)}>Agregar al carrito</Button>
 
 // 4) tiendaReducer: valida el stock y devuelve el estado nuevo
 // 5) TiendaProvider: guarda en localStorage; BotonCarrito (en el Header) muestra el nuevo total
@@ -940,13 +943,13 @@ afterEach(() => {
 ```
 
 **`tests/utilidades.jsx`**: funciones de apoyo como `renderApp(ruta)` (toda la app con
-`MemoryRouter`), `renderConProviders(ui)`, `iniciarSesionComo('Administrador')` y `guardarCarrito([...])`.
+`MemoryRouter`), `iniciarSesionComo('Administrador')` y `guardarCarrito([...])`.
 
 ### 6.2 Tres niveles de prueba
 
 ```mermaid
 flowchart TB
-  I["Integración (48)<br/>App, compra, formularios, admin<br/>la app completa como la usa una persona"]
+  I["Integración (49)<br/>App, compra, formularios, admin<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
   U["Unitarias puras (96)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
@@ -955,7 +958,7 @@ flowchart TB
 1. **Funciones puras (96 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
-3. **Integración (48 pruebas):** se monta la aplicación completa y se recorre como lo haría una
+3. **Integración (49 pruebas):** se monta la aplicación completa y se recorre como lo haría una
    persona: escribir, hacer clic, navegar y revisar lo que se ve y lo que se guarda.
 
 Todas siguen el patrón **Preparar → Actuar → Comprobar**.
@@ -967,7 +970,7 @@ Todas siguen el patrón **Preparar → Actuar → Comprobar**.
 ```jsx
 // tests/componentes/ProductoGrid.test.jsx
 it('renderiza una tarjeta por cada elemento del arreglo', () => {
-  render(<MemoryRouter><ProductoGrid productos={productosIniciales} alAgregar={vi.fn()} /></MemoryRouter>);
+  render(<MemoryRouter><ProductoGrid productos={productosIniciales} onAgregar={vi.fn()} /></MemoryRouter>);
   expect(screen.getAllByRole('article')).toHaveLength(40);
 });
 ```
@@ -992,11 +995,11 @@ Otros casos: el modal no existe mientras está cerrado; el precio tachado aparec
 ```jsx
 // tests/componentes/ProductoCard.test.jsx
 it('llama a la función onClick recibida con el id del producto', async () => {
-  const alAgregar = vi.fn();
-  mostrar({ alAgregar });
+  const onAgregar = vi.fn();
+  mostrar({ onAgregar });
   await userEvent.click(screen.getByRole('button', { name: 'Agregar Mouse Gamer al carrito' }));
-  expect(alAgregar).toHaveBeenCalledTimes(1);
-  expect(alAgregar).toHaveBeenCalledWith(7);
+  expect(onAgregar).toHaveBeenCalledTimes(1);
+  expect(onAgregar).toHaveBeenCalledWith(7);
 });
 ```
 
@@ -1054,12 +1057,12 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | `tests/componentes/CampoFormulario.test.jsx` | Componente  |       3 | Etiqueta, error accesible y variante select                                          |
 | `tests/integracion/App.test.jsx`             | Integración |      15 | Navegación, 404, buscador, catálogo, categorías, ofertas, detalle, rutas por rol     |
 | `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login, registro y contacto                                                           |
-| `tests/integracion/compra.test.jsx`          | Integración |      12 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
+| `tests/integracion/compra.test.jsx`          | Integración |      13 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
 | `tests/integracion/admin.test.jsx`           | Integración |      14 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
-| **Total**                                    |             | **159** |                                                                                      |
+| **Total**                                    |             | **160** |                                                                                      |
 
 <details>
-<summary><strong>Listado completo de las 159 pruebas (clic para desplegar)</strong></summary>
+<summary><strong>Listado completo de las 160 pruebas (clic para desplegar)</strong></summary>
 
 **`tests/unitarias/validaciones.test.js`** (25)
 - RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
@@ -1122,9 +1125,9 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 - Registro: valida todos los campos, crea la cuenta y permite iniciar sesión · no permite registrar un correo que ya existe
 - Contacto: cuenta los caracteres, valida y guarda el mensaje
 
-**`tests/integracion/compra.test.jsx`** (12)
+**`tests/integracion/compra.test.jsx`** (13)
 - Carrito: agrega desde el catálogo, cambia cantidades y elimina productos · conserva el carrito al desmontar y volver a montar la aplicación · aplica cupones válidos, rechaza los inexistentes y permite quitarlos · vacía el carrito solo después de confirmar en el modal · bloquea la compra si el stock cambió
-- Checkout: sin productos no muestra el formulario de pago · valida los datos del cliente, la dirección y la tarjeta · autocompleta los datos del cliente con sesión iniciada y suma el envío elegido · compra exitosa: descuenta stock, vacía el carrito y muestra la boleta · pago rechazado: conserva carrito y stock, y permite reintentar con los datos precargados · pago rechazado por stock insuficiente · redirige entre las vistas de resultado según el estado de la orden
+- Checkout: el cupón guardado sigue aplicado al recargar y se descuenta en la orden · sin productos no muestra el formulario de pago · valida los datos del cliente, la dirección y la tarjeta · autocompleta los datos del cliente con sesión iniciada y suma el envío elegido · compra exitosa: descuenta stock, vacía el carrito y muestra la boleta · pago rechazado: conserva carrito y stock, y permite reintentar con los datos precargados · pago rechazado por stock insuficiente · redirige entre las vistas de resultado según el estado de la orden
 
 **`tests/integracion/admin.test.jsx`** (14)
 - El dashboard muestra métricas y accesos a cada módulo · filtra órdenes por estado y muestra la boleta · muestra reportes de ventas e inventario · lista los productos críticos
@@ -1141,10 +1144,10 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,64 %** | 1093 / 1131 |
-| Ramas      | **92,26 %** | 787 / 853   |
-| Funciones  | **94,61 %** | 404 / 427   |
-| Líneas     | **96,97 %** | 962 / 992   |
+| Sentencias | **96,64 %** | 1095 / 1133 |
+| Ramas      | **92,27 %** | 788 / 854   |
+| Funciones  | **94,62 %** | 405 / 428   |
+| Líneas     | **96,97 %** | 961 / 991   |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |
@@ -1152,7 +1155,7 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 | `store/` (reducers)                       | 100 %            |
 | `utils/` (validaciones, formatos…)        | 99,5 %           |
 | `components/`                             | 89–100 %         |
-| `pages/tienda/`                           | 96,4 %           |
+| `pages/tienda/`                           | 96,3 %           |
 | `context/`                                | 93,9 %           |
 | `pages/admin/`                            | 90,2 %           |
 

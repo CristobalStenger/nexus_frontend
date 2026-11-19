@@ -6,7 +6,7 @@ import EstadoVacio from '../comunes/EstadoVacio.jsx';
 // Lista de tarjetas: map() convierte el arreglo en componentes
 export default function ProductoGrid({
   productos,
-  alAgregar,
+  onAgregar,
   mensajeVacio = 'No encontramos productos con esos filtros.',
 }) {
   if (!productos.length) return <EstadoVacio titulo={mensajeVacio} />;
@@ -15,7 +15,7 @@ export default function ProductoGrid({
     <Row className="g-4">
       {productos.map((producto) => (
         <Col xs={12} sm={6} lg={3} key={producto.id}>
-          <ProductoCard producto={producto} alAgregar={alAgregar} />
+          <ProductoCard producto={producto} onAgregar={onAgregar} />
         </Col>
       ))}
     </Row>
