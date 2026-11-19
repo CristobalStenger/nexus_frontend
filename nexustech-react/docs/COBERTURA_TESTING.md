@@ -20,7 +20,7 @@ Configuración: `vite.config.js` (`test.environment = 'jsdom'`, `setupFiles`) y
 entre pruebas para que ninguna dependa de otra.
 
 ```bash
-npm run test:run        # 160 pruebas en 17 archivos
+npm run test:run        # 159 pruebas en 17 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -42,7 +42,7 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `utils/formatos.test.js`                              | 10      | Formato CLP, FREE, precio con descuento, normalización, slugs, fechas, estados de stock                           |
 | `utils/catalogo.test.js`                              | 8       | Filtros combinados (texto, categoría, tipo, rango, disponibilidad) y los cuatro órdenes                           |
 | `utils/reportes.test.js`                              | 6       | Resumen de ventas, ventas por categoría y por día, más vendidos, inventario valorizado, historial por usuario      |
-| `services/crud.test.js`                               | 4       | Listar, obtener, id correlativo, crear, actualizar y eliminar sin mutar el arreglo original                        |
+| `services/crud.test.js`                               | 3       | Obtener, id correlativo, crear, actualizar y eliminar sin mutar el arreglo original                        |
 | `services/persistencia.test.js`                       | 10      | JSON corrupto, datos inválidos, catálogo vacío, ids repetidos, limpieza del carrito, sesión sin contraseña         |
 | `store/tiendaReducer.test.js`                         | 25      | Carrito con límite de stock, cupones, totales con envío, pago aprobado y rechazado, CRUD de productos y categorías |
 | `store/authReducer.test.js`                           | 9       | Login, logout, roles, registro, CRUD de usuarios, perfil y regla "no eliminar la propia cuenta"                    |
@@ -55,7 +55,7 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `pages/tienda/compra.test.jsx`                        | 12      | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente         |
 | `pages/admin/admin.test.jsx`                          | 14      | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión   |
 | `App.test.jsx`                                        | 15      | Navegación con NavLink, 404, buscador, categorías, ofertas, detalle, rutas protegidas por rol, sesión restaurada    |
-| **Total**                                             | **160** |                                                                                                                   |
+| **Total**                                             | **159** |                                                                                                                   |
 
 ## 4. Resultado de cobertura
 
@@ -63,10 +63,10 @@ Se excluyen `main.jsx`, los datos iniciales (`src/data`), `src/test` y los propi
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,66 %   | 1100 / 1138  |
-| Ramas         | 92,21 %   | 794 / 861    |
-| Funciones     | 94,67 %   | 409 / 432    |
-| Líneas        | 96,99 %   | 968 / 998    |
+| Sentencias    | 96,64 %   | 1093 / 1131  |
+| Ramas         | 92,26 %   | 787 / 853    |
+| Funciones     | 94,61 %   | 404 / 427    |
+| Líneas        | 96,97 %   | 962 / 992    |
 
 Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 89–100 % (`comunes` es la más baja),
 `pages/tienda` 96,4 %, `pages/admin` 90,2 %, `context` 93,9 %.

@@ -52,15 +52,13 @@ body {
     color: var(--nexus-azul);
 }
 
-.nav-nexus .nav-link,
-.nav-nexus .icon-links a {
+.nav-nexus .nav-link {
     color: var(--nexus-texto) !important;
     font-weight: 600;
     transition: 0.2s;
 }
 
-.nav-nexus .nav-link:hover,
-.nav-nexus .icon-links a:hover {
+.nav-nexus .nav-link:hover {
     color: var(--nexus-azul) !important;
     transform: translateY(-2px);
 }
@@ -325,16 +323,6 @@ body {
     border: 1px solid var(--nexus-celeste);
 }
 
-.nav-sesion .nav-link {
-    color: var(--nexus-texto);
-    font-weight: bold;
-}
-
-.nav-sesion .nav-link.active {
-    background-color: var(--nexus-azul) !important;
-    color: var(--nexus-blanco) !important;
-}
-
 /* --- FOOTER --- */
 .footer-nexus {
     background-color: rgba(255, 255, 255, 0.6);
@@ -346,19 +334,6 @@ body {
 /* ============================================================
    VISTAS AGREGADAS: detalle, blogs, contacto y administrador
    ============================================================ */
-
-/* --- AYUDAS DE VALIDACION EN TIEMPO REAL --- */
-.ayuda-campo {
-    display: block;
-    min-height: 18px;
-    font-size: 0.82rem;
-    color: #b02a37;
-    margin-top: 3px;
-}
-
-.ayuda-campo.ayuda-ok {
-    color: #146c43;
-}
 
 /* --- DETALLE DE PRODUCTO --- */
 .caja-imagen-grande {
@@ -438,31 +413,6 @@ body {
 
 .menu-lateral a:hover {
     background-color: rgba(74, 163, 240, 0.25);
-    color: var(--nexus-azul-oscuro);
-}
-
-.menu-lateral a.activo {
-    background-color: var(--nexus-azul);
-    color: var(--nexus-blanco);
-}
-
-.tarjeta-dato {
-    background-color: var(--nexus-vidrio);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--nexus-borde);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-}
-
-.tarjeta-dato .bi {
-    font-size: 2rem;
-    color: var(--nexus-azul);
-}
-
-.tarjeta-dato .numero {
-    font-size: 1.8rem;
-    font-weight: bold;
     color: var(--nexus-azul-oscuro);
 }
 

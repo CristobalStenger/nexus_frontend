@@ -63,9 +63,9 @@ su propia carpeta, igual que el proyecto de ejemplo de la guía del curso.
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **160 aprobadas** en 17 archivos                  |
-| Cobertura de líneas       | **96,99 %**                                       |
-| Cobertura de ramas        | **92,21 %**                                       |
+| Pruebas automatizadas     | **159 aprobadas** en 17 archivos                  |
+| Cobertura de líneas       | **96,97 %**                                       |
+| Cobertura de ramas        | **92,26 %**                                       |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
 
@@ -76,7 +76,7 @@ su propia carpeta, igual que el proyecto de ejemplo de la guía del curso.
 | Páginas o vistas              | 21 archivos HTML                    | 35 páginas (16 de tienda + 19 de administración)    |
 | Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 101 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
 | Componentes reutilizables     | 0 (cabecera y pie copiados 21 veces) | 37 componentes + 5 hooks propios                   |
-| Pruebas automatizadas         | 0                                   | 160 (≈1.700 líneas)                                |
+| Pruebas automatizadas         | 0                                   | 159 (≈1.700 líneas)                                |
 
 ---
 
@@ -101,7 +101,7 @@ npm run dev     # abre http://localhost:5173
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 160 pruebas una vez                        |
+| `npm run test:run`      | Ejecuta las 159 pruebas una vez                        |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -194,7 +194,7 @@ nexustech-react/
     ├── services/              CRUD genérico y persistencia en localStorage
     ├── store/                 Reducers: reglas de negocio puras
     ├── context/               Providers que comparten el estado
-    ├── hooks/                 Hooks propios (useTienda, useAuth, useFormulario, useTitulo)
+    ├── hooks/                 Hooks propios (useTienda, useAuth, useFormulario, useTitulo, useCambioDeRuta)
     ├── utils/                 Formatos, validaciones, filtros y reportes (funciones puras)
     ├── components/            37 componentes reutilizables agrupados por tema
     ├── pages/tienda/          16 páginas de la tienda
@@ -206,10 +206,11 @@ nexustech-react/
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `data/`                  | `productosIniciales` (40 productos), `categoriasIniciales`, `usuariosIniciales`, `ordenesIniciales`, `blogs`, `regiones`, `cupones`, `portada`, `configuracion` |
 | `services/storage.js`    | `leerJSON` y `guardarJSON` con `try/catch`, y los nombres de las claves                                                                   |
-| `services/crud.js`       | Funciones CRUD puras: `listar`, `obtener`, `existe`, `siguienteId`, `crear`, `actualizar`, `eliminar`                                     |
+| `services/crud.js`       | Funciones CRUD puras: `obtener`, `siguienteId`, `crear`, `actualizar`, `eliminar`                                                         |
 | `services/persistencia.js` | "Base de datos" en localStorage: carga cada colección, la valida y la guarda                                                            |
 | `store/tiendaReducer.js` | Carrito, cupones, pago simulado y CRUD de productos y categorías                                                                          |
 | `store/authReducer.js`   | Sesión, registro, CRUD de usuarios y roles                                                                                                |
+| `store/aviso.js`         | `conAviso`: agrega al estado el aviso emergente; lo usan los dos reducers                                                                 |
 | `context/`               | `TiendaProvider` y `AuthProvider`                                                                                                         |
 | `components/layout/`     | `Header`, `Footer`, `Layout`, `AdminLayout`, `RutaProtegida`, `BuscadorHeader`, `ZonaUsuario`, `BotonCarrito`, `AccesoDenegado`           |
 | `components/producto/`   | `ProductoCard`, `ProductoGrid`, `FiltrosCatalogo`, `PrecioProducto`, `StockBadge`, `CategoriaCard`                                        |
@@ -633,7 +634,7 @@ vive en el reducer, y el contador de la cabecera se actualiza solo porque lee el
 | `useAuth()`           | `hooks/useAuth.js`                   | `usuarios`, `sesion` y las funciones `ingresar`, `registrar`, `guardarUsuario`, `eliminarUsuario`, `cerrarSesion`  |
 | `useFormulario()`     | `hooks/useFormulario.js`             | `valores`, `errores`, `error(campo)`, `valido(campo)`, `cambiar`, `actualizar`, `enviar`, `reiniciar`. Muestra un error solo si el campo fue tocado o se intentó enviar |
 | `useTitulo(titulo)`   | `hooks/useTitulo.js`                 | Cambia el título de la pestaña del navegador en cada página                                                        |
-| `useCambioDeRuta()`   | `components/layout/useCambioDeRuta.js` | Al cambiar de página sube al inicio y mueve el foco al contenido principal (accesibilidad)                       |
+| `useCambioDeRuta()`   | `hooks/useCambioDeRuta.js`             | Al cambiar de página sube al inicio y mueve el foco al contenido principal (accesibilidad)                       |
 | `TiendaProvider`      | `context/TiendaProvider.jsx`         | Crea el estado con `useReducer(tiendaReducer, undefined, cargarTienda)` y guarda cada cambio con `useEffect`       |
 | `AuthProvider`        | `context/AuthProvider.jsx`           | Igual para usuarios y sesión; además valida los formularios antes de despachar la acción                           |
 | `contextos.js`        | `context/contextos.js`               | Crea `TiendaContext` y `AuthContext` en un archivo sin componentes, para que Vite recargue sin perder el estado    |
@@ -938,11 +939,11 @@ afterEach(() => {
 flowchart TB
   I["Integración (48)<br/>App, compra, formularios, admin<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
-  U["Unitarias puras (97)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
+  U["Unitarias puras (96)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
 ```
 
-1. **Funciones puras (97 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
+1. **Funciones puras (96 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
 3. **Integración (48 pruebas):** se monta la aplicación completa y se recorre como lo haría una
@@ -1033,7 +1034,7 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | `utils/formatos.test.js`                          | Unitaria     | 10      | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock                  |
 | `utils/catalogo.test.js`                          | Unitaria     | 8       | Filtros combinados y los 4 órdenes del catálogo                                         |
 | `utils/reportes.test.js`                          | Unitaria     | 6       | Ventas, categorías, días, más vendidos, inventario e historial                          |
-| `services/crud.test.js`                           | Unitaria     | 4       | CRUD sin mutar el arreglo original                                                      |
+| `services/crud.test.js`                           | Unitaria     | 3       | CRUD sin mutar el arreglo original                                                      |
 | `services/persistencia.test.js`                   | Unitaria     | 10      | Recuperación ante datos corruptos, limpieza del carrito, sesión sin contraseña          |
 | `store/tiendaReducer.test.js`                     | Unitaria     | 25      | Carrito, cupones, totales, pago aprobado y rechazado, CRUD de productos y categorías    |
 | `store/authReducer.test.js`                       | Unitaria     | 9       | Login, roles, registro, CRUD de usuarios y perfil                                       |
@@ -1046,10 +1047,10 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | `pages/tienda/formularios.test.jsx`               | Integración  | 7       | Login, registro y contacto                                                              |
 | `pages/tienda/compra.test.jsx`                    | Integración  | 12      | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                   |
 | `pages/admin/admin.test.jsx`                      | Integración  | 14      | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil          |
-| **Total**                                         |              | **160** |                                                                                         |
+| **Total**                                         |              | **159** |                                                                                         |
 
 <details>
-<summary><strong>Listado completo de las 160 pruebas (clic para desplegar)</strong></summary>
+<summary><strong>Listado completo de las 159 pruebas (clic para desplegar)</strong></summary>
 
 **`utils/validaciones.test.js`** (25)
 - RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
@@ -1068,8 +1069,8 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 **`utils/reportes.test.js`** (6)
 - Resume solo las órdenes pagadas · agrupa ventas por categoría con su porcentaje · agrupa ventas por día y lista los más vendidos · cuenta entregas e historial por RUN o correo · valoriza el stock por categoría · lista los productos en stock crítico del menor al mayor stock
 
-**`services/crud.test.js`** (4)
-- Lee todos los elementos o los filtrados · obtiene por clave y responde null si no existe · calcula el siguiente id correlativo · crea, actualiza y elimina sin mutar el arreglo original
+**`services/crud.test.js`** (3)
+- Obtiene por clave y responde null si no existe · calcula el siguiente id correlativo · crea, actualiza y elimina sin mutar el arreglo original
 
 **`services/persistencia.test.js`** (10)
 - Lee la alternativa si la clave no existe o el JSON está corrupto · guarda, borra con null e informa si el navegador rechaza la escritura
@@ -1131,10 +1132,10 @@ Resultado de `npm run test:coverage`. Se excluyen `main.jsx`, los datos iniciale
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,66 %** | 1100 / 1138 |
-| Ramas      | **92,21 %** | 794 / 861   |
-| Funciones  | **94,67 %** | 409 / 432   |
-| Líneas     | **96,99 %** | 968 / 998   |
+| Sentencias | **96,64 %** | 1093 / 1131 |
+| Ramas      | **92,26 %** | 787 / 853   |
+| Funciones  | **94,61 %** | 404 / 427   |
+| Líneas     | **96,97 %** | 962 / 992   |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |

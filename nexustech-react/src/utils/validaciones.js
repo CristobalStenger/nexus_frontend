@@ -13,7 +13,7 @@ import { comunasDe } from '../data/regiones.js';
 import { CUPONES } from '../data/cupones.js';
 import { normalizar } from './formatos.js';
 
-export const CORREOS_PERMITIDOS = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
+const CORREOS_PERMITIDOS = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
 
 const texto = (valor) => String(valor ?? '').trim();
 
@@ -49,7 +49,7 @@ export function runEsValido(run) {
   return digito === esperado;
 }
 
-export function mensajeCorreo(valor, { opcional = false } = {}) {
+function mensajeCorreo(valor, { opcional = false } = {}) {
   const correo = texto(valor);
   if (correo === '') return opcional ? '' : 'El correo es obligatorio.';
   if (correo.length > 100) return 'El correo no puede superar los 100 caracteres.';
@@ -58,7 +58,7 @@ export function mensajeCorreo(valor, { opcional = false } = {}) {
   return '';
 }
 
-export function mensajeClave(valor) {
+function mensajeClave(valor) {
   const clave = String(valor ?? '');
   if (clave === '') return 'La contraseña es obligatoria.';
   if (clave.length < 4 || clave.length > 10)
@@ -185,7 +185,7 @@ function mensajeEntero(valor, nombreCampo, { obligatorio = true, maximo = Infini
   return '';
 }
 
-export function urlImagenValida(valor) {
+function urlImagenValida(valor) {
   try {
     return ['http:', 'https:'].includes(new URL(texto(valor)).protocol);
   } catch {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, parsePath } from 'react-router';
 import App from '../App.jsx';
 import { AuthProvider } from '../context/AuthProvider.jsx';
 import { TiendaProvider } from '../context/TiendaProvider.jsx';
@@ -10,7 +10,7 @@ import { crearSesion } from '../services/persistencia.js';
 // La aplicación completa con un historial en memoria
 export function renderApp(ruta = '/', state) {
   return render(
-    <MemoryRouter initialEntries={[{ pathname: ruta.split('?')[0], search: ruta.includes('?') ? `?${ruta.split('?')[1]}` : '', state }]}>
+    <MemoryRouter initialEntries={[{ ...parsePath(ruta), state }]}>
       <App />
     </MemoryRouter>,
   );

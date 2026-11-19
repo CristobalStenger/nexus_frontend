@@ -5,7 +5,7 @@ import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
 import TarjetaMetrica from '../../components/admin/TarjetaMetrica.jsx';
-import { precioCLP } from '../../utils/formatos.js';
+import { enOferta, precioCLP } from '../../utils/formatos.js';
 import { inventarioPorCategoria, productosMasVendidos } from '../../utils/reportes.js';
 import { useTienda } from '../../hooks/useTienda.js';
 import { useTitulo } from '../../hooks/useTitulo.js';
@@ -17,7 +17,7 @@ export default function ReportesProductos() {
   const masVendidos = productosMasVendidos(estado.ordenes, 10);
   const valorTotal = inventario.reduce((total, f) => total + f.valor, 0);
   const sinStock = estado.productos.filter((p) => p.stock === 0).length;
-  const enOferta = estado.productos.filter((p) => p.descuento > 0).length;
+  const ofertas = estado.productos.filter(enOferta).length;
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function ReportesProductos() {
           <TarjetaMetrica titulo="Sin stock" valor={sinStock} icono="bi-x-octagon" variante="danger" />
         </Col>
         <Col md={4}>
-          <TarjetaMetrica titulo="En oferta" valor={enOferta} icono="bi-percent" />
+          <TarjetaMetrica titulo="En oferta" valor={ofertas} icono="bi-percent" />
         </Col>
       </Row>
 

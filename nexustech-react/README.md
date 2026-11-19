@@ -76,13 +76,14 @@ src/
 │                            órdenes de ejemplo, blogs, regiones, cupones, configuración)
 ├── services/
 │   ├── storage.js           Lectura/escritura segura de localStorage y nombres de claves
-│   ├── crud.js              Funciones CRUD puras: listar, obtener, crear, actualizar, eliminar
+│   ├── crud.js              Funciones CRUD puras: obtener, crear, actualizar, eliminar
 │   └── persistencia.js      "Base de datos" en localStorage: carga validada y guardado
 ├── store/
 │   ├── tiendaReducer.js     Carrito, cupones, pago, CRUD de productos y categorías
-│   └── authReducer.js       Sesión, registro, CRUD de usuarios y roles
+│   ├── authReducer.js       Sesión, registro, CRUD de usuarios y roles
+│   └── aviso.js             conAviso: aviso emergente que comparten ambos reducers
 ├── context/                 TiendaProvider y AuthProvider (useReducer + useEffect que guarda)
-├── hooks/                   useTienda, useAuth, useFormulario, useTitulo
+├── hooks/                   useTienda, useAuth, useFormulario, useTitulo, useCambioDeRuta
 ├── utils/                   formatos, validaciones, filtros del catálogo y reportes
 ├── components/
 │   ├── layout/              Header, Footer, Layout, AdminLayout, RutaProtegida...

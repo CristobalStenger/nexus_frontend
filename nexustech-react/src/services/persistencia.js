@@ -32,7 +32,7 @@ export function productoValido(p) {
   );
 }
 
-export function categoriaValida(c) {
+function categoriaValida(c) {
   return Boolean(
     c && Number.isInteger(c.id) && esTexto(c.nombre) && esTexto(c.slug) && esTexto(c.icono),
   );
@@ -49,7 +49,7 @@ export function usuarioValido(u) {
   );
 }
 
-export function ordenValida(o) {
+function ordenValida(o) {
   return Boolean(
     o &&
       Number.isInteger(o.numero) &&
@@ -64,7 +64,7 @@ export function ordenValida(o) {
 const copiar = (datos) => JSON.parse(JSON.stringify(datos));
 
 // Devuelve la colección guardada si es un arreglo válido y sin claves repetidas
-export function cargarColeccion(clave, semilla, esValido, campo = 'id', { permitirVacia = true } = {}) {
+function cargarColeccion(clave, semilla, esValido, campo = 'id', { permitirVacia = true } = {}) {
   const guardada = leerJSON(clave, null);
   const valida =
     Array.isArray(guardada) &&
@@ -75,7 +75,7 @@ export function cargarColeccion(clave, semilla, esValido, campo = 'id', { permit
 }
 
 // El carrito solo guarda { id, cantidad } de productos que existan
-export function limpiarCarrito(candidato, productos) {
+function limpiarCarrito(candidato, productos) {
   const ids = new Set();
   return (Array.isArray(candidato) ? candidato : [])
     .filter((item) => {
@@ -104,7 +104,7 @@ export function cargarTienda() {
   const ordenes = cargarColeccion(CLAVES.ordenes, ordenesIniciales, ordenValida, 'numero');
   const carrito = limpiarCarrito(leerJSON(CLAVES.carrito, []), productos);
   const cupon = carrito.length ? cargarCupon() : null;
-  return { productos, categorias, ordenes, carrito, cupon, aviso: null };
+  return { productos, categorias, ordenes, carrito, cupon };
 }
 
 export function guardarTienda({ productos, categorias, ordenes, carrito, cupon }) {

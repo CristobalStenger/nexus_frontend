@@ -8,6 +8,7 @@
 import { COSTO_DESPACHO, NUMERO_ORDEN_INICIAL, SUFIJO_TARJETA_RECHAZADA } from '../data/configuracion.js';
 import { CUPONES } from '../data/cupones.js';
 import { actualizar, crear, eliminar, obtener, siguienteId } from '../services/crud.js';
+import { conAviso } from './aviso.js';
 import { crearSlug, enmascararTarjeta, precioFinal } from '../utils/formatos.js';
 import {
   convertirProducto,
@@ -66,10 +67,6 @@ export function evaluarPago(estado, numeroTarjeta = '') {
   if (String(numeroTarjeta).replace(/\D/g, '').endsWith(SUFIJO_TARJETA_RECHAZADA))
     return 'La tarjeta fue rechazada por el banco emisor.';
   return '';
-}
-
-function conAviso(estado, texto, tipo = 'success') {
-  return { ...estado, aviso: { texto, tipo, id: (estado.aviso?.id ?? 0) + 1 } };
 }
 
 // ---------- Casos del reducer ----------

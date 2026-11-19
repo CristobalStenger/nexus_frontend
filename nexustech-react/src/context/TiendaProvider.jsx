@@ -1,11 +1,11 @@
 import { useEffect, useReducer, useState } from 'react';
 import { TiendaContext } from './contextos.js';
 import { cargarTienda, guardarTienda } from '../services/persistencia.js';
-import { tiendaReducer } from '../store/tiendaReducer.js';
+import { crearEstado, tiendaReducer } from '../store/tiendaReducer.js';
 
 // Comparte el estado de la tienda y guarda cada cambio en localStorage
 export function TiendaProvider({ children }) {
-  const [estado, dispatch] = useReducer(tiendaReducer, undefined, cargarTienda);
+  const [estado, dispatch] = useReducer(tiendaReducer, undefined, () => crearEstado(cargarTienda()));
   const [errorGuardado, setErrorGuardado] = useState(false);
   const { productos, categorias, ordenes, carrito, cupon } = estado;
 
