@@ -65,7 +65,7 @@ export default function Contacto() {
                 rows={4}
                 maxLength={500}
               />
-              <Form.Text className="d-block mb-3" aria-live="polite">
+              <Form.Text className="d-block mb-3">
                 Te quedan {500 - form.valores.comentario.length} caracteres.
               </Form.Text>
               <Button type="submit" variant="nexus" className="w-100 py-2">
