@@ -18,7 +18,7 @@ export default function DetalleOrden() {
 
   if (!orden)
     return (
-      <EstadoVacio icono="bi-receipt" titulo="La orden no existe.">
+      <EstadoVacio esPagina icono="bi-receipt" titulo="La orden no existe.">
         <Link to="/admin/ordenes" className="btn btn-nexus">Volver a órdenes</Link>
       </EstadoVacio>
     );

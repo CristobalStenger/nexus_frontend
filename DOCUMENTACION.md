@@ -65,9 +65,9 @@ el proyecto de ejemplo de la guía del curso.
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **163 aprobadas** en 18 archivos                  |
-| Cobertura de líneas       | **97,10 %**                                       |
-| Cobertura de ramas        | **92,05 %**                                       |
+| Pruebas automatizadas     | **164 aprobadas** en 18 archivos                  |
+| Cobertura de líneas       | **97,51 %**                                       |
+| Cobertura de ramas        | **92,13 %**                                       |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
 
@@ -78,7 +78,7 @@ el proyecto de ejemplo de la guía del curso.
 | Páginas o vistas              | 21 archivos HTML                    | 35 páginas (16 de tienda + 19 de administración)    |
 | Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 102 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
 | Componentes reutilizables     | 0 (cabecera y pie copiados 21 veces) | 37 componentes + 5 hooks propios                   |
-| Pruebas automatizadas         | 0                                   | 163 (≈1.800 líneas)                                |
+| Pruebas automatizadas         | 0                                   | 164 (≈1.800 líneas)                                |
 
 ---
 
@@ -103,7 +103,7 @@ npm run dev     # abre http://localhost:5173
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 163 pruebas una vez                        |
+| `npm run test:run`      | Ejecuta las 164 pruebas una vez                        |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -581,8 +581,8 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 
 | Componente         | Responsabilidad                                                                                  | Props                                                                                | Estado propio | Se usa en                                          |
 | ------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------- | -------------------------------------------------- |
-| `ConfirmarModal`   | Modal de confirmación: se abre con una prop y avisa con `onConfirmar` o `onCancelar`                 | `abierto`, `titulo`, `children`, `textoConfirmar = 'Confirmar'`, `variante = 'danger'`, `onConfirmar`, `onCancelar` | No (lo abre el padre) | Carrito, listados del panel |
-| `EstadoVacio`      | Mensaje con ícono cuando una lista no tiene elementos                                            | `icono = 'bi-search'`, `titulo`, `children`                                          | No            | `ProductoGrid`, Carrito, páginas "no existe"       |
+| `ConfirmarModal`   | Modal de confirmación: se abre con una prop y avisa con `onConfirmar` o `onCancelar`                 | `abierto`, `titulo`, `children`, `textoConfirmar = 'Confirmar'`, `variante = 'danger'`, `onConfirmar` (sin ella solo muestra Cancelar), `onCancelar` | No (lo abre el padre) | Carrito, listados del panel |
+| `EstadoVacio`      | Mensaje con ícono cuando una lista no tiene elementos                                            | `icono = 'bi-search'`, `titulo`, `esPagina = false` (su título pasa a ser el h1), `children` | No            | `ProductoGrid`, Carrito, páginas "no existe"       |
 | `EncabezadoPagina` | Caja de título de las páginas de la tienda                                                       | `icono`, `titulo`, `children`                                                        | No            | Páginas de la tienda                               |
 | `AvisosGlobales`   | Notificaciones `Toast` (reemplazan los `alert()`) y aviso si no se pudo guardar en el navegador  | —                                                                                    | No (lee los avisos del estado global) | `Layout`, `AdminLayout`    |
 | `HeroCarousel`     | Carrusel de portada con las diapositivas de `data/portada.js`                                    | `diapositivas`                                                                       | No            | `Inicio`                                           |
@@ -875,7 +875,7 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 - **Productos:** código único, precio entero ≥ 0, stock entero ≥ 0, descuento de 0 a 90 % y URL
   de imagen `http`/`https`. Al eliminar un producto, también sale del carrito.
 - **Categorías:** nombre único sin importar tildes, mayúsculas ni signos, para que la dirección
-  `/categorias/...` no se repita. Al renombrarla se actualizan sus productos.
+  `/categorias/...` no se repita, y con al menos una letra o un número. Al renombrarla se actualizan sus productos.
   Una categoría con productos no se puede eliminar.
 - **Usuarios:** RUN y correo únicos. Si un usuario edita su propia cuenta, la sesión se actualiza.
   No se puede eliminar la cuenta que está en uso ni cambiar el rol propio: así siempre queda un administrador.
@@ -954,7 +954,7 @@ afterEach(() => {
 
 ```mermaid
 flowchart TB
-  I["Integración (50)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
+  I["Integración (51)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
   U["Unitarias puras (98)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
@@ -963,7 +963,7 @@ flowchart TB
 1. **Funciones puras (98 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
-3. **Integración (50 pruebas):** se monta la aplicación completa y se recorre como lo haría una
+3. **Integración (51 pruebas):** se monta la aplicación completa y se recorre como lo haría una
    persona: escribir, hacer clic, navegar y revisar lo que se ve y lo que se guarda.
 
 Todas siguen el patrón **Preparar → Actuar → Comprobar**.
@@ -1063,12 +1063,12 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | `tests/integracion/App.test.jsx`             | Integración |      15 | Navegación, 404, buscador, catálogo, categorías, ofertas, detalle, rutas por rol     |
 | `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login, registro y contacto                                                           |
 | `tests/integracion/compra.test.jsx`          | Integración |      13 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
-| `tests/integracion/admin.test.jsx`           | Integración |      14 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
+| `tests/integracion/admin.test.jsx`           | Integración |      15 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
 | `tests/integracion/foco.test.jsx`            | Integración |       1 | El foco no se mueve al abrir la app y pasa al contenido al navegar                   |
-| **Total**                                    |             | **163** |                                                                                      |
+| **Total**                                    |             | **164** |                                                                                      |
 
 <details>
-<summary><strong>Listado completo de las 163 pruebas (clic para desplegar)</strong></summary>
+<summary><strong>Listado completo de las 164 pruebas (clic para desplegar)</strong></summary>
 
 **`tests/unitarias/validaciones.test.js`** (25)
 - RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
@@ -1137,7 +1137,7 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 
 **`tests/integracion/admin.test.jsx`** (14)
 - El dashboard muestra métricas y accesos a cada módulo · filtra órdenes por estado y muestra la boleta · muestra reportes de ventas e inventario · lista los productos críticos
-- Productos: crea, muestra y edita un producto conservando su id · rechaza un código repetido · cancela y confirma la eliminación, retirando el producto del carrito · busca productos en la tabla
+- Productos: crea, muestra y edita un producto conservando su id · rechaza un código repetido · cancela y confirma la eliminación, retirando el producto del carrito · busca productos en la tabla · Cancelar en editar producto o usuario vuelve a su ficha, aunque se abra directo
 - Categorías: crea una categoría, la renombra y no elimina una categoría con productos
 - Usuarios y perfil: crea un vendedor, lo muestra, lo edita y lo elimina · protege la propia cuenta y filtra por rol · muestra el historial de compras de un cliente · el perfil actualiza los datos de la sesión · cerrar sesión desde el panel vuelve a la tienda
 
@@ -1153,20 +1153,20 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,76 %** | 1108 / 1145 |
-| Ramas      | **92,05 %** | 811 / 881   |
-| Funciones  | **94,88 %** | 408 / 430   |
-| Líneas     | **97,10 %** | 972 / 1001  |
+| Sentencias | **97,13 %** | 1117 / 1150 |
+| Ramas      | **92,13 %** | 820 / 890   |
+| Funciones  | **95,81 %** | 412 / 430   |
+| Líneas     | **97,51 %** | 980 / 1005  |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |
 | `services/` (CRUD y persistencia)         | 100 %            |
 | `store/` (reducers)                       | 100 %            |
 | `utils/` (validaciones, formatos…)        | 99,5 %           |
-| `components/`                             | 89–100 %         |
+| `components/`                             | 90–100 %         |
 | `pages/tienda/`                           | 96,9 %           |
 | `context/`                                | 93,9 %           |
-| `pages/admin/`                            | 90,3 %           |
+| `pages/admin/`                            | 92,3 %           |
 
 **Análisis:**
 

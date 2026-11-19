@@ -79,7 +79,7 @@ export default function Checkout() {
 
   if (!detalle.length)
     return (
-      <EstadoVacio icono="bi-cart-x" titulo="No hay productos para pagar.">
+      <EstadoVacio esPagina icono="bi-cart-x" titulo="No hay productos para pagar.">
         <Link to="/productos" className="btn btn-nexus">
           Ir al catálogo
         </Link>

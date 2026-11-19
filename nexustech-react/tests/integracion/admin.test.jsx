@@ -119,6 +119,18 @@ describe('CRUD de productos', () => {
     await user.type(screen.getByLabelText('Buscar producto'), 'zzz');
     expect(screen.getByText('No hay productos que coincidan.')).toBeInTheDocument();
   });
+
+  it('Cancelar en editar producto o usuario vuelve a su ficha, aunque se abra directo', async () => {
+    iniciarSesionComo('Administrador');
+    const user = userEvent.setup();
+    renderApp('/admin/productos/1/editar');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(await titulo('AMD Ryzen 5 7600X')).toBeInTheDocument();
+    cleanup();
+    renderApp('/admin/usuarios/21456789K/editar');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(await titulo('Pedro Soto Fuentes')).toBeInTheDocument();
+  });
 });
 
 describe('CRUD de categorías', () => {
@@ -141,8 +153,11 @@ describe('CRUD de categorías', () => {
     expect(leer(CLAVES.productos).filter((p) => p.categoria === 'Consolas y Juegos')).toHaveLength(6);
 
     await user.click(screen.getByRole('button', { name: 'Eliminar categoría Consolas y Juegos' }));
-    await confirmarEnModal(user, 'Eliminar categoría', 'Eliminar');
-    expect(await screen.findByText(/No se puede eliminar "Consolas y Juegos"/)).toBeInTheDocument();
+    // Con productos el modal solo explica por qué no se puede: no hay botón para confirmar
+    const dialogo = await screen.findByRole('dialog', { name: 'Eliminar categoría' });
+    expect(within(dialogo).getByText(/tiene 6 producto\(s\)/)).toBeInTheDocument();
+    expect(within(dialogo).queryByRole('button', { name: 'Eliminar' })).not.toBeInTheDocument();
+    await confirmarEnModal(user, 'Eliminar categoría', 'Cancelar');
 
     await user.click(screen.getByRole('button', { name: 'Eliminar categoría Audio y Video' }));
     await confirmarEnModal(user, 'Eliminar categoría', 'Eliminar');

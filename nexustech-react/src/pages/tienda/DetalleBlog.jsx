@@ -11,7 +11,7 @@ export default function DetalleBlog() {
 
   if (!blog)
     return (
-      <EstadoVacio icono="bi-newspaper" titulo="El artículo no existe.">
+      <EstadoVacio esPagina icono="bi-newspaper" titulo="El artículo no existe.">
         <Link to="/blogs" className="btn btn-nexus">
           Volver a los blogs
         </Link>

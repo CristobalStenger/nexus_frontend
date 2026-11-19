@@ -247,11 +247,13 @@ export function convertirProducto(datos) {
 
 export function validarCategoria(datos, categorias = [], id = null) {
   const nombre = texto(datos.nombre);
+  const slug = crearSlug(nombre);
   const errores = {};
   if (nombre.length < 3 || nombre.length > 50)
     errores.nombre = 'El nombre debe tener entre 3 y 50 caracteres.';
+  else if (!slug) errores.nombre = 'El nombre debe tener letras o números.';
   // Se compara la dirección (slug): dos nombres que solo difieren en tildes o signos chocarían en la URL
-  else if (categorias.some((c) => c.id !== id && crearSlug(c.nombre) === crearSlug(nombre)))
+  else if (categorias.some((c) => c.id !== id && crearSlug(c.nombre) === slug))
     errores.nombre = 'Ya existe una categoría con ese nombre.';
   if (texto(datos.descripcion).length > 200)
     errores.descripcion = 'La descripción no puede superar los 200 caracteres.';

@@ -16,6 +16,8 @@ export default function CategoriasAdmin() {
   const admin = esAdministrador(sesion);
   const [eliminando, setEliminando] = useState(null);
   const cantidadDe = (c) => estado.productos.filter((p) => p.categoria === c.nombre).length;
+  // Una categoría con productos no se elimina: el modal solo lo explica, sin botón para confirmar
+  const enUso = eliminando ? cantidadDe(eliminando) : 0;
 
   function confirmarEliminar() {
     dispatch({ type: 'ELIMINAR_CATEGORIA', id: eliminando.id });
@@ -85,11 +87,11 @@ export default function CategoriasAdmin() {
         abierto={eliminando !== null}
         titulo="Eliminar categoría"
         textoConfirmar="Eliminar"
-        onConfirmar={confirmarEliminar}
+        onConfirmar={enUso ? undefined : confirmarEliminar}
         onCancelar={() => setEliminando(null)}
       >
-        {eliminando && cantidadDe(eliminando) > 0
-          ? `"${eliminando.nombre}" tiene ${cantidadDe(eliminando)} producto(s). Muévelos a otra categoría antes de eliminarla.`
+        {enUso
+          ? `"${eliminando.nombre}" tiene ${enUso} producto(s). Muévelos a otra categoría antes de eliminarla.`
           : `¿Seguro que quieres eliminar "${eliminando?.nombre}"?`}
       </ConfirmarModal>
     </>

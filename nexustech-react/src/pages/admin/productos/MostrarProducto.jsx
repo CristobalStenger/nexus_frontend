@@ -23,7 +23,7 @@ export default function MostrarProducto() {
 
   if (!producto)
     return (
-      <EstadoVacio icono="bi-box-seam" titulo="El producto no existe.">
+      <EstadoVacio esPagina icono="bi-box-seam" titulo="El producto no existe.">
         <Link to="/admin/productos" className="btn btn-nexus">Volver a productos</Link>
       </EstadoVacio>
     );

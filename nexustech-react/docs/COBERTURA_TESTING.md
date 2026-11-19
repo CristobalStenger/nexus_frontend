@@ -20,7 +20,7 @@ Configuración: `vite.config.js` (`test.environment = 'jsdom'`, `setupFiles`) y
 entre pruebas para que ninguna dependa de otra.
 
 ```bash
-npm run test:run        # 163 pruebas en 18 archivos
+npm run test:run        # 164 pruebas en 18 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -53,10 +53,10 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `tests/componentes/CampoFormulario.test.jsx` |       3 | Etiqueta asociada, error con `aria-describedby`, variante select                                                     |
 | `tests/integracion/formularios.test.jsx`     |       7 | Login, registro completo y Contacto con validación en vivo                                                           |
 | `tests/integracion/compra.test.jsx`          |      13 | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente           |
-| `tests/integracion/admin.test.jsx`           |      14 | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión    |
+| `tests/integracion/admin.test.jsx`           |      15 | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión    |
 | `tests/integracion/App.test.jsx`             |      15 | Navegación con NavLink, 404, buscador, categorías, ofertas, detalle, rutas protegidas por rol, sesión restaurada     |
 | `tests/integracion/foco.test.jsx`            |       1 | Al abrir la app el foco no se mueve; al navegar pasa al contenido principal                                          |
-| **Total**                                    | **163** |                                                                                                                      |
+| **Total**                                    | **164** |                                                                                                                      |
 
 ## 4. Resultado de cobertura
 
@@ -64,13 +64,13 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,76 %   | 1108 / 1145  |
-| Ramas         | 92,05 %   | 811 / 881    |
-| Funciones     | 94,88 %   | 408 / 430    |
-| Líneas        | 97,10 %   | 972 / 1001   |
+| Sentencias    | 97,13 %   | 1117 / 1150  |
+| Ramas         | 92,13 %   | 820 / 890    |
+| Funciones     | 95,81 %   | 412 / 430    |
+| Líneas        | 97,51 %   | 980 / 1005   |
 
-Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 89–100 % (`comunes` es la más baja),
-`pages/tienda` 96,9 %, `pages/admin` 90,3 %, `context` 93,9 %.
+Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 90–100 % (`comunes` es la más baja),
+`pages/tienda` 96,9 %, `pages/admin` 92,3 %, `context` 93,9 %.
 
 ## 5. Análisis
 
