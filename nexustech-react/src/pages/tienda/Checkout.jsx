@@ -1,3 +1,4 @@
+import { startTransition } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -88,29 +89,32 @@ export default function Checkout() {
   const pagar = form.enviar((v) => {
     const numero = siguienteNumeroOrden(estado.ordenes);
     const rechazo = evaluarPago(estado, v.numeroTarjeta);
-    dispatch({
-      type: 'PAGAR',
-      numero,
-      fecha: new Date().toISOString(),
-      datos: {
-        cliente: {
-          run: sesion?.run ?? '',
-          nombre: v.nombre.trim(),
-          apellidos: v.apellidos.trim(),
-          correo: v.correo.trim().toLowerCase(),
+    // Pago y navegación en la misma transición: si no, se alcanza a ver el checkout con el carrito vacío
+    startTransition(() => {
+      dispatch({
+        type: 'PAGAR',
+        numero,
+        fecha: new Date().toISOString(),
+        datos: {
+          cliente: {
+            run: sesion?.run ?? '',
+            nombre: v.nombre.trim(),
+            apellidos: v.apellidos.trim(),
+            correo: v.correo.trim().toLowerCase(),
+          },
+          entrega: {
+            tipo: v.entrega,
+            calle: v.calle.trim(),
+            departamento: v.departamento.trim(),
+            region: v.region,
+            comuna: v.comuna,
+            indicaciones: v.indicaciones.trim(),
+          },
+          numeroTarjeta: v.numeroTarjeta,
         },
-        entrega: {
-          tipo: v.entrega,
-          calle: v.calle.trim(),
-          departamento: v.departamento.trim(),
-          region: v.region,
-          comuna: v.comuna,
-          indicaciones: v.indicaciones.trim(),
-        },
-        numeroTarjeta: v.numeroTarjeta,
-      },
+      });
+      navigate(`/compra/${rechazo ? 'error' : 'exitosa'}/${numero}`);
     });
-    navigate(`/compra/${rechazo ? 'error' : 'exitosa'}/${numero}`);
   });
 
   const campo = (nombre) => ({ ...form.campo(nombre), id: `checkout-${nombre}`, className: '' });

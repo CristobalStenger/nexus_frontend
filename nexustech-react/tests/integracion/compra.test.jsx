@@ -145,9 +145,15 @@ describe('checkout y pago simulado', () => {
     renderApp('/carrito');
     await user.click(screen.getByRole('button', { name: /Comprar ahora/ }));
     await completarCheckout(user);
+    const agregados = [];
+    const observador = new MutationObserver((cambios) => cambios.forEach((c) => agregados.push(...c.addedNodes)));
+    observador.observe(document.body, { childList: true, subtree: true });
     await user.click(screen.getByRole('button', { name: /Pagar ahora/ }));
 
     expect(await screen.findByRole('heading', { name: /Se ha realizado la compra\. nro #1006/ })).toBeInTheDocument();
+    observador.disconnect();
+    // Al pagar no debe alcanzar a dibujarse el checkout con el carrito ya vacío
+    expect(agregados.some((nodo) => nodo.textContent.includes('No hay productos para pagar.'))).toBe(false);
     expect(screen.getByText('Total pagado')).toBeInTheDocument();
     expect(screen.getByText('$503.970')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Carrito (0)' })).toBeInTheDocument();
