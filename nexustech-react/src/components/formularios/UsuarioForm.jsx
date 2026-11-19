@@ -118,6 +118,7 @@ export default function UsuarioForm({
             region={valores.region}
             comuna={valores.comuna}
             errores={{ region: form.error('region'), comuna: form.error('comuna') }}
+            validos={{ region: form.valido('region'), comuna: form.valido('comuna') }}
             onCambio={form.actualizar}
           />
         </Col>
