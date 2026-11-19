@@ -22,7 +22,7 @@ export default function DetalleProducto() {
 
   if (!producto)
     return (
-      <EstadoVacio icono="bi-box-seam" titulo="Producto no encontrado.">
+      <EstadoVacio esPagina icono="bi-box-seam" titulo="Producto no encontrado.">
         <Link to="/productos" className="btn btn-nexus">
           Ir al catálogo
         </Link>

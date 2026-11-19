@@ -107,7 +107,8 @@ describe('checkout y pago simulado', () => {
 
   it('sin productos no muestra el formulario de pago', () => {
     renderApp('/checkout');
-    expect(screen.getByText('No hay productos para pagar.')).toBeInTheDocument();
+    // El aviso ocupa toda la página: su título es el h1
+    expect(screen.getByRole('heading', { level: 1, name: 'No hay productos para pagar.' })).toBeInTheDocument();
   });
 
   it('valida los datos del cliente, la dirección y la tarjeta', async () => {

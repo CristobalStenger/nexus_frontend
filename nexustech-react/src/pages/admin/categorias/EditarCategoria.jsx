@@ -15,7 +15,7 @@ export default function EditarCategoria() {
 
   if (!categoria)
     return (
-      <EstadoVacio icono="bi-tags" titulo="La categoría no existe.">
+      <EstadoVacio esPagina icono="bi-tags" titulo="La categoría no existe.">
         <Link to="/admin/categorias" className="btn btn-nexus">Volver a categorías</Link>
       </EstadoVacio>
     );

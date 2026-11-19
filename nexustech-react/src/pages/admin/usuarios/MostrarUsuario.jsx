@@ -19,7 +19,7 @@ export default function MostrarUsuario() {
 
   if (!usuario)
     return (
-      <EstadoVacio icono="bi-person-x" titulo="El usuario no existe.">
+      <EstadoVacio esPagina icono="bi-person-x" titulo="El usuario no existe.">
         <Link to="/admin/usuarios" className="btn btn-nexus">Volver a usuarios</Link>
       </EstadoVacio>
     );

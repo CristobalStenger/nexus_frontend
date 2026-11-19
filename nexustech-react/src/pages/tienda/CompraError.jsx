@@ -18,7 +18,7 @@ export default function CompraError() {
 
   if (!orden)
     return (
-      <EstadoVacio icono="bi-receipt" titulo="No encontramos esa orden.">
+      <EstadoVacio esPagina icono="bi-receipt" titulo="No encontramos esa orden.">
         <Link to="/productos" className="btn btn-nexus">Ir al catálogo</Link>
       </EstadoVacio>
     );
