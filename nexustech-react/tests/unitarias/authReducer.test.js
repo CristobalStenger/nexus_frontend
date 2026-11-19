@@ -80,6 +80,17 @@ describe('CRUD de usuarios', () => {
     expect(estado.sesion.nombre).toBe('Administradora');
   });
 
+  it('nadie puede cambiar su propio rol, así siempre queda un administrador', () => {
+    const admin = usuariosIniciales[0];
+    const estado = authReducer(iniciar({ run: admin.run, tipo: admin.tipo }), {
+      type: 'GUARDAR_USUARIO',
+      runOriginal: admin.run,
+      datos: { ...admin, tipo: 'Cliente' },
+    });
+    expect(estado.usuarios[0].tipo).toBe('Administrador');
+    expect(estado.aviso.tipo).toBe('danger');
+  });
+
   it('elimina usuarios, pero nunca la cuenta en uso', () => {
     const sesion = { run: '190110222', tipo: 'Administrador' };
     expect(authReducer(iniciar(sesion), { type: 'ELIMINAR_USUARIO', run: '21456789K' }).usuarios).toHaveLength(2);

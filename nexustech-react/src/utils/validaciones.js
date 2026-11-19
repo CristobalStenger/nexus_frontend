@@ -114,7 +114,7 @@ export function validarUsuario(
   datos,
   usuarios = [],
   runOriginal = null,
-  { confirmarClave = false, conTerminos = false, conTipo = false, hoy = new Date() } = {},
+  { confirmarClave = false, conTerminos = false, conTipo = false, sesion = null, hoy = new Date() } = {},
 ) {
   const run = texto(datos.run).toUpperCase();
   const correo = texto(datos.correo).toLowerCase();
@@ -146,6 +146,9 @@ export function validarUsuario(
   if (conTerminos && !datos.terminos)
     errores.terminos = 'Debes aceptar los términos y condiciones.';
   if (conTipo && !ROLES.includes(datos.tipo)) errores.tipo = 'Selecciona el tipo de usuario.';
+  // Nadie cambia su propio rol: así siempre queda al menos el administrador que hace los cambios
+  else if (sesion?.run === runOriginal && datos.tipo !== sesion.tipo)
+    errores.tipo = 'No puedes cambiar tu propio rol.';
 
   return armar(errores);
 }

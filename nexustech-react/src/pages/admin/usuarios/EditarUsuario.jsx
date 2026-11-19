@@ -1,5 +1,4 @@
-import { Link, useNavigate, useParams } from 'react-router';
-import Alert from 'react-bootstrap/Alert';
+import { Link, Navigate, useNavigate, useParams } from 'react-router';
 import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
 import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
 import UsuarioForm from '../../../components/formularios/UsuarioForm.jsx';
@@ -21,6 +20,8 @@ export default function EditarUsuario() {
         <Link to="/admin/usuarios" className="btn btn-nexus">Volver a usuarios</Link>
       </EstadoVacio>
     );
+  // La cuenta propia se edita desde el perfil, donde el RUN y el rol no se cambian
+  if (usuario.run === sesion.run) return <Navigate to="/admin/perfil" replace />;
 
   function guardar(datos) {
     if (guardarUsuario(datos, usuario.run).ok) navigate(`/admin/usuarios/${datos.run.trim().toUpperCase()}`);
@@ -29,11 +30,6 @@ export default function EditarUsuario() {
   return (
     <>
       <EncabezadoAdmin titulo={`Editar usuario: ${nombreCompleto(usuario)}`} />
-      {usuario.run === sesion.run && (
-        <Alert variant="warning">
-          Estás editando tu propia cuenta. Si cambias tu tipo a Cliente perderás el acceso al panel.
-        </Alert>
-      )}
       <section className="caja-sesion">
         <UsuarioForm
           key={usuario.run}

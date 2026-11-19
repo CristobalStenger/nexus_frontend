@@ -38,7 +38,7 @@ function registrar(estado, { datos }) {
 }
 
 function guardarUsuario(estado, { runOriginal = null, datos }) {
-  const errores = validarUsuario(datos, estado.usuarios, runOriginal, { conTipo: true });
+  const errores = validarUsuario(datos, estado.usuarios, runOriginal, { conTipo: true, sesion: estado.sesion });
   if (!sinErrores(errores)) return conAviso(estado, 'Revisa los datos del usuario.', 'danger');
   if (runOriginal !== null && !obtener(estado.usuarios, runOriginal, 'run'))
     return conAviso(estado, 'El usuario ya no existe.', 'warning');

@@ -77,7 +77,7 @@ describe('persistencia de la tienda', () => {
 });
 
 describe('usuarios, sesión y mensajes', () => {
-  it('siempre deja al menos una cuenta de administrador', () => {
+  it('si la lista de cuentas queda vacía vuelve a las cuentas iniciales', () => {
     localStorage.setItem(CLAVES.usuarios, JSON.stringify([]));
     expect(cargarUsuarios()).toHaveLength(usuariosIniciales.length);
   });

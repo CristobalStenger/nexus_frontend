@@ -181,13 +181,17 @@ describe('CRUD de usuarios y perfil', () => {
     expect(leer(CLAVES.usuarios).some((u) => u.run === '111111111')).toBe(false);
   });
 
-  it('no permite eliminar la propia cuenta y filtra por rol', async () => {
+  it('protege la propia cuenta y filtra por rol', async () => {
     iniciarSesionComo('Administrador');
     const user = userEvent.setup();
     renderApp('/admin/usuarios');
     expect(screen.getByRole('button', { name: 'Eliminar Admin' })).toBeDisabled();
     await user.selectOptions(screen.getByLabelText('Filtrar por rol'), 'Cliente');
     expect(screen.getAllByRole('row')).toHaveLength(2);
+    // La cuenta propia se edita desde el perfil, donde no se cambia el rol
+    cleanup();
+    renderApp('/admin/usuarios/190110222/editar');
+    expect(await titulo('Mi perfil')).toBeInTheDocument();
   });
 
   it('muestra el historial de compras de un cliente', () => {
