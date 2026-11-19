@@ -7,7 +7,7 @@ import Alert from 'react-bootstrap/Alert';
 import EncabezadoPagina from '../../components/comunes/EncabezadoPagina.jsx';
 import CampoFormulario from '../../components/formularios/CampoFormulario.jsx';
 import { guardarMensaje } from '../../services/persistencia.js';
-import { validarContacto } from '../../utils/validaciones.js';
+import { TEXTO_CORREOS, validarContacto } from '../../utils/validaciones.js';
 import { nombreCompleto } from '../../utils/formatos.js';
 import { useFormulario } from '../../hooks/useFormulario.js';
 import { useAuth } from '../../hooks/useAuth.js';
@@ -56,7 +56,7 @@ export default function Contacto() {
                 id="contacto-correo"
                 name="correo"
                 etiqueta="Correo electrónico"
-                ayuda="opcional, @duoc.cl, @profesor.duoc.cl o @gmail.com"
+                ayuda={`opcional, ${TEXTO_CORREOS}`}
                 type="email"
                 maxLength={100}
                 value={form.valores.correo}

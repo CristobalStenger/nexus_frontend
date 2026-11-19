@@ -4,13 +4,13 @@ import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import ConfirmarModal from '../../components/comunes/ConfirmarModal.jsx';
-import { esStockCritico, normalizar, textoPrecio } from '../../utils/formatos.js';
-import { esAdministrador } from '../../store/authReducer.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import ConfirmarModal from '../../../components/comunes/ConfirmarModal.jsx';
+import { esStockCritico, normalizar, textoPrecio } from '../../../utils/formatos.js';
+import { esAdministrador } from '../../../store/authReducer.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function ProductosAdmin() {
   useTitulo('Productos');

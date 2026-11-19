@@ -4,8 +4,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import CampoFormulario from './CampoFormulario.jsx';
 import SelectorRegionComuna from './SelectorRegionComuna.jsx';
-import { ROLES } from '../../data/usuariosIniciales.js';
-import { validarUsuario } from '../../utils/validaciones.js';
+import { ROLES } from '../../data/configuracion.js';
+import { TEXTO_CORREOS, validarUsuario } from '../../utils/validaciones.js';
 import { useFormulario } from '../../hooks/useFormulario.js';
 
 const USUARIO_VACIO = {
@@ -81,7 +81,7 @@ export default function UsuarioForm({
           <CampoFormulario
             {...campo('correo')}
             etiqueta="Correo electrónico"
-            ayuda="@duoc.cl, @profesor.duoc.cl o @gmail.com"
+            ayuda={TEXTO_CORREOS}
             type="email"
             maxLength={100}
             autoComplete="email"

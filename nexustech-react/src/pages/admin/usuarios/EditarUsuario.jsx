@@ -1,12 +1,12 @@
 import { Link, useNavigate, useParams } from 'react-router';
 import Alert from 'react-bootstrap/Alert';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import UsuarioForm from '../../components/formularios/UsuarioForm.jsx';
-import { obtener } from '../../services/crud.js';
-import { nombreCompleto } from '../../utils/formatos.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import UsuarioForm from '../../../components/formularios/UsuarioForm.jsx';
+import { obtener } from '../../../services/crud.js';
+import { nombreCompleto } from '../../../utils/formatos.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function EditarUsuario() {
   useTitulo('Editar usuario');

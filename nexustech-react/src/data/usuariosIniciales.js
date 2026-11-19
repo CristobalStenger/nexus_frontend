@@ -6,8 +6,6 @@
 // académica: un backend real nunca debe guardarlas así.
 // ============================================================
 
-export const ROLES = ['Administrador', 'Vendedor', 'Cliente'];
-
 export const usuariosIniciales = [
   {
     run: '190110222',

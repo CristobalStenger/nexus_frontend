@@ -2,17 +2,17 @@ import { Link, useParams } from 'react-router';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import PrecioProducto from '../../components/producto/PrecioProducto.jsx';
-import StockBadge from '../../components/producto/StockBadge.jsx';
-import { obtener } from '../../services/crud.js';
-import { esAdministrador } from '../../store/authReducer.js';
-import { precioCLP } from '../../utils/formatos.js';
-import { ordenesPagadas } from '../../utils/reportes.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import PrecioProducto from '../../../components/producto/PrecioProducto.jsx';
+import StockBadge from '../../../components/producto/StockBadge.jsx';
+import { obtener } from '../../../services/crud.js';
+import { esAdministrador } from '../../../store/authReducer.js';
+import { precioCLP } from '../../../utils/formatos.js';
+import { ordenesPagadas } from '../../../utils/reportes.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function MostrarProducto() {
   const { id } = useParams();

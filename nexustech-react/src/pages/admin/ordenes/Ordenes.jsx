@@ -2,12 +2,12 @@ import { useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import TablaOrdenes from '../../components/admin/TablaOrdenes.jsx';
-import { nombreCompleto, normalizar, precioCLP } from '../../utils/formatos.js';
-import { resumenVentas } from '../../utils/reportes.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import TablaOrdenes from '../../../components/admin/TablaOrdenes.jsx';
+import { nombreCompleto, normalizar, precioCLP } from '../../../utils/formatos.js';
+import { resumenVentas } from '../../../utils/reportes.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function Ordenes() {
   useTitulo('Órdenes');

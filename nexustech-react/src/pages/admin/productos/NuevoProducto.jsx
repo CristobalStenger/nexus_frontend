@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import ProductoForm from '../../components/formularios/ProductoForm.jsx';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import ProductoForm from '../../../components/formularios/ProductoForm.jsx';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function NuevoProducto() {
   useTitulo('Nuevo producto');

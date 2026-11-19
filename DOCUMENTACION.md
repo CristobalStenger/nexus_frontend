@@ -198,7 +198,8 @@ nexustech-react/
     ├── utils/                 Formatos, validaciones, filtros y reportes (funciones puras)
     ├── components/            37 componentes reutilizables agrupados por tema
     ├── pages/tienda/          16 páginas de la tienda
-    └── pages/admin/           19 páginas del panel de administración
+    └── pages/admin/           19 páginas del panel: Dashboard, Perfil y Reportes, más una carpeta
+                               por sección (ordenes/, productos/, categorias/, usuarios/)
 └── tests/                     Pruebas, separadas por nivel (sección 6.2)
     ├── setup.js               Limpieza antes y después de cada prueba
     ├── utilidades.jsx         renderApp, renderConProviders, iniciarSesionComo...

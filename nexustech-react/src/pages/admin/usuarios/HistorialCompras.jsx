@@ -1,16 +1,16 @@
 import { Link, useParams } from 'react-router';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import TablaOrdenes from '../../components/admin/TablaOrdenes.jsx';
-import TarjetaMetrica from '../../components/admin/TarjetaMetrica.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import { obtener } from '../../services/crud.js';
-import { nombreCompleto, precioCLP } from '../../utils/formatos.js';
-import { ordenesDeUsuario, resumenVentas } from '../../utils/reportes.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import TablaOrdenes from '../../../components/admin/TablaOrdenes.jsx';
+import TarjetaMetrica from '../../../components/admin/TarjetaMetrica.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import { obtener } from '../../../services/crud.js';
+import { nombreCompleto, precioCLP } from '../../../utils/formatos.js';
+import { ordenesDeUsuario, resumenVentas } from '../../../utils/reportes.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 // Vista nueva: compras de un usuario (por RUN o correo)
 export default function HistorialCompras() {

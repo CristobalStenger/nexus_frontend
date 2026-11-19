@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import CategoriaForm from '../../components/formularios/CategoriaForm.jsx';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import CategoriaForm from '../../../components/formularios/CategoriaForm.jsx';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function NuevaCategoria() {
   useTitulo('Nueva categoría');

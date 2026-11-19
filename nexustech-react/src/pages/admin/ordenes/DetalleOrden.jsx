@@ -1,13 +1,13 @@
 import { Link, useParams } from 'react-router';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import EstadoOrdenBadge from '../../components/admin/EstadoOrdenBadge.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import ResultadoCompra from '../../components/compra/ResultadoCompra.jsx';
-import { obtener } from '../../services/crud.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import EstadoOrdenBadge from '../../../components/admin/EstadoOrdenBadge.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import ResultadoCompra from '../../../components/compra/ResultadoCompra.jsx';
+import { obtener } from '../../../services/crud.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 // Vista "Mostrar boleta" del panel
 export default function DetalleOrden() {

@@ -8,12 +8,15 @@
 // Un objeto vacío significa que no hay errores.
 // ============================================================
 
-import { ROLES } from '../data/usuariosIniciales.js';
+import { ROLES } from '../data/configuracion.js';
 import { comunasDe } from '../data/regiones.js';
 import { CUPONES } from '../data/cupones.js';
 import { normalizar } from './formatos.js';
 
 const CORREOS_PERMITIDOS = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
+
+// "@duoc.cl, @profesor.duoc.cl o @gmail.com": mensajes de error y ayudas de los formularios
+export const TEXTO_CORREOS = `${CORREOS_PERMITIDOS.slice(0, -1).join(', ')} o ${CORREOS_PERMITIDOS.at(-1)}`;
 
 const texto = (valor) => String(valor ?? '').trim();
 
@@ -54,7 +57,7 @@ function mensajeCorreo(valor, { opcional = false } = {}) {
   if (correo === '') return opcional ? '' : 'El correo es obligatorio.';
   if (correo.length > 100) return 'El correo no puede superar los 100 caracteres.';
   if (!correoEsValido(correo))
-    return 'Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com';
+    return `Solo se aceptan correos ${TEXTO_CORREOS}`;
   return '';
 }
 

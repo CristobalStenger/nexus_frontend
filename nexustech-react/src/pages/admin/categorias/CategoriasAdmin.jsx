@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import ConfirmarModal from '../../components/comunes/ConfirmarModal.jsx';
-import { esAdministrador } from '../../store/authReducer.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import ConfirmarModal from '../../../components/comunes/ConfirmarModal.jsx';
+import { esAdministrador } from '../../../store/authReducer.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function CategoriasAdmin() {
   useTitulo('Categorías');

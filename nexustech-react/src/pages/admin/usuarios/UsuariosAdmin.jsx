@@ -5,13 +5,13 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import ConfirmarModal from '../../components/comunes/ConfirmarModal.jsx';
-import RolBadge from '../../components/admin/RolBadge.jsx';
-import { ROLES } from '../../data/usuariosIniciales.js';
-import { nombreCompleto, normalizar } from '../../utils/formatos.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import ConfirmarModal from '../../../components/comunes/ConfirmarModal.jsx';
+import RolBadge from '../../../components/admin/RolBadge.jsx';
+import { ROLES } from '../../../data/configuracion.js';
+import { nombreCompleto, normalizar } from '../../../utils/formatos.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function UsuariosAdmin() {
   useTitulo('Usuarios');

@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import EncabezadoPagina from '../../components/comunes/EncabezadoPagina.jsx';
 import CampoFormulario from '../../components/formularios/CampoFormulario.jsx';
-import { validarLogin } from '../../utils/validaciones.js';
+import { TEXTO_CORREOS, validarLogin } from '../../utils/validaciones.js';
 import { puedeVerPanel } from '../../store/authReducer.js';
 import { useFormulario } from '../../hooks/useFormulario.js';
 import { useAuth } from '../../hooks/useAuth.js';
@@ -55,7 +55,7 @@ export default function Login() {
                 id="login-correo"
                 name="correo"
                 etiqueta="Correo electrónico"
-                ayuda="@duoc.cl, @profesor.duoc.cl o @gmail.com"
+                ayuda={TEXTO_CORREOS}
                 type="email"
                 autoComplete="username"
                 maxLength={100}

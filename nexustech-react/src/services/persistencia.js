@@ -7,7 +7,8 @@
 
 import { productosIniciales } from '../data/productosIniciales.js';
 import { categoriasIniciales } from '../data/categoriasIniciales.js';
-import { usuariosIniciales, ROLES } from '../data/usuariosIniciales.js';
+import { usuariosIniciales } from '../data/usuariosIniciales.js';
+import { ROLES } from '../data/configuracion.js';
 import { ordenesIniciales } from '../data/ordenesIniciales.js';
 import { CUPONES } from '../data/cupones.js';
 import { CLAVES, guardarJSON, leerJSON } from './storage.js';

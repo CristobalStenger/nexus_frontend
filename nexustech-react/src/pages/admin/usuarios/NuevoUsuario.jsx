@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import UsuarioForm from '../../components/formularios/UsuarioForm.jsx';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import UsuarioForm from '../../../components/formularios/UsuarioForm.jsx';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function NuevoUsuario() {
   useTitulo('Nuevo usuario');

@@ -1,10 +1,10 @@
 import { Link, useNavigate, useParams } from 'react-router';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import CategoriaForm from '../../components/formularios/CategoriaForm.jsx';
-import { obtener } from '../../services/crud.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import CategoriaForm from '../../../components/formularios/CategoriaForm.jsx';
+import { obtener } from '../../../services/crud.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function EditarCategoria() {
   useTitulo('Editar categoría');

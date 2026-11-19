@@ -1,13 +1,13 @@
 import { Link } from 'react-router';
 import Table from 'react-bootstrap/Table';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import StockBadge from '../../components/producto/StockBadge.jsx';
-import { esAdministrador } from '../../store/authReducer.js';
-import { productosCriticos } from '../../utils/reportes.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import StockBadge from '../../../components/producto/StockBadge.jsx';
+import { esAdministrador } from '../../../store/authReducer.js';
+import { productosCriticos } from '../../../utils/reportes.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 // Vista nueva: productos con stock menor o igual a su stock crítico
 export default function ProductosCriticos() {

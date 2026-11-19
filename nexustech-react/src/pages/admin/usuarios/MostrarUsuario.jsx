@@ -1,14 +1,14 @@
 import { Link, useParams } from 'react-router';
 import Table from 'react-bootstrap/Table';
-import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
-import RolBadge from '../../components/admin/RolBadge.jsx';
-import EstadoVacio from '../../components/comunes/EstadoVacio.jsx';
-import { obtener } from '../../services/crud.js';
-import { nombreCompleto, precioCLP } from '../../utils/formatos.js';
-import { ordenesDeUsuario, resumenVentas } from '../../utils/reportes.js';
-import { useAuth } from '../../hooks/useAuth.js';
-import { useTienda } from '../../hooks/useTienda.js';
-import { useTitulo } from '../../hooks/useTitulo.js';
+import EncabezadoAdmin from '../../../components/admin/EncabezadoAdmin.jsx';
+import RolBadge from '../../../components/admin/RolBadge.jsx';
+import EstadoVacio from '../../../components/comunes/EstadoVacio.jsx';
+import { obtener } from '../../../services/crud.js';
+import { nombreCompleto, precioCLP } from '../../../utils/formatos.js';
+import { ordenesDeUsuario, resumenVentas } from '../../../utils/reportes.js';
+import { useAuth } from '../../../hooks/useAuth.js';
+import { useTienda } from '../../../hooks/useTienda.js';
+import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function MostrarUsuario() {
   const { run } = useParams();
