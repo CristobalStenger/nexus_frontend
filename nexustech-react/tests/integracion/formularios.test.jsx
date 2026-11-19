@@ -73,7 +73,8 @@ describe('Registro de clientes', () => {
     await user.click(screen.getByLabelText('Acepto los términos y condiciones de NexusTech.'));
     await user.click(screen.getByRole('button', { name: 'Crear mi cuenta' }));
 
-    expect(await screen.findByText('Cuenta creada correctamente. Ya puedes iniciar sesión.', { selector: '.alert' })).toBeInTheDocument();
+    // Un solo aviso: el del login (antes salía también uno emergente con el mismo texto)
+    expect(await screen.findAllByText('Cuenta creada correctamente. Ya puedes iniciar sesión.')).toHaveLength(1);
     expect(screen.getByLabelText('Correo electrónico')).toHaveValue('lucia@duoc.cl');
     expect(leer(CLAVES.usuarios).find((u) => u.run === '111111111').tipo).toBe('Cliente');
 
