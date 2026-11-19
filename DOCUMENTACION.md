@@ -39,12 +39,12 @@ React y se agregaron nuevos flujos de compra y administración.
 
 | Entrega      | Carpeta                                          | Tecnologías                                               |
 | ------------ | ------------------------------------------------ | --------------------------------------------------------- |
-| Evaluación 1 | [`nexustech-html/`](https://github.com/CristobalStenger/nexus_frontend/tree/entrega-1/nexustech-html) (tag `entrega-1`) | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript |
+| Evaluación 1 | [`nexustech-html/`](https://github.com/CristobalStenger/nexus_frontend/tree/948ceaf472d32a08d28bb0cf4581a54355025353/nexustech-html) (commit `948ceaf`) | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/)           | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 
 La carpeta `nexustech-html/` de la entrega 1 se quitó de `main` para aligerar el repositorio. Se
-conserva sin cambios en el tag `entrega-1`; para recuperarla en local basta con
-`git checkout entrega-1 -- nexustech-html`. La versión React vive en `nexustech-react/`, igual que
+conserva sin cambios en el commit `948ceaf`; para recuperarla en local basta con
+`git checkout 948ceaf -- nexustech-html`. La versión React vive en `nexustech-react/`, igual que
 el proyecto de ejemplo de la guía del curso.
 
 ### Tecnologías de la entrega 2
@@ -123,7 +123,7 @@ Para volver a los datos iniciales, borra las claves `*_NEXUSTECH` y `USUARIO_ACT
 
 ### 3.1 Estructura original
 
-Esta carpeta ya no está en `main`; se puede ver en el tag `entrega-1`.
+Esta carpeta ya no está en `main`; se puede ver en el commit `948ceaf`.
 
 ```
 nexustech-html/
@@ -232,7 +232,7 @@ nexustech-react/
 
 ### 4.3 Correspondencia entre la entrega 1 y la entrega 2
 
-Las rutas de la columna izquierda son relativas a `nexustech-html/` (tag `entrega-1`); las de la derecha, a
+Las rutas de la columna izquierda son relativas a `nexustech-html/` (commit `948ceaf`); las de la derecha, a
 `nexustech-react/src/`.
 
 | Entrega 1 (HTML / JS)                              | Entrega 2 (React)                                                             |
