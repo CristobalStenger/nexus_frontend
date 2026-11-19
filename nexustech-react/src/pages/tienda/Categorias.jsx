@@ -28,6 +28,8 @@ export default function Categorias() {
         Elige una categoría para ver sus productos.
       </EncabezadoPagina>
 
+      {/* Las tarjetas usan h3: este h2 evita saltar del h1 al h3 */}
+      <h2 className="visually-hidden">Lista de categorías</h2>
       <Row className="g-3 mb-5 justify-content-center">
         {estado.categorias.map((c) => (
           <Col xs={6} md={4} lg={3} key={c.id}>

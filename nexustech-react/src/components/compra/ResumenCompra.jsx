@@ -22,8 +22,8 @@ export default function ResumenCompra({ subtotal, descuento = 0, envio, total, c
           <dd className="mb-0">{envio === 0 ? 'Gratis' : precioCLP(envio)}</dd>
         </div>
       )}
-      <hr />
-      <div className="d-flex justify-content-between align-items-center">
+      {/* La línea va como borde: un <hr> no puede ir directo dentro de <dl> */}
+      <div className="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
         <dt className="fs-5">{textoTotal}</dt>
         <dd className="mb-0 fs-4 precio-producto">{precioCLP(total)}</dd>
       </div>

@@ -45,7 +45,7 @@ export function AuthProvider({ children }) {
   }
 
   function guardarUsuario(datos, runOriginal = null) {
-    const errores = validarUsuario(datos, usuarios, runOriginal, { conTipo: true });
+    const errores = validarUsuario(datos, usuarios, runOriginal, { conTipo: true, sesion });
     if (sinErrores(errores)) dispatch({ type: 'GUARDAR_USUARIO', datos, runOriginal });
     return { ok: sinErrores(errores), errores };
   }

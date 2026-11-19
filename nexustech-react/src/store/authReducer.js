@@ -31,14 +31,12 @@ function registrar(estado, { datos }) {
   });
   if (!sinErrores(errores)) return conAviso(estado, 'Revisa los datos del registro.', 'danger');
   const usuario = { ...convertirUsuario(datos), tipo: 'Cliente' };
-  return conAviso(
-    { ...estado, usuarios: crear(estado.usuarios, usuario) },
-    'Cuenta creada correctamente. Ya puedes iniciar sesión.',
-  );
+  // Sin aviso emergente: el registro lleva al login, que ya confirma que se creó la cuenta
+  return { ...estado, usuarios: crear(estado.usuarios, usuario) };
 }
 
 function guardarUsuario(estado, { runOriginal = null, datos }) {
-  const errores = validarUsuario(datos, estado.usuarios, runOriginal, { conTipo: true });
+  const errores = validarUsuario(datos, estado.usuarios, runOriginal, { conTipo: true, sesion: estado.sesion });
   if (!sinErrores(errores)) return conAviso(estado, 'Revisa los datos del usuario.', 'danger');
   if (runOriginal !== null && !obtener(estado.usuarios, runOriginal, 'run'))
     return conAviso(estado, 'El usuario ya no existe.', 'warning');

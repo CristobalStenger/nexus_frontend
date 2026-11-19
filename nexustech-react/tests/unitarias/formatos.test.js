@@ -56,6 +56,7 @@ describe('estado del stock', () => {
   it.each([
     [{ stock: 0, stockCritico: 2 }, 'Sin stock', 'danger'],
     [{ stock: 2, stockCritico: 2 }, 'Últimas 2 unidades', 'warning'],
+    [{ stock: 1, stockCritico: 2 }, 'Última unidad', 'warning'],
     [{ stock: 10, stockCritico: 2 }, 'Disponible', 'success'],
   ])('clasifica %o', (producto, texto, variante) => {
     expect(estadoStock(producto)).toEqual({ texto, variante });

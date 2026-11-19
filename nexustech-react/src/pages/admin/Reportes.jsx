@@ -62,7 +62,10 @@ export default function Reportes() {
                       <td>{f.unidades}</td>
                       <td>{precioCLP(f.total)}</td>
                       <td>
-                        <ProgressBar variant="success" now={f.porcentaje} label={`${f.porcentaje}%`} aria-label={`${f.categoria} ${f.porcentaje}%`} />
+                        {/* Barra hija: así el aria-label queda en el elemento con role="progressbar" */}
+                        <ProgressBar>
+                          <ProgressBar variant="success" now={f.porcentaje} label={`${f.porcentaje}%`} aria-label={`${f.categoria} ${f.porcentaje}%`} />
+                        </ProgressBar>
                       </td>
                     </tr>
                   ))}

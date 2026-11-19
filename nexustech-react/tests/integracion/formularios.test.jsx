@@ -69,11 +69,15 @@ describe('Registro de clientes', () => {
     await user.type(screen.getByLabelText('Repetir contraseña'), 'clave1');
     await user.selectOptions(screen.getByLabelText('Región'), 'Región de Coquimbo');
     await user.selectOptions(screen.getByLabelText('Comuna'), 'La Serena');
+    // Como los demás campos válidos, región y comuna se marcan en verde
+    expect(screen.getByLabelText('Región')).toHaveClass('is-valid');
+    expect(screen.getByLabelText('Comuna')).toHaveClass('is-valid');
     await user.type(screen.getByLabelText('Dirección'), 'Av. del Mar 100');
     await user.click(screen.getByLabelText('Acepto los términos y condiciones de NexusTech.'));
     await user.click(screen.getByRole('button', { name: 'Crear mi cuenta' }));
 
-    expect(await screen.findByText('Cuenta creada correctamente. Ya puedes iniciar sesión.', { selector: '.alert' })).toBeInTheDocument();
+    // Un solo aviso: el del login (antes salía también uno emergente con el mismo texto)
+    expect(await screen.findAllByText('Cuenta creada correctamente. Ya puedes iniciar sesión.')).toHaveLength(1);
     expect(screen.getByLabelText('Correo electrónico')).toHaveValue('lucia@duoc.cl');
     expect(leer(CLAVES.usuarios).find((u) => u.run === '111111111').tipo).toBe('Cliente');
 

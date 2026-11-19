@@ -4,7 +4,7 @@ import CampoFormulario from './CampoFormulario.jsx';
 import { comunasDe, regionesChile } from '../../data/regiones.js';
 
 // Dos selects dependientes: al cambiar la región se reinicia la comuna
-export default function SelectorRegionComuna({ prefijo, region, comuna, errores = {}, onCambio, disabled }) {
+export default function SelectorRegionComuna({ prefijo, region, comuna, errores = {}, validos = {}, onCambio, disabled }) {
   return (
     <Row className="g-3">
       <Col md={6}>
@@ -14,6 +14,7 @@ export default function SelectorRegionComuna({ prefijo, region, comuna, errores 
           as="select"
           value={region}
           error={errores.region}
+          valido={validos.region}
           disabled={disabled}
           onChange={(e) => onCambio({ region: e.target.value, comuna: '' })}
         >
@@ -32,6 +33,7 @@ export default function SelectorRegionComuna({ prefijo, region, comuna, errores 
           as="select"
           value={comuna}
           error={errores.comuna}
+          valido={validos.comuna}
           disabled={disabled || !region}
           onChange={(e) => onCambio({ comuna: e.target.value })}
         >

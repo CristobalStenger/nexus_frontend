@@ -2,7 +2,7 @@
 
 > **Asignatura:** Desarrollo Fullstack II · **Evaluación 2** (30 %)
 > **Equipo:** Cristóbal Stenger y Xavier Marin
-> **Repositorio:** `CristobalStenger/fullstack.code`
+> **Repositorio:** `CristobalStenger/nexus_frontend`
 
 Este documento explica todo el proyecto NexusTech, con tres focos:
 
@@ -65,9 +65,9 @@ el proyecto de ejemplo de la guía del curso.
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **160 aprobadas** en 17 archivos                  |
-| Cobertura de líneas       | **96,97 %**                                       |
-| Cobertura de ramas        | **92,26 %**                                       |
+| Pruebas automatizadas     | **163 aprobadas** en 18 archivos                  |
+| Cobertura de líneas       | **97,10 %**                                       |
+| Cobertura de ramas        | **92,05 %**                                       |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
 
@@ -76,9 +76,9 @@ el proyecto de ejemplo de la guía del curso.
 | Medida                        | Entrega 1 (HTML/JS)                 | Entrega 2 (React)                                  |
 | ----------------------------- | ----------------------------------- | -------------------------------------------------- |
 | Páginas o vistas              | 21 archivos HTML                    | 35 páginas (16 de tienda + 19 de administración)    |
-| Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 101 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
+| Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 102 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
 | Componentes reutilizables     | 0 (cabecera y pie copiados 21 veces) | 37 componentes + 5 hooks propios                   |
-| Pruebas automatizadas         | 0                                   | 160 (≈1.700 líneas)                                |
+| Pruebas automatizadas         | 0                                   | 163 (≈1.800 líneas)                                |
 
 ---
 
@@ -93,7 +93,7 @@ npm run dev     # abre http://localhost:5173
 ```
 
 > **En Windows (PowerShell):** si la ruta tiene espacios o paréntesis, escríbela entre comillas:
-> `cd "C:\Users\...\fullstack.code-main\nexustech-react"`.
+> `cd "C:\Users\...\nexus_frontend-main\nexustech-react"`.
 > El comando `npm ci` debe ejecutarse **dentro** de `nexustech-react`, donde está `package-lock.json`.
 
 | Script                  | Qué hace                                               |
@@ -103,7 +103,7 @@ npm run dev     # abre http://localhost:5173
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 160 pruebas una vez                        |
+| `npm run test:run`      | Ejecuta las 163 pruebas una vez                        |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -554,14 +554,14 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 | `TablaItemsCompra`  | Tabla de solo lectura con los productos de una compra                                 | `items`                                                                    | No            | Checkout, `ResultadoCompra`            |
 | `ResumenCompra`     | Subtotal, descuento del cupón, envío y total                                          | `subtotal`, `descuento = 0`, `envio`, `total`, `cupon`, `textoTotal = 'TOTAL'` | No        | Carrito, Checkout, `ResultadoCompra`   |
 | `DatosOrden`        | Datos del cliente y de la entrega de una orden, en campos de solo lectura             | `orden`                                                                    | No            | `ResultadoCompra`                      |
-| `ResultadoCompra`   | Estructura común de "compra exitosa", "pago con error" y boleta del panel             | `orden`, `icono`, `claseIcono`, `titulo`, `subtitulo`, `acciones`, `children` | No         | CompraExitosa, CompraError, DetalleOrden |
+| `ResultadoCompra`   | Estructura común de "compra exitosa", "pago con error" y boleta del panel             | `orden`, `icono`, `claseIcono`, `titulo`, `etiquetaTitulo = 'h1'` (`h2` en la boleta del panel, que ya tiene su h1), `subtitulo`, `acciones`, `children` | No         | CompraExitosa, CompraError, DetalleOrden |
 
 **`components/formularios/`: formularios**
 
 | Componente             | Responsabilidad                                                                                 | Props                                                                                         | Estado propio                                  | Se usa en                                 |
 | ---------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
 | `CampoFormulario`      | Campo con etiqueta, ayuda, borde de error o éxito y mensaje enlazado con `aria-describedby`     | `id`, `etiqueta`, `ayuda`, `error`, `valido`, `as` (`input`, `textarea` o `select`), `className`, y el resto pasa al input | No | Todos los formularios        |
-| `SelectorRegionComuna` | Dos listas dependientes: al cambiar la región se reinicia la comuna                             | `prefijo`, `region`, `comuna`, `errores`, `onCambio`, `disabled`                              | No                                             | `UsuarioForm`, Checkout                   |
+| `SelectorRegionComuna` | Dos listas dependientes: al cambiar la región se reinicia la comuna                             | `prefijo`, `region`, `comuna`, `errores`, `validos` (marca en verde), `onCambio`, `disabled`   | No                                             | `UsuarioForm`, Checkout                   |
 | `UsuarioForm`          | Formulario de usuario con tres modos: `registro`, `admin` y `perfil`                            | `inicial`, `usuarios`, `runOriginal`, `modo = 'admin'`, `textoBoton`, `onGuardar`, `onCancelar` | Sí, mediante `useFormulario`                | Registro, Nuevo y Editar usuario, Perfil  |
 | `ProductoForm`         | Crear (producto `null`) o editar un producto, con vista previa del precio                       | `producto = null`, `productos`, `categorias`, `onGuardar`, `onCancelar`                       | Sí, mediante `useFormulario`                   | Nuevo y Editar producto                   |
 | `CategoriaForm`        | Crear o editar una categoría; muestra la dirección (slug) que se generará                       | `categoria = null`, `categorias`, `onGuardar`, `onCancelar`                                   | Sí, mediante `useFormulario`                   | Nueva y Editar categoría                  |
@@ -650,8 +650,8 @@ vive en el reducer, y el contador de la cabecera se actualiza solo porque lee el
 | `useAuth()`           | `hooks/useAuth.js`                   | `usuarios`, `sesion` y las funciones `ingresar`, `registrar`, `guardarUsuario`, `eliminarUsuario`, `cerrarSesion`  |
 | `useFormulario()`     | `hooks/useFormulario.js`             | `valores`, `errores`, `error(campo)`, `valido(campo)`, `cambiar`, `actualizar`, `enviar`, `reiniciar`. Muestra un error solo si el campo fue tocado o se intentó enviar |
 | `useTitulo(titulo)`   | `hooks/useTitulo.js`                 | Cambia el título de la pestaña del navegador en cada página                                                        |
-| `useCambioDeRuta()`   | `hooks/useCambioDeRuta.js`             | Al cambiar de página sube al inicio y mueve el foco al contenido principal (accesibilidad)                       |
-| `TiendaProvider`      | `context/TiendaProvider.jsx`         | Crea el estado con `useReducer(tiendaReducer, undefined, cargarTienda)` y guarda cada cambio con `useEffect`       |
+| `useCambioDeRuta()`   | `hooks/useCambioDeRuta.js`             | Al cambiar de página sube al inicio y mueve el foco al contenido principal (accesibilidad). Al abrir la app no lo mueve, para que el primer Tab llegue a "Saltar al contenido" |
+| `TiendaProvider`      | `context/TiendaProvider.jsx`         | Crea el estado con `useReducer(tiendaReducer, undefined, () => crearEstado(cargarTienda()))` y guarda cada cambio con `useEffect`       |
 | `AuthProvider`        | `context/AuthProvider.jsx`           | Igual para usuarios y sesión; además valida los formularios antes de despachar la acción                           |
 | `contextos.js`        | `context/contextos.js`               | Crea `TiendaContext` y `AuthContext` en un archivo sin componentes, para que Vite recargue sin perder el estado    |
 
@@ -865,7 +865,7 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 | `/admin/usuarios`                   | Usuarios ♻️                  | Admin         | Búsqueda, filtro por rol y acciones                                                                                   |
 | `/admin/usuarios/nuevo`             | Nuevo usuario ♻️             | Admin         | Crea cuentas de cualquiera de los 3 roles                                                                             |
 | `/admin/usuarios/:run`              | Mostrar usuario 🆕           | Admin         | Ficha del usuario y resumen de sus compras                                                                            |
-| `/admin/usuarios/:run/editar`       | Editar usuario ♻️            | Admin         | Avisa si el administrador edita su propia cuenta                                                                      |
+| `/admin/usuarios/:run/editar`       | Editar usuario ♻️            | Admin         | La cuenta propia se edita desde Perfil, sin cambiar el RUN ni el rol                                                  |
 | `/admin/usuarios/:run/compras`      | Historial de compras 🆕      | Admin         | Órdenes del usuario (por RUN o correo), total gastado y pagos rechazados                                              |
 | `/admin/reportes`                   | Reportes 🆕                  | Admin         | Ventas totales, ticket promedio, unidades, % de pagos aprobados, ventas por categoría y por día, tipo de entrega       |
 | `/admin/perfil`                     | Perfil 🆕                    | Admin, Vendedor | La persona edita sus datos; el RUN y el rol no se cambian desde aquí                                                  |
@@ -874,10 +874,11 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 
 - **Productos:** código único, precio entero ≥ 0, stock entero ≥ 0, descuento de 0 a 90 % y URL
   de imagen `http`/`https`. Al eliminar un producto, también sale del carrito.
-- **Categorías:** nombre único sin importar tildes. Al renombrarla se actualizan sus productos.
+- **Categorías:** nombre único sin importar tildes, mayúsculas ni signos, para que la dirección
+  `/categorias/...` no se repita. Al renombrarla se actualizan sus productos.
   Una categoría con productos no se puede eliminar.
 - **Usuarios:** RUN y correo únicos. Si un usuario edita su propia cuenta, la sesión se actualiza.
-  No se puede eliminar la cuenta que está en uso.
+  No se puede eliminar la cuenta que está en uso ni cambiar el rol propio: así siempre queda un administrador.
 
 ### 5.4 Otras mejoras
 
@@ -953,16 +954,16 @@ afterEach(() => {
 
 ```mermaid
 flowchart TB
-  I["Integración (49)<br/>App, compra, formularios, admin<br/>la app completa como la usa una persona"]
+  I["Integración (50)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
-  U["Unitarias puras (96)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
+  U["Unitarias puras (98)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
 ```
 
-1. **Funciones puras (96 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
+1. **Funciones puras (98 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
-3. **Integración (49 pruebas):** se monta la aplicación completa y se recorre como lo haría una
+3. **Integración (50 pruebas):** se monta la aplicación completa y se recorre como lo haría una
    persona: escribir, hacer clic, navegar y revisar lo que se ve y lo que se guarda.
 
 Todas siguen el patrón **Preparar → Actuar → Comprobar**.
@@ -1047,13 +1048,13 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | Archivo                                      | Nivel       | Pruebas | Qué verifica                                                                         |
 | -------------------------------------------- | ----------- | ------: | ------------------------------------------------------------------------------------ |
 | `tests/unitarias/validaciones.test.js`       | Unitaria    |      25 | RUN, correos, registro, contacto, producto, categoría, checkout, tarjeta y cupones   |
-| `tests/unitarias/formatos.test.js`           | Unitaria    |      10 | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock               |
+| `tests/unitarias/formatos.test.js`           | Unitaria    |      11 | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock               |
 | `tests/unitarias/catalogo.test.js`           | Unitaria    |       8 | Filtros combinados y los 4 órdenes del catálogo                                      |
 | `tests/unitarias/reportes.test.js`           | Unitaria    |       6 | Ventas, categorías, días, más vendidos, inventario e historial                       |
 | `tests/unitarias/crud.test.js`               | Unitaria    |       3 | CRUD sin mutar el arreglo original                                                   |
 | `tests/unitarias/persistencia.test.js`       | Unitaria    |      10 | Recuperación ante datos corruptos, limpieza del carrito, sesión sin contraseña       |
 | `tests/unitarias/tiendaReducer.test.js`      | Unitaria    |      25 | Carrito, cupones, totales, pago aprobado y rechazado, CRUD de productos y categorías |
-| `tests/unitarias/authReducer.test.js`        | Unitaria    |       9 | Login, roles, registro, CRUD de usuarios y perfil                                    |
+| `tests/unitarias/authReducer.test.js`        | Unitaria    |      10 | Login, roles, registro, CRUD de usuarios, perfil y rol propio fijo                   |
 | `tests/componentes/ProductoCard.test.jsx`    | Componente  |       6 | Props, clic, botón deshabilitado, precio con oferta y FREE                           |
 | `tests/componentes/ProductoGrid.test.jsx`    | Componente  |       2 | Renderizado de listas y estado vacío                                                 |
 | `tests/componentes/FiltrosCatalogo.test.jsx` | Componente  |       2 | Componente controlado que informa sus cambios                                        |
@@ -1063,10 +1064,11 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 | `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login, registro y contacto                                                           |
 | `tests/integracion/compra.test.jsx`          | Integración |      13 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
 | `tests/integracion/admin.test.jsx`           | Integración |      14 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
-| **Total**                                    |             | **160** |                                                                                      |
+| `tests/integracion/foco.test.jsx`            | Integración |       1 | El foco no se mueve al abrir la app y pasa al contenido al navegar                   |
+| **Total**                                    |             | **163** |                                                                                      |
 
 <details>
-<summary><strong>Listado completo de las 160 pruebas (clic para desplegar)</strong></summary>
+<summary><strong>Listado completo de las 163 pruebas (clic para desplegar)</strong></summary>
 
 **`tests/unitarias/validaciones.test.js`** (25)
 - RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
@@ -1074,10 +1076,10 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 - Productos y categorías: acepta un producto válido con precio y stock cero · informa todos los campos incorrectos · rechaza códigos repetidos y categorías inexistentes · convierte números y valores opcionales · valida categorías sin nombres duplicados
 - Checkout, tarjeta y cupones: exige datos del cliente y la dirección de entrega · acepta una tarjeta vigente y rechaza formatos inválidos o vencidos · busca cupones existentes solo si hay productos en el carrito
 
-**`tests/unitarias/formatos.test.js`** (10)
+**`tests/unitarias/formatos.test.js`** (11)
 - Formatea pesos chilenos sin decimales · muestra FREE cuando el precio es cero · aplica el descuento de la oferta y redondea
 - Normaliza tildes, mayúsculas y espacios · crea slugs para las URL de categorías · enmascara la tarjeta y arma el nombre completo · formatea fechas en horario de Chile
-- Clasifica el stock como "Sin stock", "Últimas N unidades" y "Disponible" (3)
+- Clasifica el stock como "Sin stock", "Últimas N unidades", "Última unidad" y "Disponible" (4)
 
 **`tests/unitarias/catalogo.test.js`** (8)
 - Sin filtros devuelve todos los productos sin modificar el arreglo · busca por nombre sin importar tildes, también por tipo y código · combina categoría, tipo, rango de precio final y disponibilidad · ordena por A–Z, Z–A, menor y mayor precio (4) · lista los tipos y las ofertas ordenadas por descuento
@@ -1091,7 +1093,7 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 **`tests/unitarias/persistencia.test.js`** (10)
 - Lee la alternativa si la clave no existe o el JSON está corrupto · guarda, borra con null e informa si el navegador rechaza la escritura
 - Parte con los datos iniciales y recupera lo guardado · se recupera de JSON corrupto y de estructuras inválidas · respeta un catálogo vacío y rechaza ids repetidos · limpia productos inexistentes, cantidades inválidas, filas duplicadas y cupones falsos
-- Siempre deja al menos una cuenta de administrador · la sesión nunca guarda la contraseña · solo restaura una sesión que corresponda a un usuario existente · acumula los mensajes de contacto
+- Si la lista de cuentas queda vacía vuelve a las cuentas iniciales · la sesión nunca guarda la contraseña · solo restaura una sesión que corresponda a un usuario existente · acumula los mensajes de contacto
 
 **`tests/unitarias/tiendaReducer.test.js`** (25)
 - Carrito: acumula cantidades sin duplicar productos ni mutar el estado anterior · agrega varias unidades desde el detalle y respeta el stock · impide agregar productos inexistentes o cantidades inválidas · rechaza las cantidades inválidas -1, 1.5, 3 y NaN (4) · cambia cantidades y retira el producto (y el cupón) al llegar a cero · quita un producto y vacía el carrito · calcula subtotal con ofertas, cupón y envío según la entrega · aplica y quita cupones válidos
@@ -1099,9 +1101,9 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 - CRUD de productos: crea un producto con id único y convierte los números del formulario · actualiza manteniendo el id y el carrito usa el precio nuevo · rechaza datos inválidos, códigos repetidos y productos inexistentes · elimina el producto del catálogo y del carrito
 - CRUD de categorías: crea una categoría con slug e ícono por defecto · al renombrar actualiza también los productos de la categoría · rechaza duplicados y categorías inexistentes · no elimina una categoría con productos, pero sí una vacía · cierra avisos e ignora acciones desconocidas
 
-**`tests/unitarias/authReducer.test.js`** (9)
+**`tests/unitarias/authReducer.test.js`** (10)
 - Busca credenciales sin distinguir mayúsculas en el correo · inicia sesión sin guardar la clave y la cierra · distingue los permisos de cada rol
-- Registra clientes nuevos aunque pidan otro rol · rechaza registros inválidos o repetidos · el administrador crea y edita usuarios con su rol · actualiza la sesión cuando el usuario edita su propio perfil · elimina usuarios, pero nunca la cuenta en uso · cierra avisos e ignora acciones desconocidas
+- Registra clientes nuevos aunque pidan otro rol · rechaza registros inválidos o repetidos · el administrador crea y edita usuarios con su rol · actualiza la sesión cuando el usuario edita su propio perfil · nadie puede cambiar su propio rol, así siempre queda un administrador · elimina usuarios, pero nunca la cuenta en uso · cierra avisos e ignora acciones desconocidas
 
 **`tests/componentes/ProductoCard.test.jsx`** (6)
 - Muestra los datos recibidos por props · llama a la función onClick recibida con el id del producto · deshabilita el botón cuando no hay stock
@@ -1137,7 +1139,10 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 - El dashboard muestra métricas y accesos a cada módulo · filtra órdenes por estado y muestra la boleta · muestra reportes de ventas e inventario · lista los productos críticos
 - Productos: crea, muestra y edita un producto conservando su id · rechaza un código repetido · cancela y confirma la eliminación, retirando el producto del carrito · busca productos en la tabla
 - Categorías: crea una categoría, la renombra y no elimina una categoría con productos
-- Usuarios y perfil: crea un vendedor, lo muestra, lo edita y lo elimina · no permite eliminar la propia cuenta y filtra por rol · muestra el historial de compras de un cliente · el perfil actualiza los datos de la sesión · cerrar sesión desde el panel vuelve a la tienda
+- Usuarios y perfil: crea un vendedor, lo muestra, lo edita y lo elimina · protege la propia cuenta y filtra por rol · muestra el historial de compras de un cliente · el perfil actualiza los datos de la sesión · cerrar sesión desde el panel vuelve a la tienda
+
+**`tests/integracion/foco.test.jsx`** (1)
+- Al abrir la app no mueve el foco y al navegar lo lleva al contenido
 
 </details>
 
@@ -1148,10 +1153,10 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,64 %** | 1095 / 1133 |
-| Ramas      | **92,27 %** | 788 / 854   |
-| Funciones  | **94,62 %** | 405 / 428   |
-| Líneas     | **96,97 %** | 961 / 991   |
+| Sentencias | **96,76 %** | 1108 / 1145 |
+| Ramas      | **92,05 %** | 811 / 881   |
+| Funciones  | **94,88 %** | 408 / 430   |
+| Líneas     | **97,10 %** | 972 / 1001  |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |
@@ -1159,9 +1164,9 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 | `store/` (reducers)                       | 100 %            |
 | `utils/` (validaciones, formatos…)        | 99,5 %           |
 | `components/`                             | 89–100 %         |
-| `pages/tienda/`                           | 96,3 %           |
+| `pages/tienda/`                           | 96,9 %           |
 | `context/`                                | 93,9 %           |
-| `pages/admin/`                            | 90,2 %           |
+| `pages/admin/`                            | 90,3 %           |
 
 **Análisis:**
 

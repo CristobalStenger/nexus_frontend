@@ -33,6 +33,8 @@ body {
     padding-top: 12px;
     padding-bottom: 12px;
     margin-bottom: 20px;
+    /* backdrop-filter encierra el z-index del desplegable de Categorías: sin esto, el contenido lo tapa */
+    z-index: 1020;
 }
 
 .nav-nexus .navbar-brand {

@@ -20,7 +20,7 @@ Configuración: `vite.config.js` (`test.environment = 'jsdom'`, `setupFiles`) y
 entre pruebas para que ninguna dependa de otra.
 
 ```bash
-npm run test:run        # 160 pruebas en 17 archivos
+npm run test:run        # 163 pruebas en 18 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -39,13 +39,13 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | Archivo                                      | Pruebas | Qué verifica                                                                                                         |
 | -------------------------------------------- | ------: | -------------------------------------------------------------------------------------------------------------------- |
 | `tests/unitarias/validaciones.test.js`       |      25 | RUN (módulo 11), dominios de correo, contraseña, registro, contacto, producto, categoría, checkout, tarjeta, cupones |
-| `tests/unitarias/formatos.test.js`           |      10 | Formato CLP, FREE, precio con descuento, normalización, slugs, fechas, estados de stock                              |
+| `tests/unitarias/formatos.test.js`           |      11 | Formato CLP, FREE, precio con descuento, normalización, slugs, fechas, estados de stock                              |
 | `tests/unitarias/catalogo.test.js`           |       8 | Filtros combinados (texto, categoría, tipo, rango, disponibilidad) y los cuatro órdenes                              |
 | `tests/unitarias/reportes.test.js`           |       6 | Resumen de ventas, ventas por categoría y por día, más vendidos, inventario valorizado, historial por usuario        |
 | `tests/unitarias/crud.test.js`               |       3 | Obtener, id correlativo, crear, actualizar y eliminar sin mutar el arreglo original                                  |
 | `tests/unitarias/persistencia.test.js`       |      10 | JSON corrupto, datos inválidos, catálogo vacío, ids repetidos, limpieza del carrito, sesión sin contraseña           |
 | `tests/unitarias/tiendaReducer.test.js`      |      25 | Carrito con límite de stock, cupones, totales con envío, pago aprobado y rechazado, CRUD de productos y categorías   |
-| `tests/unitarias/authReducer.test.js`        |       9 | Login, logout, roles, registro, CRUD de usuarios, perfil y regla "no eliminar la propia cuenta"                      |
+| `tests/unitarias/authReducer.test.js`        |      10 | Login, logout, roles, registro, CRUD de usuarios, perfil y reglas "no eliminar la propia cuenta" y "no cambiar el propio rol" |
 | `tests/componentes/ProductoCard.test.jsx`    |       6 | Props, evento de clic, botón deshabilitado sin stock, precio con oferta y FREE                                       |
 | `tests/componentes/ProductoGrid.test.jsx`    |       2 | Renderizado de listas y estado vacío                                                                                 |
 | `tests/componentes/FiltrosCatalogo.test.jsx` |       2 | Componente controlado: informa cambios al padre y limpia filtros                                                     |
@@ -55,7 +55,8 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `tests/integracion/compra.test.jsx`          |      13 | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente           |
 | `tests/integracion/admin.test.jsx`           |      14 | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión    |
 | `tests/integracion/App.test.jsx`             |      15 | Navegación con NavLink, 404, buscador, categorías, ofertas, detalle, rutas protegidas por rol, sesión restaurada     |
-| **Total**                                    | **160** |                                                                                                                      |
+| `tests/integracion/foco.test.jsx`            |       1 | Al abrir la app el foco no se mueve; al navegar pasa al contenido principal                                          |
+| **Total**                                    | **163** |                                                                                                                      |
 
 ## 4. Resultado de cobertura
 
@@ -63,13 +64,13 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,64 %   | 1095 / 1133  |
-| Ramas         | 92,27 %   | 788 / 854    |
-| Funciones     | 94,62 %   | 405 / 428    |
-| Líneas        | 96,97 %   | 961 / 991    |
+| Sentencias    | 96,76 %   | 1108 / 1145  |
+| Ramas         | 92,05 %   | 811 / 881    |
+| Funciones     | 94,88 %   | 408 / 430    |
+| Líneas        | 97,10 %   | 972 / 1001   |
 
 Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 89–100 % (`comunes` es la más baja),
-`pages/tienda` 96,3 %, `pages/admin` 90,2 %, `context` 93,9 %.
+`pages/tienda` 96,9 %, `pages/admin` 90,3 %, `context` 93,9 %.
 
 ## 5. Análisis
 

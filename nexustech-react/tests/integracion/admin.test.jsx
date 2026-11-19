@@ -29,6 +29,7 @@ describe('dashboard, órdenes y reportes', () => {
     expect(screen.getAllByRole('link', { name: /Ver boleta/ })).toHaveLength(1);
     await user.click(screen.getByRole('link', { name: 'Ver boleta 1003' }));
     expect(await titulo('Boleta #1003')).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByText(/Motivo: La tarjeta fue rechazada/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /Imprimir/ }));
     expect(window.print).toHaveBeenCalled();
@@ -39,9 +40,11 @@ describe('dashboard, órdenes y reportes', () => {
     renderApp('/admin/reportes');
     expect(screen.getByRole('heading', { name: 'Ventas por categoría' })).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: /Notebooks/ })).toBeInTheDocument();
     cleanup();
     renderApp('/admin/productos/reportes');
     expect(screen.getByRole('heading', { name: 'Productos más vendidos' })).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: /Componentes/ })).toBeInTheDocument();
   });
 
   it('lista los productos críticos', () => {
@@ -62,7 +65,7 @@ describe('CRUD de productos', () => {
 
     await user.type(screen.getByLabelText('Código'), 'aud010');
     await user.type(screen.getByLabelText('Nombre del producto'), 'Audífonos Pro');
-    await user.selectOptions(screen.getByLabelText('Categoría'), 'Perifericos');
+    await user.selectOptions(screen.getByLabelText('Categoría'), 'Periféricos');
     await user.type(screen.getByLabelText('Tipo'), 'Audifonos');
     await user.type(screen.getByLabelText('Precio'), '15000');
     await user.type(screen.getByLabelText('Stock'), '3');
@@ -179,13 +182,17 @@ describe('CRUD de usuarios y perfil', () => {
     expect(leer(CLAVES.usuarios).some((u) => u.run === '111111111')).toBe(false);
   });
 
-  it('no permite eliminar la propia cuenta y filtra por rol', async () => {
+  it('protege la propia cuenta y filtra por rol', async () => {
     iniciarSesionComo('Administrador');
     const user = userEvent.setup();
     renderApp('/admin/usuarios');
     expect(screen.getByRole('button', { name: 'Eliminar Admin' })).toBeDisabled();
     await user.selectOptions(screen.getByLabelText('Filtrar por rol'), 'Cliente');
     expect(screen.getAllByRole('row')).toHaveLength(2);
+    // La cuenta propia se edita desde el perfil, donde no se cambia el rol
+    cleanup();
+    renderApp('/admin/usuarios/190110222/editar');
+    expect(await titulo('Mi perfil')).toBeInTheDocument();
   });
 
   it('muestra el historial de compras de un cliente', () => {
