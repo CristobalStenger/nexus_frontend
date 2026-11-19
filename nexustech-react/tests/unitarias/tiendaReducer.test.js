@@ -111,7 +111,8 @@ describe('pago simulado', () => {
     const final = tiendaReducer(inicial, {
       type: 'PAGAR',
       numero: 1001,
-      fecha: '2026-10-08T15:00:00.000Z',
+      // 23:00 del 8 de octubre en Chile (en UTC ya es el 9): el código usa el día de Chile
+      fecha: '2026-10-09T02:00:00.000Z',
       datos: datosPago(),
     });
     expect(final.productos[0].stock).toBe(0);

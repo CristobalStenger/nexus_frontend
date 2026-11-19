@@ -8,7 +8,7 @@
 import { COSTO_DESPACHO, NUMERO_ORDEN_INICIAL, SUFIJO_TARJETA_RECHAZADA } from '../data/configuracion.js';
 import { actualizar, crear, eliminar, obtener, siguienteId } from '../services/crud.js';
 import { conAviso } from './aviso.js';
-import { crearSlug, enmascararTarjeta, precioFinal } from '../utils/formatos.js';
+import { crearSlug, diaChile, enmascararTarjeta, precioFinal } from '../utils/formatos.js';
 import {
   buscarCupon,
   convertirProducto,
@@ -115,7 +115,7 @@ function pagar(estado, accion) {
 
   const orden = {
     numero,
-    codigo: `ORD-${fecha.slice(0, 10).replaceAll('-', '')}-${numero}`,
+    codigo: `ORD-${diaChile(fecha).replaceAll('-', '')}-${numero}`,
     fecha,
     estado: motivo ? 'rechazada' : 'pagada',
     motivo,
