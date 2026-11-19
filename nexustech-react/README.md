@@ -1,7 +1,7 @@
 # NexusTech React (Evaluación 2)
 
-Tienda de tecnología **NexusTech** migrada desde HTML + JavaScript (entrega 1, en
-[`../nexustech-html/`](../nexustech-html/index.html)) a **React 19 + Vite 7**, con React Router 7,
+Tienda de tecnología **NexusTech** migrada desde HTML + JavaScript (entrega 1, guardada en
+el commit [`948ceaf`](https://github.com/CristobalStenger/nexus_frontend/tree/948ceaf472d32a08d28bb0cf4581a54355025353/nexustech-html)) a **React 19 + Vite 7**, con React Router 7,
 React Bootstrap, Context + `useReducer`, persistencia en `localStorage` y pruebas con Vitest +
 Testing Library.
 
