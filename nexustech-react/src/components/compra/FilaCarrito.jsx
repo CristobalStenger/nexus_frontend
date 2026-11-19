@@ -11,7 +11,7 @@ export default function FilaCarrito({ item, onCambiar, onQuitar }) {
       <td>
         <div className="d-flex align-items-center gap-2">
           <div className="mini-imagen">
-            <img src={item.imagen} alt="" />
+            <img src={item.imagen || undefined} alt="" />
           </div>
           <div>
             <span className="fw-semibold d-block">{item.nombre}</span>

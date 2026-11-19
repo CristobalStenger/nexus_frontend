@@ -13,7 +13,8 @@ export default function ProductoCard({ producto, onAgregar }) {
   return (
     <article className="card-producto h-100 d-flex flex-column">
       <Link to={ruta} className="caja-imagen enlace-producto" tabIndex={-1} aria-hidden="true">
-        <img src={producto.imagen} alt="" loading="lazy" />
+        {/* La imagen es opcional: src="" haría que el navegador vuelva a pedir la página */}
+        <img src={producto.imagen || undefined} alt="" loading="lazy" />
       </Link>
       <div className="card-body d-flex flex-column">
         <div className="mb-2 d-flex flex-wrap gap-1">

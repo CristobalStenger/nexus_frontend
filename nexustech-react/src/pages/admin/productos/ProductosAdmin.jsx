@@ -80,7 +80,7 @@ export default function ProductosAdmin() {
                 <td>{p.codigo}</td>
                 <td>
                   <div className="d-flex align-items-center gap-2">
-                    <img className="admin-thumb" src={p.imagen} alt="" />
+                    <img className="admin-thumb" src={p.imagen || undefined} alt="" />
                     <span>{p.nombre}</span>
                   </div>
                 </td>

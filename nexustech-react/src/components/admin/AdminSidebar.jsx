@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, startTransition } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/useAuth.js';
 import { ENLACES_CUENTA, seccionesVisibles } from './secciones.js';
@@ -14,9 +14,13 @@ export default function AdminSidebar() {
   const { sesion, cerrarSesion } = useAuth();
   const navigate = useNavigate();
 
+  // React Router navega dentro de una transición; si cerrarSesion corre afuera, se dibuja
+  // primero /admin sin sesión y RutaProtegida manda al login. Juntas, llegan a la tienda.
   function salir() {
-    cerrarSesion();
-    navigate('/', { replace: true });
+    startTransition(() => {
+      cerrarSesion();
+      navigate('/', { replace: true });
+    });
   }
 
   return (

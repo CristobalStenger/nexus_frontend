@@ -64,7 +64,7 @@ function FichaProducto({ producto, enCarrito, onAgregar }) {
       <Col xs={12} lg={5}>
         <div className="caja-vidrio p-3">
           <div className="caja-imagen-grande">
-            <img src={producto.imagen} alt={producto.nombre} />
+            <img src={producto.imagen || undefined} alt={producto.nombre} />
           </div>
         </div>
       </Col>
