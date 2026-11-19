@@ -80,7 +80,7 @@ function FichaProducto({ producto, enCarrito, onAgregar }) {
             Código: <strong>{producto.codigo}</strong>
           </p>
           <p className="mb-1">
-            Stock disponible: <strong>{producto.stock}</strong> unidades
+            Stock disponible: <strong>{producto.stock}</strong> {producto.stock === 1 ? 'unidad' : 'unidades'}
             {enCarrito > 0 && ` (${enCarrito} en tu carrito)`}
           </p>
           <PrecioProducto producto={producto} className="fs-2 my-3" />

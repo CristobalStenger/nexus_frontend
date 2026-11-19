@@ -41,7 +41,7 @@ export const esStockCritico = (producto) =>
 export function estadoStock(producto) {
   if (producto.stock <= 0) return { texto: 'Sin stock', variante: 'danger' };
   if (esStockCritico(producto))
-    return { texto: `Últimas ${producto.stock} unidades`, variante: 'warning' };
+    return { texto: producto.stock === 1 ? 'Última unidad' : `Últimas ${producto.stock} unidades`, variante: 'warning' };
   return { texto: 'Disponible', variante: 'success' };
 }
 

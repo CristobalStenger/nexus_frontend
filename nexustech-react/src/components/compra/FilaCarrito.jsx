@@ -17,7 +17,9 @@ export default function FilaCarrito({ item, onCambiar, onQuitar }) {
             <span className="fw-semibold d-block">{item.nombre}</span>
             <small>{item.tipo}</small>
             {excede && (
-              <small className="d-block aviso-stock">Solo quedan {item.stock} unidades</small>
+              <small className="d-block aviso-stock">
+                {item.stock === 1 ? 'Solo queda 1 unidad' : `Solo quedan ${item.stock} unidades`}
+              </small>
             )}
           </div>
         </div>
