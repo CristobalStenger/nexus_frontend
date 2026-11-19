@@ -6,7 +6,7 @@ const enlaces = [
   { ruta: '/categorias', texto: 'Categorías' },
   { ruta: '/ofertas', texto: 'Ofertas' },
   { ruta: '/nosotros', texto: 'Nosotros' },
-  { ruta: '/blogs', texto: 'Blogs' },
+  { ruta: '/blogs', texto: 'Blog' },
   { ruta: '/contacto', texto: 'Contacto' },
 ];
 
