@@ -60,7 +60,7 @@ describe('catálogo, categorías y ofertas', () => {
     const user = userEvent.setup();
     renderApp('/productos');
     expect(screen.getAllByRole('article')).toHaveLength(40);
-    await user.selectOptions(screen.getByLabelText('Categoría'), 'Perifericos');
+    await user.selectOptions(screen.getByLabelText('Categoría'), 'Periféricos');
     await user.selectOptions(screen.getByLabelText('Tipo'), 'Teclado');
     expect(screen.getAllByRole('article')).toHaveLength(3);
     await user.selectOptions(screen.getByLabelText('Rango de precio'), '0-99999');

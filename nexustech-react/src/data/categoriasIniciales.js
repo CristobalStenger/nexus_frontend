@@ -13,7 +13,7 @@ export const categoriasIniciales = [
   },
   {
     id: 2,
-    nombre: 'Perifericos',
+    nombre: 'Periféricos',
     slug: 'perifericos',
     icono: 'bi-mouse2-fill',
     descripcion: 'Teclados, mouse, audífonos, monitores y webcams.',

@@ -65,7 +65,7 @@ describe('CRUD de productos', () => {
 
     await user.type(screen.getByLabelText('Código'), 'aud010');
     await user.type(screen.getByLabelText('Nombre del producto'), 'Audífonos Pro');
-    await user.selectOptions(screen.getByLabelText('Categoría'), 'Perifericos');
+    await user.selectOptions(screen.getByLabelText('Categoría'), 'Periféricos');
     await user.type(screen.getByLabelText('Tipo'), 'Audifonos');
     await user.type(screen.getByLabelText('Precio'), '15000');
     await user.type(screen.getByLabelText('Stock'), '3');
