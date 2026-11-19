@@ -1,6 +1,6 @@
 // ============================================================
 // NexusTech - Fuente de datos simulada: catálogo inicial
-// Los 40 productos de la entrega 1 (js/catalogo.js) con el campo
+// Los 40 productos de la entrega 1 (nexustech-html/js/catalogo.js) con el campo
 // nuevo "descuento" (porcentaje) que usa la vista de Ofertas.
 // ============================================================
 

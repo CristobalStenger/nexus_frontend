@@ -1,7 +1,7 @@
 # NexusTech React (Evaluación 2)
 
-Tienda de tecnología **NexusTech** migrada desde HTML + JavaScript (entrega 1, en la raíz del
-repositorio) a **React 19 + Vite 7**. Usa React Router 7 (modo declarativo), React Bootstrap,
+Tienda de tecnología **NexusTech** migrada desde HTML + JavaScript (entrega 1, en
+[`../nexustech-html/`](../nexustech-html/index.html)) a **React 19 + Vite 7**. Usa React Router 7 (modo declarativo), React Bootstrap,
 Context + `useReducer`, persistencia en `localStorage` y pruebas con Vitest + Testing Library.
 
 La explicación detallada del proyecto (migración, vistas nuevas y pruebas) está en

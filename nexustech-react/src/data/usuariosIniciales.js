@@ -1,6 +1,6 @@
 // ============================================================
 // NexusTech - Fuente de datos simulada: usuarios
-// El administrador es el mismo de la entrega 1 (js/main.js).
+// El administrador es el mismo de la entrega 1 (nexustech-html/js/main.js).
 // Se agregan un vendedor y un cliente para probar los roles.
 // Las claves quedan en texto plano solo porque es una simulación
 // académica: un backend real nunca debe guardarlas así.

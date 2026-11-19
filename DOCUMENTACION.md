@@ -39,11 +39,11 @@ React y se agregaron nuevos flujos de compra y administración.
 
 | Entrega      | Carpeta                                          | Tecnologías                                               |
 | ------------ | ------------------------------------------------ | --------------------------------------------------------- |
-| Evaluación 1 | Raíz (`index.html`, `css/`, `js/`, `admin/`…)    | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript                |
+| Evaluación 1 | [`nexustech-html/`](nexustech-html/index.html)   | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript                |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/)           | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 
-Los archivos de la entrega 1 se conservaron sin cambios como referencia. La versión React vive en
-su propia carpeta, igual que el proyecto de ejemplo de la guía del curso.
+Los archivos de la entrega 1 se conservaron sin cambios como referencia en `nexustech-html/`. La
+versión React vive en `nexustech-react/`, igual que el proyecto de ejemplo de la guía del curso.
 
 ### Tecnologías de la entrega 2
 
@@ -122,7 +122,7 @@ Para volver a los datos iniciales, borra las claves `*_NEXUSTECH` y `USUARIO_ACT
 ### 3.1 Estructura original
 
 ```
-fullstack.code/
+nexustech-html/
 ├── index.html, catalogo.html, producto.html, carrito.html, login.html,
 │   nosotros.html, blogs.html, contacto.html
 ├── categorias/   componentes.html, perifericos.html, consolas.html, notebooks.html
@@ -221,6 +221,9 @@ nexustech-react/
 | `components/contenido/`  | `HeroCarousel`, `BlogCard`                                                                                                                |
 
 ### 4.3 Correspondencia entre la entrega 1 y la entrega 2
+
+Las rutas de la columna izquierda son relativas a `nexustech-html/`; las de la derecha, a
+`nexustech-react/src/`.
 
 | Entrega 1 (HTML / JS)                              | Entrega 2 (React)                                                             |
 | -------------------------------------------------- | ----------------------------------------------------------------------------- |
