@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import FiltrosCatalogo from './FiltrosCatalogo.jsx';
-import { FILTROS_VACIOS } from '../../utils/catalogo.js';
+import FiltrosCatalogo from '../../src/components/producto/FiltrosCatalogo.jsx';
+import { FILTROS_VACIOS } from '../../src/utils/catalogo.js';
 
 describe('FiltrosCatalogo (componente controlado)', () => {
   it('informa cada cambio al padre y limpia los filtros', async () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ConfirmarModal from './ConfirmarModal.jsx';
+import ConfirmarModal from '../../src/components/comunes/ConfirmarModal.jsx';
 
 describe('ConfirmarModal (renderizado condicional y eventos)', () => {
   it('no muestra nada mientras está cerrado', () => {

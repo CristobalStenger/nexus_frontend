@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react';
 import { MemoryRouter, parsePath } from 'react-router';
-import App from '../App.jsx';
-import { AuthProvider } from '../context/AuthProvider.jsx';
-import { TiendaProvider } from '../context/TiendaProvider.jsx';
-import { usuariosIniciales } from '../data/usuariosIniciales.js';
-import { CLAVES } from '../services/storage.js';
-import { crearSesion } from '../services/persistencia.js';
+import App from '../src/App.jsx';
+import { AuthProvider } from '../src/context/AuthProvider.jsx';
+import { TiendaProvider } from '../src/context/TiendaProvider.jsx';
+import { usuariosIniciales } from '../src/data/usuariosIniciales.js';
+import { CLAVES } from '../src/services/storage.js';
+import { crearSesion } from '../src/services/persistencia.js';
 
 // La aplicación completa con un historial en memoria
 export function renderApp(ruta = '/', state) {

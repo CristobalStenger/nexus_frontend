@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filtrarProductos, productosEnOferta, tiposDe } from './catalogo.js';
+import { filtrarProductos, productosEnOferta, tiposDe } from '../../src/utils/catalogo.js';
 
 const productos = [
   { id: 1, codigo: 'MOU1', nombre: 'Mouse Pro', categoria: 'Perifericos', tipo: 'Mouse', precio: 50000, descuento: 0, stock: 3 },

@@ -134,15 +134,15 @@ nexustech-html/
                   regiones.js, admin.js
 ```
 
-| Archivo JS         | Responsabilidad en la entrega 1                                                       |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| `catalogo.js`      | Arreglo de 40 productos, filtros y dibujo de las tarjetas con `innerHTML`             |
-| `main.js`          | Agregar al carrito, contador del carrito, usuario activo, cerrar sesión               |
-| `detalle.js`       | Dibujar el detalle del producto guardado en `PRODUCTO_VISTO`                          |
-| `carrito.js`       | Tabla del carrito, cantidades, cupones y botón pagar                                  |
-| `validaciones.js`  | Validación en vivo (RUN, correos, claves…), login, registro y contacto                |
-| `regiones.js`      | Regiones y comunas de Chile para los formularios                                      |
-| `admin.js`         | Permisos por rol y CRUD de productos y usuarios del panel                              |
+| Archivo JS        | Responsabilidad en la entrega 1                                           |
+| ----------------- | ------------------------------------------------------------------------- |
+| `catalogo.js`     | Arreglo de 40 productos, filtros y dibujo de las tarjetas con `innerHTML` |
+| `main.js`         | Agregar al carrito, contador del carrito, usuario activo, cerrar sesión   |
+| `detalle.js`      | Dibujar el detalle del producto guardado en `PRODUCTO_VISTO`              |
+| `carrito.js`      | Tabla del carrito, cantidades, cupones y botón pagar                      |
+| `validaciones.js` | Validación en vivo (RUN, correos, claves…), login, registro y contacto    |
+| `regiones.js`     | Regiones y comunas de Chile para los formularios                          |
+| `admin.js`        | Permisos por rol y CRUD de productos y usuarios del panel                 |
 
 ### 3.2 Limitaciones que motivaron la migración
 
@@ -186,7 +186,7 @@ nexustech-react/
 ├── vite.config.js             Configuración de Vite y de las pruebas (Vitest)
 ├── public/_redirects          Regla para que el hosting sirva index.html en todas las rutas
 ├── docs/COBERTURA_TESTING.md  Documento de cobertura de pruebas
-└── src/
+├── src/                       Código de la aplicación
     ├── main.jsx               Monta <App /> dentro de BrowserRouter e importa los estilos
     ├── App.jsx                Providers y definición de todas las rutas
     ├── styles.css             Estilos de la entrega 1 + estilos nuevos
@@ -198,8 +198,13 @@ nexustech-react/
     ├── utils/                 Formatos, validaciones, filtros y reportes (funciones puras)
     ├── components/            37 componentes reutilizables agrupados por tema
     ├── pages/tienda/          16 páginas de la tienda
-    ├── pages/admin/           19 páginas del panel de administración
-    └── test/                  Configuración y utilidades de prueba
+    └── pages/admin/           19 páginas del panel de administración
+└── tests/                     Pruebas, separadas por nivel (sección 6.2)
+    ├── setup.js               Limpieza antes y después de cada prueba
+    ├── utilidades.jsx         renderApp, renderConProviders, iniciarSesionComo...
+    ├── unitarias/             Funciones puras: reducers, servicios y utils
+    ├── componentes/           Un componente con props controladas
+    └── integracion/           La aplicación completa recorrida como una persona
 ```
 
 | Carpeta                  | Contenido                                                                                                                                 |
@@ -906,19 +911,19 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.js'],
-    include: ['src/**/*.test.{js,jsx}'],
+    setupFiles: ['./tests/setup.js'],
+    include: ['tests/**/*.test.{js,jsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'json-summary'],
       include: ['src/**/*.{js,jsx}'],
-      exclude: ['src/main.jsx', 'src/data/**', 'src/test/**', 'src/**/*.test.{js,jsx}'],
+      exclude: ['src/main.jsx', 'src/data/**'],
     },
   },
 });
 ```
 
-**`src/test/setup.js`**: cada prueba empieza limpia, así ninguna depende de otra.
+**`tests/setup.js`**: cada prueba empieza limpia, así ninguna depende de otra.
 
 ```js
 beforeEach(() => {
@@ -933,7 +938,7 @@ afterEach(() => {
 });
 ```
 
-**`src/test/utilidades.jsx`**: funciones de apoyo como `renderApp(ruta)` (toda la app con
+**`tests/utilidades.jsx`**: funciones de apoyo como `renderApp(ruta)` (toda la app con
 `MemoryRouter`), `renderConProviders(ui)`, `iniciarSesionComo('Administrador')` y `guardarCarrito([...])`.
 
 ### 6.2 Tres niveles de prueba
@@ -959,7 +964,7 @@ Todas siguen el patrón **Preparar → Actuar → Comprobar**.
 #### Renderizado correcto: una lista muestra todos sus elementos
 
 ```jsx
-// src/components/producto/ProductoGrid.test.jsx
+// tests/componentes/ProductoGrid.test.jsx
 it('renderiza una tarjeta por cada elemento del arreglo', () => {
   render(<MemoryRouter><ProductoGrid productos={productosIniciales} alAgregar={vi.fn()} /></MemoryRouter>);
   expect(screen.getAllByRole('article')).toHaveLength(40);
@@ -969,7 +974,7 @@ it('renderiza una tarjeta por cada elemento del arreglo', () => {
 #### Renderizado condicional: el error aparece solo cuando hay error
 
 ```jsx
-// src/components/formularios/CampoFormulario.test.jsx
+// tests/componentes/CampoFormulario.test.jsx
 it('muestra el mensaje de error solo cuando recibe uno', () => {
   render(<CampoFormulario id="campo-run" etiqueta="RUN" value="1" onChange={() => {}} error="RUN inválido" />);
   const campo = screen.getByLabelText('RUN');
@@ -984,7 +989,7 @@ Otros casos: el modal no existe mientras está cerrado; el precio tachado aparec
 #### Props: un botón recibe su etiqueta y su función `onClick`
 
 ```jsx
-// src/components/producto/ProductoCard.test.jsx
+// tests/componentes/ProductoCard.test.jsx
 it('llama a la función onClick recibida con el id del producto', async () => {
   const alAgregar = vi.fn();
   mostrar({ alAgregar });
@@ -997,7 +1002,7 @@ it('llama a la función onClick recibida con el id del producto', async () => {
 #### Estado: el formulario cambia cuando el usuario escribe
 
 ```jsx
-// src/pages/tienda/formularios.test.jsx
+// tests/integracion/formularios.test.jsx
 it('el estado del formulario cambia cuando el usuario escribe', async () => {
   const user = userEvent.setup();
   renderApp('/login');
@@ -1010,7 +1015,7 @@ it('el estado del formulario cambia cuando el usuario escribe', async () => {
 #### Eventos: un clic cambia el estado o ejecuta una función
 
 ```jsx
-// src/pages/tienda/compra.test.jsx (extracto)
+// tests/integracion/compra.test.jsx (extracto)
 await user.click(screen.getByRole('button', { name: 'Agregar una unidad de AMD Ryzen 5 7600X' }));
 expect(screen.getByLabelText('Cantidad de AMD Ryzen 5 7600X')).toHaveTextContent('2');
 expect(screen.getByRole('link', { name: 'Carrito (2)' })).toHaveTextContent('$499.980');
@@ -1019,7 +1024,7 @@ expect(screen.getByRole('link', { name: 'Carrito (2)' })).toHaveTextContent('$49
 #### Lógica de negocio sin interfaz: el reducer es una función pura
 
 ```js
-// src/store/tiendaReducer.test.js
+// tests/unitarias/tiendaReducer.test.js
 it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', () => {
   const inicial = iniciar({ carrito: [{ id: 1, cantidad: 1 }] });
   const final = tiendaReducer(inicial, { type: 'PAGAR', numero: 1001, datos: datosPago('4242424242420000') });
@@ -1031,96 +1036,96 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 
 ### 6.4 Inventario de pruebas
 
-| Archivo                                           | Nivel        | Pruebas | Qué verifica                                                                            |
-| ------------------------------------------------- | ------------ | ------: | --------------------------------------------------------------------------------------- |
-| `utils/validaciones.test.js`                      | Unitaria     | 25      | RUN, correos, registro, contacto, producto, categoría, checkout, tarjeta y cupones      |
-| `utils/formatos.test.js`                          | Unitaria     | 10      | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock                  |
-| `utils/catalogo.test.js`                          | Unitaria     | 8       | Filtros combinados y los 4 órdenes del catálogo                                         |
-| `utils/reportes.test.js`                          | Unitaria     | 6       | Ventas, categorías, días, más vendidos, inventario e historial                          |
-| `services/crud.test.js`                           | Unitaria     | 3       | CRUD sin mutar el arreglo original                                                      |
-| `services/persistencia.test.js`                   | Unitaria     | 10      | Recuperación ante datos corruptos, limpieza del carrito, sesión sin contraseña          |
-| `store/tiendaReducer.test.js`                     | Unitaria     | 25      | Carrito, cupones, totales, pago aprobado y rechazado, CRUD de productos y categorías    |
-| `store/authReducer.test.js`                       | Unitaria     | 9       | Login, roles, registro, CRUD de usuarios y perfil                                       |
-| `components/producto/ProductoCard.test.jsx`       | Componente   | 6       | Props, clic, botón deshabilitado, precio con oferta y FREE                              |
-| `components/producto/ProductoGrid.test.jsx`       | Componente   | 2       | Renderizado de listas y estado vacío                                                    |
-| `components/producto/FiltrosCatalogo.test.jsx`    | Componente   | 2       | Componente controlado que informa sus cambios                                           |
-| `components/comunes/ConfirmarModal.test.jsx`      | Componente   | 2       | Abierto/cerrado, confirmar y cancelar                                                   |
-| `components/formularios/CampoFormulario.test.jsx` | Componente   | 3       | Etiqueta, error accesible y variante select                                             |
-| `App.test.jsx`                                    | Integración  | 15      | Navegación, 404, buscador, catálogo, categorías, ofertas, detalle, rutas por rol        |
-| `pages/tienda/formularios.test.jsx`               | Integración  | 7       | Login, registro y contacto                                                              |
-| `pages/tienda/compra.test.jsx`                    | Integración  | 12      | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                   |
-| `pages/admin/admin.test.jsx`                      | Integración  | 14      | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil          |
-| **Total**                                         |              | **159** |                                                                                         |
+| Archivo                                      | Nivel       | Pruebas | Qué verifica                                                                         |
+| -------------------------------------------- | ----------- | ------: | ------------------------------------------------------------------------------------ |
+| `tests/unitarias/validaciones.test.js`       | Unitaria    |      25 | RUN, correos, registro, contacto, producto, categoría, checkout, tarjeta y cupones   |
+| `tests/unitarias/formatos.test.js`           | Unitaria    |      10 | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock               |
+| `tests/unitarias/catalogo.test.js`           | Unitaria    |       8 | Filtros combinados y los 4 órdenes del catálogo                                      |
+| `tests/unitarias/reportes.test.js`           | Unitaria    |       6 | Ventas, categorías, días, más vendidos, inventario e historial                       |
+| `tests/unitarias/crud.test.js`               | Unitaria    |       3 | CRUD sin mutar el arreglo original                                                   |
+| `tests/unitarias/persistencia.test.js`       | Unitaria    |      10 | Recuperación ante datos corruptos, limpieza del carrito, sesión sin contraseña       |
+| `tests/unitarias/tiendaReducer.test.js`      | Unitaria    |      25 | Carrito, cupones, totales, pago aprobado y rechazado, CRUD de productos y categorías |
+| `tests/unitarias/authReducer.test.js`        | Unitaria    |       9 | Login, roles, registro, CRUD de usuarios y perfil                                    |
+| `tests/componentes/ProductoCard.test.jsx`    | Componente  |       6 | Props, clic, botón deshabilitado, precio con oferta y FREE                           |
+| `tests/componentes/ProductoGrid.test.jsx`    | Componente  |       2 | Renderizado de listas y estado vacío                                                 |
+| `tests/componentes/FiltrosCatalogo.test.jsx` | Componente  |       2 | Componente controlado que informa sus cambios                                        |
+| `tests/componentes/ConfirmarModal.test.jsx`  | Componente  |       2 | Abierto/cerrado, confirmar y cancelar                                                |
+| `tests/componentes/CampoFormulario.test.jsx` | Componente  |       3 | Etiqueta, error accesible y variante select                                          |
+| `tests/integracion/App.test.jsx`             | Integración |      15 | Navegación, 404, buscador, catálogo, categorías, ofertas, detalle, rutas por rol     |
+| `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login, registro y contacto                                                           |
+| `tests/integracion/compra.test.jsx`          | Integración |      12 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
+| `tests/integracion/admin.test.jsx`           | Integración |      14 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
+| **Total**                                    |             | **159** |                                                                                      |
 
 <details>
 <summary><strong>Listado completo de las 159 pruebas (clic para desplegar)</strong></summary>
 
-**`utils/validaciones.test.js`** (25)
+**`tests/unitarias/validaciones.test.js`** (25)
 - RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
 - Formularios de usuario: valida el login con correo y contraseña de 4 a 10 caracteres · acepta un registro completo · informa todos los errores del registro a la vez · rechaza RUN y correo repetidos, salvo al editar el mismo usuario · rechaza fechas de nacimiento futuras y comunas de otra región · convierte los datos del formulario · valida el formulario de contacto con correo opcional
 - Productos y categorías: acepta un producto válido con precio y stock cero · informa todos los campos incorrectos · rechaza códigos repetidos y categorías inexistentes · convierte números y valores opcionales · valida categorías sin nombres duplicados
 - Checkout, tarjeta y cupones: exige datos del cliente y la dirección de entrega · acepta una tarjeta vigente y rechaza formatos inválidos o vencidos · busca cupones existentes solo si hay productos en el carrito
 
-**`utils/formatos.test.js`** (10)
+**`tests/unitarias/formatos.test.js`** (10)
 - Formatea pesos chilenos sin decimales · muestra FREE cuando el precio es cero · aplica el descuento de la oferta y redondea
 - Normaliza tildes, mayúsculas y espacios · crea slugs para las URL de categorías · enmascara la tarjeta y arma el nombre completo · formatea fechas en horario de Chile
 - Clasifica el stock como "Sin stock", "Últimas N unidades" y "Disponible" (3)
 
-**`utils/catalogo.test.js`** (8)
+**`tests/unitarias/catalogo.test.js`** (8)
 - Sin filtros devuelve todos los productos sin modificar el arreglo · busca por nombre sin importar tildes, también por tipo y código · combina categoría, tipo, rango de precio final y disponibilidad · ordena por A–Z, Z–A, menor y mayor precio (4) · lista los tipos y las ofertas ordenadas por descuento
 
-**`utils/reportes.test.js`** (6)
+**`tests/unitarias/reportes.test.js`** (6)
 - Resume solo las órdenes pagadas · agrupa ventas por categoría con su porcentaje · agrupa ventas por día y lista los más vendidos · cuenta entregas e historial por RUN o correo · valoriza el stock por categoría · lista los productos en stock crítico del menor al mayor stock
 
-**`services/crud.test.js`** (3)
+**`tests/unitarias/crud.test.js`** (3)
 - Obtiene por clave y responde null si no existe · calcula el siguiente id correlativo · crea, actualiza y elimina sin mutar el arreglo original
 
-**`services/persistencia.test.js`** (10)
+**`tests/unitarias/persistencia.test.js`** (10)
 - Lee la alternativa si la clave no existe o el JSON está corrupto · guarda, borra con null e informa si el navegador rechaza la escritura
 - Parte con los datos iniciales y recupera lo guardado · se recupera de JSON corrupto y de estructuras inválidas · respeta un catálogo vacío y rechaza ids repetidos · limpia productos inexistentes, cantidades inválidas, filas duplicadas y cupones falsos
 - Siempre deja al menos una cuenta de administrador · la sesión nunca guarda la contraseña · solo restaura una sesión que corresponda a un usuario existente · acumula los mensajes de contacto
 
-**`store/tiendaReducer.test.js`** (25)
+**`tests/unitarias/tiendaReducer.test.js`** (25)
 - Carrito: acumula cantidades sin duplicar productos ni mutar el estado anterior · agrega varias unidades desde el detalle y respeta el stock · impide agregar productos inexistentes o cantidades inválidas · rechaza las cantidades inválidas -1, 1.5, 3 y NaN (4) · cambia cantidades y retira el producto (y el cupón) al llegar a cero · quita un producto y vacía el carrito · calcula subtotal con ofertas, cupón y envío según la entrega · aplica y quita cupones válidos
 - Pago simulado: numera las órdenes en forma correlativa · descuenta stock, vacía el carrito y registra una orden pagada · rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito · rechaza el pago completo si un producto perdió stock · no crea órdenes con el carrito vacío y evita números repetidos
 - CRUD de productos: crea un producto con id único y convierte los números del formulario · actualiza manteniendo el id y el carrito usa el precio nuevo · rechaza datos inválidos, códigos repetidos y productos inexistentes · elimina el producto del catálogo y del carrito
 - CRUD de categorías: crea una categoría con slug e ícono por defecto · al renombrar actualiza también los productos de la categoría · rechaza duplicados y categorías inexistentes · no elimina una categoría con productos, pero sí una vacía · cierra avisos e ignora acciones desconocidas
 
-**`store/authReducer.test.js`** (9)
+**`tests/unitarias/authReducer.test.js`** (9)
 - Busca credenciales sin distinguir mayúsculas en el correo · inicia sesión sin guardar la clave y la cierra · distingue los permisos de cada rol
 - Registra clientes nuevos aunque pidan otro rol · rechaza registros inválidos o repetidos · el administrador crea y edita usuarios con su rol · actualiza la sesión cuando el usuario edita su propio perfil · elimina usuarios, pero nunca la cuenta en uso · cierra avisos e ignora acciones desconocidas
 
-**`components/producto/ProductoCard.test.jsx`** (6)
+**`tests/componentes/ProductoCard.test.jsx`** (6)
 - Muestra los datos recibidos por props · llama a la función onClick recibida con el id del producto · deshabilita el botón cuando no hay stock
 - PrecioProducto: sin oferta muestra solo el precio · con oferta muestra el precio anterior tachado y el porcentaje · muestra FREE cuando el precio final es cero
 
-**`components/producto/ProductoGrid.test.jsx`** (2)
+**`tests/componentes/ProductoGrid.test.jsx`** (2)
 - Renderiza una tarjeta por cada elemento del arreglo · muestra el mensaje vacío solo cuando no hay productos
 
-**`components/producto/FiltrosCatalogo.test.jsx`** (2)
+**`tests/componentes/FiltrosCatalogo.test.jsx`** (2)
 - Informa cada cambio al padre y limpia los filtros · puede ocultar el filtro de categoría
 
-**`components/comunes/ConfirmarModal.test.jsx`** (2)
+**`tests/componentes/ConfirmarModal.test.jsx`** (2)
 - No muestra nada mientras está cerrado · al abrirse muestra el contenido y ejecuta confirmar o cancelar
 
-**`components/formularios/CampoFormulario.test.jsx`** (3)
+**`tests/componentes/CampoFormulario.test.jsx`** (3)
 - Asocia la etiqueta y no muestra error si no lo hay · muestra el mensaje de error solo cuando recibe uno · marca el campo válido y puede ser un select
 
-**`App.test.jsx`** (15)
+**`tests/integracion/App.test.jsx`** (15)
 - Navegación: cambia de página con NavLink, marca el enlace activo y actualiza el título · muestra la página 404 para direcciones desconocidas · el inicio muestra categorías, ofertas y productos destacados · el buscador de la cabecera lleva al catálogo filtrado · muestra blogs, su detalle y la página nosotros
 - Catálogo: combina búsqueda, categoría, tipo, rango y orden, y puede limpiar los filtros · separa los productos por categoría y avisa si la categoría no existe · la vista de ofertas muestra solo productos con descuento · el detalle permite elegir cantidad sin superar el stock · avisa cuando el producto no existe
 - Rutas protegidas: sin sesión el panel redirige al login y luego vuelve al panel · un cliente no puede entrar al panel · el vendedor solo consulta: no ve acciones de escritura ni usuarios · el vendedor ve acceso denegado al intentar crear productos · restaura la sesión guardada al volver a montar la aplicación
 
-**`pages/tienda/formularios.test.jsx`** (7)
+**`tests/integracion/formularios.test.jsx`** (7)
 - Login: el estado del formulario cambia cuando el usuario escribe · muestra errores de formato al tocar los campos y al enviar · el mensaje de credenciales incorrectas aparece solo si hay error · el cliente entra a la tienda y ve su nombre en la cabecera
 - Registro: valida todos los campos, crea la cuenta y permite iniciar sesión · no permite registrar un correo que ya existe
 - Contacto: cuenta los caracteres, valida y guarda el mensaje
 
-**`pages/tienda/compra.test.jsx`** (12)
+**`tests/integracion/compra.test.jsx`** (12)
 - Carrito: agrega desde el catálogo, cambia cantidades y elimina productos · conserva el carrito al desmontar y volver a montar la aplicación · aplica cupones válidos, rechaza los inexistentes y permite quitarlos · vacía el carrito solo después de confirmar en el modal · bloquea la compra si el stock cambió
 - Checkout: sin productos no muestra el formulario de pago · valida los datos del cliente, la dirección y la tarjeta · autocompleta los datos del cliente con sesión iniciada y suma el envío elegido · compra exitosa: descuenta stock, vacía el carrito y muestra la boleta · pago rechazado: conserva carrito y stock, y permite reintentar con los datos precargados · pago rechazado por stock insuficiente · redirige entre las vistas de resultado según el estado de la orden
 
-**`pages/admin/admin.test.jsx`** (14)
+**`tests/integracion/admin.test.jsx`** (14)
 - El dashboard muestra métricas y accesos a cada módulo · filtra órdenes por estado y muestra la boleta · muestra reportes de ventas e inventario · lista los productos críticos
 - Productos: crea, muestra y edita un producto conservando su id · rechaza un código repetido · cancela y confirma la eliminación, retirando el producto del carrito · busca productos en la tabla
 - Categorías: crea una categoría, la renombra y no elimina una categoría con productos
@@ -1130,8 +1135,8 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 
 ### 6.5 Cobertura
 
-Resultado de `npm run test:coverage`. Se excluyen `main.jsx`, los datos iniciales (`src/data`),
-`src/test` y los propios archivos de prueba.
+Resultado de `npm run test:coverage`. Se mide solo `src/` (las pruebas viven en `tests/`) y
+se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |

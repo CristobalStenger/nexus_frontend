@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { usuariosIniciales } from '../data/usuariosIniciales.js';
+import { usuariosIniciales } from '../../src/data/usuariosIniciales.js';
 import {
   authReducer,
   buscarCredenciales,
   crearEstadoAuth,
   esAdministrador,
   puedeVerPanel,
-} from './authReducer.js';
+} from '../../src/store/authReducer.js';
 
 const iniciar = (sesion = null) => crearEstadoAuth(usuariosIniciales.map((u) => ({ ...u })), sesion);
 

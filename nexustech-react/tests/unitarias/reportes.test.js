@@ -8,7 +8,7 @@ import {
   resumenVentas,
   ventasPorCategoria,
   ventasPorDia,
-} from './reportes.js';
+} from '../../src/utils/reportes.js';
 
 const item = (id, categoria, precio, cantidad) => ({ id, nombre: `P${id}`, categoria, precio, cantidad });
 const ordenes = [

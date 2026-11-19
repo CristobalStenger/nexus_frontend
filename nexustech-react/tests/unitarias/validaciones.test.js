@@ -13,7 +13,7 @@ import {
   validarProducto,
   validarTarjeta,
   validarUsuario,
-} from './validaciones.js';
+} from '../../src/utils/validaciones.js';
 
 const usuarioValido = {
   run: '21456789K',

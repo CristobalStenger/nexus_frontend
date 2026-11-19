@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import CampoFormulario from './CampoFormulario.jsx';
+import CampoFormulario from '../../src/components/formularios/CampoFormulario.jsx';
 
 describe('CampoFormulario', () => {
   it('asocia la etiqueta y no muestra error si no lo hay', () => {

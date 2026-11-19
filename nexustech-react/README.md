@@ -95,7 +95,13 @@ src/
 ├── pages/
 │   ├── tienda/              Una página por ruta de la tienda
 │   └── admin/               Una página por ruta del panel
-└── test/                    setup.js y utilidades de prueba
+
+tests/                       Pruebas fuera de src/, separadas por nivel
+├── setup.js                 Limpieza antes y después de cada prueba
+├── utilidades.jsx           renderApp, renderConProviders, iniciarSesionComo...
+├── unitarias/               Reducers, servicios y utils (funciones puras)
+├── componentes/             Componentes sueltos con props controladas
+└── integracion/             La aplicación completa: navegación, compra, formularios y panel
 ```
 
 ### Flujo de datos

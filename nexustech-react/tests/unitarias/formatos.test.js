@@ -11,7 +11,7 @@ import {
   precioCLP,
   precioFinal,
   textoPrecio,
-} from './formatos.js';
+} from '../../src/utils/formatos.js';
 
 describe('formatos de precio', () => {
   it('formatea pesos chilenos sin decimales', () => {

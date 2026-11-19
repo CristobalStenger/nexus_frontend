@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CLAVES } from '../../services/storage.js';
-import { guardarCarrito, iniciarSesionComo, leer, renderApp } from '../../test/utilidades.jsx';
+import { CLAVES } from '../../src/services/storage.js';
+import { guardarCarrito, iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
 
 async function completarCheckout(user, tarjeta = '4242 4242 4242 4242') {
   await user.type(screen.getByLabelText('Nombre'), 'Pedro');

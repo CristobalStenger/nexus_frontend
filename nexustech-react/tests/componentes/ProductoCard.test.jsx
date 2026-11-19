@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
-import ProductoCard from './ProductoCard.jsx';
-import PrecioProducto from './PrecioProducto.jsx';
+import ProductoCard from '../../src/components/producto/ProductoCard.jsx';
+import PrecioProducto from '../../src/components/producto/PrecioProducto.jsx';
 
 const producto = {
   id: 7,

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { productosIniciales } from '../data/productosIniciales.js';
-import { usuariosIniciales } from '../data/usuariosIniciales.js';
-import { CLAVES, guardarJSON, leerJSON } from './storage.js';
+import { productosIniciales } from '../../src/data/productosIniciales.js';
+import { usuariosIniciales } from '../../src/data/usuariosIniciales.js';
+import { CLAVES, guardarJSON, leerJSON } from '../../src/services/storage.js';
 import {
   cargarSesion,
   cargarTienda,
@@ -10,7 +10,7 @@ import {
   guardarAutenticacion,
   guardarMensaje,
   guardarTienda,
-} from './persistencia.js';
+} from '../../src/services/persistencia.js';
 
 describe('almacenamiento seguro', () => {
   it('lee la alternativa si la clave no existe o el JSON está corrupto', () => {

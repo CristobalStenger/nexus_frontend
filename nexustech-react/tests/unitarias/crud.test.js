@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { actualizar, crear, eliminar, obtener, siguienteId } from './crud.js';
+import { actualizar, crear, eliminar, obtener, siguienteId } from '../../src/services/crud.js';
 
 const lista = [
   { id: 1, nombre: 'A' },

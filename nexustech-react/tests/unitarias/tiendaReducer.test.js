@@ -6,7 +6,7 @@ import {
   resumenCarrito,
   siguienteNumeroOrden,
   tiendaReducer,
-} from './tiendaReducer.js';
+} from '../../src/store/tiendaReducer.js';
 
 const mouse = {
   id: 1,

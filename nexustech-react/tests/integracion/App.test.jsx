@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CLAVES } from './services/storage.js';
-import { productosIniciales } from './data/productosIniciales.js';
-import { iniciarSesionComo, leer, renderApp } from './test/utilidades.jsx';
+import { CLAVES } from '../../src/services/storage.js';
+import { productosIniciales } from '../../src/data/productosIniciales.js';
+import { iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
 
 const navegacion = () => screen.getByRole('navigation', { name: 'Navegación principal' });
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CLAVES } from '../../services/storage.js';
-import { leer, renderApp } from '../../test/utilidades.jsx';
+import { CLAVES } from '../../src/services/storage.js';
+import { leer, renderApp } from '../utilidades.jsx';
 
 describe('Login (estado del formulario)', () => {
   it('el estado del formulario cambia cuando el usuario escribe', async () => {
