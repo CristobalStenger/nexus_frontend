@@ -6,11 +6,11 @@
 // ============================================================
 
 import { COSTO_DESPACHO, NUMERO_ORDEN_INICIAL, SUFIJO_TARJETA_RECHAZADA } from '../data/configuracion.js';
-import { CUPONES } from '../data/cupones.js';
 import { actualizar, crear, eliminar, obtener, siguienteId } from '../services/crud.js';
 import { conAviso } from './aviso.js';
 import { crearSlug, enmascararTarjeta, precioFinal } from '../utils/formatos.js';
 import {
+  buscarCupon,
   convertirProducto,
   sinErrores,
   validarCategoria,
@@ -97,10 +97,9 @@ function cambiarCantidad(estado, { id, cantidad }) {
 }
 
 function aplicarCupon(estado, { codigo }) {
-  const cupon = CUPONES.find((c) => c.codigo === String(codigo).toUpperCase());
-  if (!cupon || !estado.carrito.length)
-    return conAviso(estado, 'No se pudo aplicar el cupón.', 'danger');
-  return conAviso({ ...estado, cupon: { ...cupon } }, `Cupón ${cupon.codigo} aplicado.`);
+  const { cupon, error } = buscarCupon(codigo, estado.carrito);
+  if (error) return conAviso(estado, error, 'danger');
+  return conAviso({ ...estado, cupon }, `Cupón ${cupon.codigo} aplicado.`);
 }
 
 function pagar(estado, accion) {

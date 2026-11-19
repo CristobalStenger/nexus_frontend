@@ -10,6 +10,9 @@ export function useFormulario(inicial, validar) {
   const [intentado, setIntentado] = useState(false);
   const errores = validar(valores);
   const mostrar = (campo) => Boolean(tocados[campo] || intentado);
+  const error = (campo) => (mostrar(campo) ? errores[campo] : undefined);
+  // Un campo vacío nunca se marca en verde: los opcionales no tienen error, pero tampoco dato
+  const valido = (campo) => mostrar(campo) && !errores[campo] && valores[campo] !== '';
 
   function actualizar(cambios) {
     setValores((actual) => ({ ...actual, ...cambios }));
@@ -42,8 +45,16 @@ export function useFormulario(inicial, validar) {
   return {
     valores,
     errores,
-    error: (campo) => (mostrar(campo) ? errores[campo] : undefined),
-    valido: (campo) => mostrar(campo) && !errores[campo],
+    error,
+    valido,
+    // Props de estado para <CampoFormulario {...form.campo('correo')} />
+    campo: (nombre) => ({
+      name: nombre,
+      value: valores[nombre],
+      onChange: cambiar,
+      error: error(nombre),
+      valido: valido(nombre),
+    }),
     cambiar,
     actualizar,
     enviar,

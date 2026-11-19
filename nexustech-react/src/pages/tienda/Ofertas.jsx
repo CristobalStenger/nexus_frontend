@@ -17,7 +17,7 @@ export default function Ofertas() {
       </EncabezadoPagina>
       <ProductoGrid
         productos={ofertas}
-        alAgregar={(id) => dispatch({ type: 'AGREGAR', id })}
+        onAgregar={(id) => dispatch({ type: 'AGREGAR', id })}
         mensajeVacio="Por ahora no hay productos en oferta."
       />
     </>

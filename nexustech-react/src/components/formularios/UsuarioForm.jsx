@@ -45,15 +45,7 @@ export default function UsuarioForm({
     validarUsuario(v, usuarios, runOriginal, opciones),
   );
   const { valores, cambiar } = form;
-  const campo = (nombre) => ({
-    id: `usuario-${nombre}`,
-    name: nombre,
-    value: valores[nombre],
-    onChange: cambiar,
-    error: form.error(nombre),
-    valido: form.valido(nombre),
-    className: '',
-  });
+  const campo = (nombre) => ({ ...form.campo(nombre), id: `usuario-${nombre}`, className: '' });
 
   return (
     <Form noValidate onSubmit={form.enviar(onGuardar)}>

@@ -117,8 +117,8 @@ export default function UsuariosAdmin() {
         abierto={eliminando !== null}
         titulo="Eliminar usuario"
         textoConfirmar="Eliminar"
-        confirmar={confirmarEliminar}
-        cancelar={() => setEliminando(null)}
+        onConfirmar={confirmarEliminar}
+        onCancelar={() => setEliminando(null)}
       >
         ¿Seguro que quieres eliminar a "{eliminando && nombreCompleto(eliminando)}"?
       </ConfirmarModal>

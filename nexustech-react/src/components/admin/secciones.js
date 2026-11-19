@@ -10,5 +10,11 @@ const SECCIONES = [
   { ruta: '/admin/reportes', texto: 'Reportes', icono: 'bi-bar-chart-line', soloAdmin: true, descripcion: 'Informes de ventas y operaciones de la tienda.' },
 ];
 
+// Accesos de la cuenta: en el menú van separados de las secciones
+export const ENLACES_CUENTA = [
+  { ruta: '/admin/perfil', texto: 'Perfil', icono: 'bi-person-circle', descripcion: 'Tu información personal y datos de la cuenta.' },
+  { ruta: '/', texto: 'Tienda', icono: 'bi-shop', descripcion: 'Visualiza la tienda tal como la ven los clientes.' },
+];
+
 export const seccionesVisibles = (sesion) =>
   SECCIONES.filter((s) => !s.soloAdmin || esAdministrador(sesion));

@@ -85,8 +85,8 @@ export default function CategoriasAdmin() {
         abierto={eliminando !== null}
         titulo="Eliminar categoría"
         textoConfirmar="Eliminar"
-        confirmar={confirmarEliminar}
-        cancelar={() => setEliminando(null)}
+        onConfirmar={confirmarEliminar}
+        onCancelar={() => setEliminando(null)}
       >
         {eliminando && cantidadDe(eliminando) > 0
           ? `"${eliminando.nombre}" tiene ${cantidadDe(eliminando)} producto(s). Muévelos a otra categoría antes de eliminarla.`

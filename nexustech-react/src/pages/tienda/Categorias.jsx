@@ -45,7 +45,7 @@ export default function Categorias() {
       )}
 
       {seleccionada && (
-        <ProductosDeCategoria key={seleccionada.id} categoria={seleccionada} productos={estado.productos} alAgregar={agregar} />
+        <ProductosDeCategoria key={seleccionada.id} categoria={seleccionada} productos={estado.productos} onAgregar={agregar} />
       )}
 
       {!slug &&
@@ -59,7 +59,7 @@ export default function Categorias() {
             </div>
             <ProductoGrid
               productos={estado.productos.filter((p) => p.categoria === c.nombre).slice(0, 4)}
-              alAgregar={agregar}
+              onAgregar={agregar}
               mensajeVacio="Esta categoría aún no tiene productos."
             />
           </section>
@@ -68,7 +68,7 @@ export default function Categorias() {
   );
 }
 
-function ProductosDeCategoria({ categoria, productos, alAgregar }) {
+function ProductosDeCategoria({ categoria, productos, onAgregar }) {
   const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const visibles = filtrarProductos(productos, { ...filtros, categoria: categoria.nombre });
 
@@ -83,7 +83,7 @@ function ProductosDeCategoria({ categoria, productos, alAgregar }) {
         mostrarCategoria={false}
         resultados={visibles.length}
       />
-      <ProductoGrid productos={visibles} alAgregar={alAgregar} />
+      <ProductoGrid productos={visibles} onAgregar={onAgregar} />
     </section>
   );
 }

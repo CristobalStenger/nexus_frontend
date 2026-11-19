@@ -5,7 +5,7 @@ import ConfirmarModal from '../../src/components/comunes/ConfirmarModal.jsx';
 
 describe('ConfirmarModal (renderizado condicional y eventos)', () => {
   it('no muestra nada mientras está cerrado', () => {
-    render(<ConfirmarModal abierto={false} titulo="Eliminar" confirmar={vi.fn()} cancelar={vi.fn()} />);
+    render(<ConfirmarModal abierto={false} titulo="Eliminar" onConfirmar={vi.fn()} onCancelar={vi.fn()} />);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -13,7 +13,7 @@ describe('ConfirmarModal (renderizado condicional y eventos)', () => {
     const confirmar = vi.fn();
     const cancelar = vi.fn();
     render(
-      <ConfirmarModal abierto titulo="Eliminar producto" textoConfirmar="Eliminar" confirmar={confirmar} cancelar={cancelar}>
+      <ConfirmarModal abierto titulo="Eliminar producto" textoConfirmar="Eliminar" onConfirmar={confirmar} onCancelar={cancelar}>
         ¿Seguro?
       </ConfirmarModal>,
     );

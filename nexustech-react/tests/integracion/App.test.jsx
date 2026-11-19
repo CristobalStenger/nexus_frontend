@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { screen, within } from '@testing-library/react';
+import { cleanup, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CLAVES } from '../../src/services/storage.js';
 import { productosIniciales } from '../../src/data/productosIniciales.js';
@@ -46,8 +46,12 @@ describe('navegación de la tienda', () => {
     renderApp('/blogs');
     await user.click(screen.getByRole('link', { name: 'Leer más: Cómo elegir tu primera tarjeta de video' }));
     expect(await screen.findByRole('heading', { name: 'Cómo elegir tu primera tarjeta de video' })).toBeInTheDocument();
+    cleanup();
     renderApp('/blogs/99');
     expect(screen.getByText('El artículo no existe.')).toBeInTheDocument();
+    cleanup();
+    renderApp('/nosotros');
+    expect(screen.getByRole('heading', { name: 'El equipo de desarrollo' })).toBeInTheDocument();
   });
 });
 
@@ -76,6 +80,7 @@ describe('catálogo, categorías y ofertas', () => {
     await user.click(screen.getByRole('link', { name: /Consolas PlayStation/ }));
     expect(await screen.findByText('6 producto(s) encontrado(s)')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Consolas PlayStation/ })).toHaveAttribute('aria-current', 'page');
+    cleanup();
     renderApp('/categorias/inventada');
     expect(screen.getByText('La categoría no existe.')).toBeInTheDocument();
   });

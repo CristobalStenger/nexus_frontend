@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CLAVES } from '../../src/services/storage.js';
 import { guardarCarrito, iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
@@ -90,6 +90,21 @@ describe('carrito', () => {
 });
 
 describe('checkout y pago simulado', () => {
+  it('el cupón guardado sigue aplicado al recargar y se descuenta en la orden', async () => {
+    guardarCarrito([{ id: 1, cantidad: 1 }]);
+    localStorage.setItem(CLAVES.cupon, JSON.stringify({ codigo: 'FELIZ18', descuento: 10 }));
+    const user = userEvent.setup();
+    renderApp('/carrito');
+    expect(screen.getByText('Cupón FELIZ18 aplicado: 10% de descuento.')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Comprar ahora/ }));
+    await completarCheckout(user);
+    // 249.990 - 10% (24.999) + despacho 3.990
+    await user.click(screen.getByRole('button', { name: 'Pagar ahora $228.981' }));
+    expect(await screen.findByRole('heading', { name: /Se ha realizado la compra/ })).toBeInTheDocument();
+    expect(leer(CLAVES.ordenes).at(-1)).toMatchObject({ descuento: 24999, total: 228981, cupon: { codigo: 'FELIZ18' } });
+    expect(leer(CLAVES.cupon)).toBeNull();
+  });
+
   it('sin productos no muestra el formulario de pago', () => {
     renderApp('/checkout');
     expect(screen.getByText('No hay productos para pagar.')).toBeInTheDocument();
@@ -179,8 +194,10 @@ describe('checkout y pago simulado', () => {
   it('redirige entre las vistas de resultado según el estado de la orden', () => {
     renderApp('/compra/exitosa/1003');
     expect(screen.getByRole('heading', { name: /No se pudo realizar el pago\. nro #1003/ })).toBeInTheDocument();
+    cleanup();
     renderApp('/compra/error/1001');
     expect(screen.getByRole('heading', { name: /Se ha realizado la compra\. nro #1001/ })).toBeInTheDocument();
+    cleanup();
     renderApp('/compra/exitosa/9999');
     expect(screen.getByText('No encontramos esa orden.')).toBeInTheDocument();
   });

@@ -1,8 +1,6 @@
 import { render } from '@testing-library/react';
 import { MemoryRouter, parsePath } from 'react-router';
 import App from '../src/App.jsx';
-import { AuthProvider } from '../src/context/AuthProvider.jsx';
-import { TiendaProvider } from '../src/context/TiendaProvider.jsx';
 import { usuariosIniciales } from '../src/data/usuariosIniciales.js';
 import { CLAVES } from '../src/services/storage.js';
 import { crearSesion } from '../src/services/persistencia.js';
@@ -12,17 +10,6 @@ export function renderApp(ruta = '/', state) {
   return render(
     <MemoryRouter initialEntries={[{ ...parsePath(ruta), state }]}>
       <App />
-    </MemoryRouter>,
-  );
-}
-
-// Un componente suelto con los providers y el router que necesita
-export function renderConProviders(ui, ruta = '/') {
-  return render(
-    <MemoryRouter initialEntries={[ruta]}>
-      <AuthProvider>
-        <TiendaProvider>{ui}</TiendaProvider>
-      </AuthProvider>
     </MemoryRouter>,
   );
 }

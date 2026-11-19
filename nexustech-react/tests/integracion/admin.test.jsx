@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { screen, waitFor, within } from '@testing-library/react';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CLAVES } from '../../src/services/storage.js';
 import { guardarCarrito, iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
@@ -39,6 +39,7 @@ describe('dashboard, órdenes y reportes', () => {
     renderApp('/admin/reportes');
     expect(screen.getByRole('heading', { name: 'Ventas por categoría' })).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
+    cleanup();
     renderApp('/admin/productos/reportes');
     expect(screen.getByRole('heading', { name: 'Productos más vendidos' })).toBeInTheDocument();
   });
@@ -191,7 +192,7 @@ describe('CRUD de usuarios y perfil', () => {
     iniciarSesionComo('Administrador');
     renderApp('/admin/usuarios/21456789K/compras');
     expect(screen.getByRole('heading', { name: 'Historial de compras de Pedro Soto Fuentes' })).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: /Ver boleta/ }).map((l) => l.textContent)).toHaveLength(3);
+    expect(screen.getAllByRole('link', { name: /Ver boleta/ })).toHaveLength(3);
   });
 
   it('el perfil actualiza los datos de la sesión', async () => {

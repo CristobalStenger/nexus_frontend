@@ -15,12 +15,6 @@
     --nexus-borde: rgba(255, 255, 255, 0.75);
 }
 
-/* Las clases d-flex de Bootstrap usan !important y le ganan al atributo
-   hidden, asi que lo reforzamos para poder esconder filas con JavaScript */
-[hidden] {
-    display: none !important;
-}
-
 body {
     background-color: var(--nexus-celeste-claro);
     background-image: linear-gradient(160deg, #f2f9ff 0%, #d8ecfd 45%, #b7dcf8 100%);
@@ -102,11 +96,18 @@ body {
 }
 
 /* --- CAJAS DE VIDRIO (translucidez) --- */
-.caja-vidrio {
+.caja-vidrio,
+.card-producto,
+.card-categoria,
+.barra-filtros,
+.tabla-carrito {
     background-color: var(--nexus-vidrio);
     backdrop-filter: blur(10px);
     border: 1px solid var(--nexus-borde);
     border-radius: 18px;
+}
+
+.caja-vidrio {
     box-shadow: 0 8px 24px rgba(27, 111, 212, 0.15);
 }
 
@@ -118,11 +119,8 @@ body {
 }
 
 /* --- TARJETAS DE PRODUCTO --- */
-.card-producto {
-    background-color: var(--nexus-vidrio);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--nexus-borde);
-    border-radius: 18px;
+.card-producto,
+.card-categoria {
     box-shadow: 0 8px 24px rgba(27, 111, 212, 0.12);
     transition: 0.2s;
 }
@@ -145,7 +143,9 @@ body {
     overflow: hidden;
 }
 
-.caja-imagen img {
+.caja-imagen img,
+.caja-imagen-grande img,
+.mini-imagen img {
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
@@ -197,7 +197,7 @@ body {
     position: relative;
 }
 
-.portada-nexus h1,
+.portada-nexus h2,
 .portada-nexus p,
 .portada-nexus .bi {
     color: #ffffff;
@@ -220,12 +220,6 @@ body {
 }
 
 .card-categoria {
-    background-color: var(--nexus-vidrio);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--nexus-borde);
-    border-radius: 18px;
-    box-shadow: 0 8px 24px rgba(27, 111, 212, 0.12);
-    transition: 0.2s;
     text-align: center;
     padding: 30px 15px;
     height: 100%;
@@ -254,9 +248,6 @@ body {
 
 /* --- FILTROS --- */
 .barra-filtros {
-    background-color: var(--nexus-vidrio);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--nexus-borde);
     border-radius: 16px;
     padding: 18px;
     margin-bottom: 25px;
@@ -276,14 +267,11 @@ body {
 
 /* --- TABLA DEL CARRITO --- */
 .tabla-carrito {
-    background-color: var(--nexus-vidrio);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--nexus-borde);
-    border-radius: 18px;
     padding: 18px;
 }
 
-.tabla-carrito .table {
+.tabla-carrito .table,
+.tabla-admin {
     --bs-table-bg: transparent;
     color: var(--nexus-texto);
 }
@@ -299,12 +287,6 @@ body {
     justify-content: center;
     overflow: hidden;
     flex-shrink: 0;
-}
-
-.mini-imagen img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
 }
 
 /* --- LOGIN Y REGISTRO --- */
@@ -345,12 +327,6 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-}
-
-.caja-imagen-grande img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
 }
 
 .enlace-producto {
@@ -508,7 +484,6 @@ main:focus {
     border: 2px solid var(--nexus-azul);
 }
 
-a:hover > .card-categoria,
 a:focus-visible > .card-categoria {
     transform: translateY(-6px);
 }
@@ -606,11 +581,6 @@ a:focus-visible > .card-categoria {
     object-fit: contain;
     background-color: var(--nexus-blanco);
     border-radius: 8px;
-}
-
-.tabla-admin {
-    --bs-table-bg: transparent;
-    color: var(--nexus-texto);
 }
 
 .fila-critica td {

@@ -5,7 +5,7 @@ import Alert from 'react-bootstrap/Alert';
 import EncabezadoAdmin from '../../components/admin/EncabezadoAdmin.jsx';
 import TarjetaMetrica from '../../components/admin/TarjetaMetrica.jsx';
 import TablaOrdenes from '../../components/admin/TablaOrdenes.jsx';
-import { seccionesVisibles } from '../../components/admin/secciones.js';
+import { ENLACES_CUENTA, seccionesVisibles } from '../../components/admin/secciones.js';
 import { precioCLP } from '../../utils/formatos.js';
 import { productosCriticos, resumenVentas } from '../../utils/reportes.js';
 import { useTienda } from '../../hooks/useTienda.js';
@@ -22,11 +22,7 @@ export default function Dashboard() {
   const clientes = usuarios.filter((u) => u.tipo === 'Cliente').length;
   const recientes = [...estado.ordenes].sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 5);
 
-  const modulos = [
-    ...seccionesVisibles(sesion),
-    { ruta: '/admin/perfil', texto: 'Perfil', icono: 'bi-person-circle', descripcion: 'Tu información personal y datos de la cuenta.' },
-    { ruta: '/', texto: 'Tienda', icono: 'bi-shop', descripcion: 'Visualiza la tienda tal como la ven los clientes.' },
-  ];
+  const modulos = [...seccionesVisibles(sesion), ...ENLACES_CUENTA];
 
   return (
     <>

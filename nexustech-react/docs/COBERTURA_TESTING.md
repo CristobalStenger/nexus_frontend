@@ -20,7 +20,7 @@ Configuración: `vite.config.js` (`test.environment = 'jsdom'`, `setupFiles`) y
 entre pruebas para que ninguna dependa de otra.
 
 ```bash
-npm run test:run        # 159 pruebas en 17 archivos
+npm run test:run        # 160 pruebas en 17 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -32,7 +32,7 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | Renderizado condicional    | Un mensaje de error solo se muestra cuando hay error          | `CampoFormulario.test.jsx` › "muestra el mensaje de error solo cuando recibe uno"; `formularios.test.jsx` › "el mensaje de credenciales incorrectas aparece solo si hay error"; `ConfirmarModal.test.jsx` › cerrado/abierto; `PrecioProducto` con y sin oferta |
 | Propiedades (props)        | Un botón recibe la etiqueta y la función `onClick`            | `ProductoCard.test.jsx` › "muestra los datos recibidos por props" y "llama a la función onClick recibida con el id del producto"                            |
 | Estado (state)             | El estado de un formulario cambia cuando el usuario escribe   | `formularios.test.jsx` › "el estado del formulario cambia cuando el usuario escribe"; contador de caracteres de Contacto; cantidad en el detalle de producto |
-| Eventos                    | Un clic cambia el estado o ejecuta una función                | `ProductoCard.test.jsx` (clic → `alAgregar`); `FiltrosCatalogo.test.jsx` (cambios → `onCambio`); `compra.test.jsx` (botones + / − / eliminar del carrito)     |
+| Eventos                    | Un clic cambia el estado o ejecuta una función                | `ProductoCard.test.jsx` (clic → `onAgregar`); `FiltrosCatalogo.test.jsx` (cambios → `onCambio`); `compra.test.jsx` (botones + / − / eliminar del carrito)     |
 
 ## 3. Inventario de pruebas
 
@@ -52,10 +52,10 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `tests/componentes/ConfirmarModal.test.jsx`  |       2 | Modal abierto/cerrado y funciones confirmar/cancelar                                                                 |
 | `tests/componentes/CampoFormulario.test.jsx` |       3 | Etiqueta asociada, error con `aria-describedby`, variante select                                                     |
 | `tests/integracion/formularios.test.jsx`     |       7 | Login, registro completo y Contacto con validación en vivo                                                           |
-| `tests/integracion/compra.test.jsx`          |      12 | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente           |
+| `tests/integracion/compra.test.jsx`          |      13 | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente           |
 | `tests/integracion/admin.test.jsx`           |      14 | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión    |
 | `tests/integracion/App.test.jsx`             |      15 | Navegación con NavLink, 404, buscador, categorías, ofertas, detalle, rutas protegidas por rol, sesión restaurada     |
-| **Total**                                    | **159** |                                                                                                                      |
+| **Total**                                    | **160** |                                                                                                                      |
 
 ## 4. Resultado de cobertura
 
@@ -63,13 +63,13 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,64 %   | 1093 / 1131  |
-| Ramas         | 92,26 %   | 787 / 853    |
-| Funciones     | 94,61 %   | 404 / 427    |
-| Líneas        | 96,97 %   | 962 / 992    |
+| Sentencias    | 96,64 %   | 1095 / 1133  |
+| Ramas         | 92,27 %   | 788 / 854    |
+| Funciones     | 94,62 %   | 405 / 428    |
+| Líneas        | 96,97 %   | 961 / 991    |
 
 Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 89–100 % (`comunes` es la más baja),
-`pages/tienda` 96,4 %, `pages/admin` 90,2 %, `context` 93,9 %.
+`pages/tienda` 96,3 %, `pages/admin` 90,2 %, `context` 93,9 %.
 
 ## 5. Análisis
 

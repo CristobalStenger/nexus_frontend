@@ -3,7 +3,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { textoPrecio } from '../../utils/formatos.js';
 
 // Una fila del carrito con controles de cantidad y eliminar
-export default function FilaCarrito({ item, alCambiar, alQuitar }) {
+export default function FilaCarrito({ item, onCambiar, onQuitar }) {
   const excede = item.cantidad > item.stock;
 
   return (
@@ -28,18 +28,18 @@ export default function FilaCarrito({ item, alCambiar, alQuitar }) {
           <Button
             variant="nexus-claro"
             aria-label={`Quitar una unidad de ${item.nombre}`}
-            onClick={() => alCambiar(Math.min(item.stock, item.cantidad - 1))}
+            onClick={() => onCambiar(Math.min(item.stock, item.cantidad - 1))}
           >
             -
           </Button>
-          <span className="btn btn-light disabled px-3 fw-bold" aria-label={`Cantidad de ${item.nombre}`}>
+          <output className="btn btn-light disabled px-3 fw-bold" aria-label={`Cantidad de ${item.nombre}`}>
             {item.cantidad}
-          </span>
+          </output>
           <Button
             variant="nexus-claro"
             aria-label={`Agregar una unidad de ${item.nombre}`}
             disabled={item.cantidad >= item.stock}
-            onClick={() => alCambiar(item.cantidad + 1)}
+            onClick={() => onCambiar(item.cantidad + 1)}
           >
             +
           </Button>
@@ -47,7 +47,7 @@ export default function FilaCarrito({ item, alCambiar, alQuitar }) {
       </td>
       <td className="fw-bold">{textoPrecio(item.precioUnitario * item.cantidad)}</td>
       <td className="text-center">
-        <Button size="sm" variant="outline-danger" aria-label={`Eliminar ${item.nombre}`} onClick={alQuitar}>
+        <Button size="sm" variant="outline-danger" aria-label={`Eliminar ${item.nombre}`} onClick={onQuitar}>
           <i className="bi bi-trash" aria-hidden="true"></i>
         </Button>
       </td>
