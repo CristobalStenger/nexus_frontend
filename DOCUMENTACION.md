@@ -76,7 +76,7 @@ el proyecto de ejemplo de la guía del curso.
 | Medida                        | Entrega 1 (HTML/JS)                 | Entrega 2 (React)                                  |
 | ----------------------------- | ----------------------------------- | -------------------------------------------------- |
 | Páginas o vistas              | 21 archivos HTML                    | 35 páginas (16 de tienda + 19 de administración)    |
-| Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 102 módulos JS/JSX (≈6.540 líneas, incluye datos)  |
+| Archivos de lógica            | 7 archivos JS (≈2.270 líneas)       | 102 módulos JS/JSX (≈6.550 líneas, incluye datos)  |
 | Componentes reutilizables     | 0 (cabecera y pie copiados 21 veces) | 37 componentes + 5 hooks propios                   |
 | Pruebas automatizadas         | 0                                   | 163 (≈1.800 líneas)                                |
 
@@ -554,14 +554,14 @@ valor por defecto), si tiene **estado propio** y dónde se **usa**.
 | `TablaItemsCompra`  | Tabla de solo lectura con los productos de una compra                                 | `items`                                                                    | No            | Checkout, `ResultadoCompra`            |
 | `ResumenCompra`     | Subtotal, descuento del cupón, envío y total                                          | `subtotal`, `descuento = 0`, `envio`, `total`, `cupon`, `textoTotal = 'TOTAL'` | No        | Carrito, Checkout, `ResultadoCompra`   |
 | `DatosOrden`        | Datos del cliente y de la entrega de una orden, en campos de solo lectura             | `orden`                                                                    | No            | `ResultadoCompra`                      |
-| `ResultadoCompra`   | Estructura común de "compra exitosa", "pago con error" y boleta del panel             | `orden`, `icono`, `claseIcono`, `titulo`, `subtitulo`, `acciones`, `children` | No         | CompraExitosa, CompraError, DetalleOrden |
+| `ResultadoCompra`   | Estructura común de "compra exitosa", "pago con error" y boleta del panel             | `orden`, `icono`, `claseIcono`, `titulo`, `etiquetaTitulo = 'h1'` (`h2` en la boleta del panel, que ya tiene su h1), `subtitulo`, `acciones`, `children` | No         | CompraExitosa, CompraError, DetalleOrden |
 
 **`components/formularios/`: formularios**
 
 | Componente             | Responsabilidad                                                                                 | Props                                                                                         | Estado propio                                  | Se usa en                                 |
 | ---------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------- | ----------------------------------------- |
 | `CampoFormulario`      | Campo con etiqueta, ayuda, borde de error o éxito y mensaje enlazado con `aria-describedby`     | `id`, `etiqueta`, `ayuda`, `error`, `valido`, `as` (`input`, `textarea` o `select`), `className`, y el resto pasa al input | No | Todos los formularios        |
-| `SelectorRegionComuna` | Dos listas dependientes: al cambiar la región se reinicia la comuna                             | `prefijo`, `region`, `comuna`, `errores`, `onCambio`, `disabled`                              | No                                             | `UsuarioForm`, Checkout                   |
+| `SelectorRegionComuna` | Dos listas dependientes: al cambiar la región se reinicia la comuna                             | `prefijo`, `region`, `comuna`, `errores`, `validos` (marca en verde), `onCambio`, `disabled`   | No                                             | `UsuarioForm`, Checkout                   |
 | `UsuarioForm`          | Formulario de usuario con tres modos: `registro`, `admin` y `perfil`                            | `inicial`, `usuarios`, `runOriginal`, `modo = 'admin'`, `textoBoton`, `onGuardar`, `onCancelar` | Sí, mediante `useFormulario`                | Registro, Nuevo y Editar usuario, Perfil  |
 | `ProductoForm`         | Crear (producto `null`) o editar un producto, con vista previa del precio                       | `producto = null`, `productos`, `categorias`, `onGuardar`, `onCancelar`                       | Sí, mediante `useFormulario`                   | Nuevo y Editar producto                   |
 | `CategoriaForm`        | Crear o editar una categoría; muestra la dirección (slug) que se generará                       | `categoria = null`, `categorias`, `onGuardar`, `onCancelar`                                   | Sí, mediante `useFormulario`                   | Nueva y Editar categoría                  |
@@ -1153,10 +1153,10 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,76 %** | 1107 / 1144 |
+| Sentencias | **96,76 %** | 1108 / 1145 |
 | Ramas      | **92,05 %** | 811 / 881   |
 | Funciones  | **94,88 %** | 408 / 430   |
-| Líneas     | **97,10 %** | 971 / 1000  |
+| Líneas     | **97,10 %** | 972 / 1001  |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |

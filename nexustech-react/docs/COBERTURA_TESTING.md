@@ -64,10 +64,10 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,76 %   | 1107 / 1144  |
+| Sentencias    | 96,76 %   | 1108 / 1145  |
 | Ramas         | 92,05 %   | 811 / 881    |
 | Funciones     | 94,88 %   | 408 / 430    |
-| Líneas        | 97,10 %   | 971 / 1000   |
+| Líneas        | 97,10 %   | 972 / 1001   |
 
 Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 89–100 % (`comunes` es la más baja),
 `pages/tienda` 96,9 %, `pages/admin` 90,3 %, `context` 93,9 %.
