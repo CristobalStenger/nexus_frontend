@@ -39,9 +39,11 @@ describe('dashboard, órdenes y reportes', () => {
     renderApp('/admin/reportes');
     expect(screen.getByRole('heading', { name: 'Ventas por categoría' })).toBeInTheDocument();
     expect(screen.getByText('80%')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: /Notebooks/ })).toBeInTheDocument();
     cleanup();
     renderApp('/admin/productos/reportes');
     expect(screen.getByRole('heading', { name: 'Productos más vendidos' })).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: /Componentes/ })).toBeInTheDocument();
   });
 
   it('lista los productos críticos', () => {
