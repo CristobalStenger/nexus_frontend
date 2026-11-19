@@ -37,7 +37,7 @@ export default function EditarUsuario() {
           usuarios={usuarios}
           runOriginal={usuario.run}
           onGuardar={guardar}
-          onCancelar={() => navigate(-1)}
+          onCancelar={() => navigate(`/admin/usuarios/${usuario.run}`)}
         />
       </section>
     </>

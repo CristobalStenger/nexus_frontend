@@ -119,6 +119,18 @@ describe('CRUD de productos', () => {
     await user.type(screen.getByLabelText('Buscar producto'), 'zzz');
     expect(screen.getByText('No hay productos que coincidan.')).toBeInTheDocument();
   });
+
+  it('Cancelar en editar producto o usuario vuelve a su ficha, aunque se abra directo', async () => {
+    iniciarSesionComo('Administrador');
+    const user = userEvent.setup();
+    renderApp('/admin/productos/1/editar');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(await titulo('AMD Ryzen 5 7600X')).toBeInTheDocument();
+    cleanup();
+    renderApp('/admin/usuarios/21456789K/editar');
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(await titulo('Pedro Soto Fuentes')).toBeInTheDocument();
+  });
 });
 
 describe('CRUD de categorías', () => {

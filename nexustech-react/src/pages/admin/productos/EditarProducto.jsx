@@ -35,7 +35,7 @@ export default function EditarProducto() {
           productos={estado.productos}
           categorias={estado.categorias}
           onGuardar={guardar}
-          onCancelar={() => navigate(-1)}
+          onCancelar={() => navigate(`/admin/productos/${producto.id}`)}
         />
       </section>
     </>
