@@ -22,9 +22,12 @@ export default function ConfirmarModal({
         <Button variant="secondary" onClick={onCancelar}>
           Cancelar
         </Button>
-        <Button variant={variante} onClick={onConfirmar}>
-          {textoConfirmar}
-        </Button>
+        {/* Sin onConfirmar el modal solo informa: no hay nada que confirmar */}
+        {onConfirmar && (
+          <Button variant={variante} onClick={onConfirmar}>
+            {textoConfirmar}
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
