@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanup, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CLAVES } from '../../src/services/storage.js';
 import { productosIniciales } from '../../src/data/productosIniciales.js';
@@ -97,6 +97,9 @@ describe('catálogo, categorías y ofertas', () => {
     renderApp('/productos/7');
     expect(screen.getByRole('heading', { name: 'NVIDIA GeForce RTX 4080 Super 16GB' })).toBeInTheDocument();
     expect(screen.getByText('Últimas 2 unidades')).toBeInTheDocument();
+    // Una cantidad con decimales (por ejemplo, pegada) se trunca al entero
+    fireEvent.change(screen.getByLabelText('Cantidad'), { target: { value: '1.5' } });
+    expect(screen.getByLabelText('Cantidad')).toHaveValue(1);
     await user.click(screen.getByRole('button', { name: 'Sumar una unidad' }));
     expect(screen.getByLabelText('Cantidad')).toHaveValue(2);
     expect(screen.getByRole('button', { name: 'Sumar una unidad' })).toBeDisabled();

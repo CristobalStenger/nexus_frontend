@@ -110,7 +110,7 @@ function FichaProducto({ producto, enCarrito, onAgregar }) {
               max={Math.max(1, disponible)}
               className="text-center"
               value={cantidad}
-              onChange={(e) => cambiar(Number(e.target.value) || 1)}
+              onChange={(e) => cambiar(Math.floor(Number(e.target.value)) || 1)}
             />
             <Button variant="nexus-claro" aria-label="Sumar una unidad" onClick={() => cambiar(cantidad + 1)} disabled={cantidad >= disponible}>
               +
