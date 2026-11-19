@@ -11,7 +11,7 @@
 import { ROLES } from '../data/configuracion.js';
 import { comunasDe } from '../data/regiones.js';
 import { CUPONES } from '../data/cupones.js';
-import { normalizar } from './formatos.js';
+import { crearSlug } from './formatos.js';
 
 const CORREOS_PERMITIDOS = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
 
@@ -247,7 +247,8 @@ export function validarCategoria(datos, categorias = [], id = null) {
   const errores = {};
   if (nombre.length < 3 || nombre.length > 50)
     errores.nombre = 'El nombre debe tener entre 3 y 50 caracteres.';
-  else if (categorias.some((c) => c.id !== id && normalizar(c.nombre) === normalizar(nombre)))
+  // Se compara la dirección (slug): dos nombres que solo difieren en tildes o signos chocarían en la URL
+  else if (categorias.some((c) => c.id !== id && crearSlug(c.nombre) === crearSlug(nombre)))
     errores.nombre = 'Ya existe una categoría con ese nombre.';
   if (texto(datos.descripcion).length > 200)
     errores.descripcion = 'La descripción no puede superar los 200 caracteres.';

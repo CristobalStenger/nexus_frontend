@@ -174,6 +174,8 @@ describe('formularios de productos y categorías', () => {
     const categorias = [{ id: 1, nombre: 'Periféricos' }];
     expect(validarCategoria({ nombre: 'perifericos' }, categorias).nombre).toMatch(/Ya existe/);
     expect(validarCategoria({ nombre: 'Periféricos' }, categorias, 1)).toEqual({});
+    // Nombres distintos con la misma dirección: /categorias/audio-video
+    expect(validarCategoria({ nombre: 'Audio-Video' }, [{ id: 2, nombre: 'Audio Video' }]).nombre).toMatch(/Ya existe/);
     expect(validarCategoria({ nombre: 'TV', descripcion: 'x'.repeat(201) }, [])).toHaveProperty('descripcion');
   });
 });
