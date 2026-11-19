@@ -6,16 +6,9 @@
 // usuarios y órdenes.
 // ============================================================
 
-// Leer: todos los elementos o solo los que cumplan el filtro
-export const listar = (coleccion, filtro) =>
-  filtro ? coleccion.filter(filtro) : [...coleccion];
-
 // Leer: un elemento por su clave (id por defecto)
 export const obtener = (coleccion, valor, campo = 'id') =>
   coleccion.find((elemento) => elemento[campo] === valor) ?? null;
-
-export const existe = (coleccion, valor, campo = 'id') =>
-  coleccion.some((elemento) => elemento[campo] === valor);
 
 // Id correlativo: el mayor existente + 1
 export const siguienteId = (coleccion, campo = 'id', inicial = 1) =>

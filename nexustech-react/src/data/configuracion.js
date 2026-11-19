@@ -25,3 +25,6 @@ export const NUMERO_ORDEN_INICIAL = 1000;
 export const SUFIJO_TARJETA_RECHAZADA = '0000';
 
 export const LIMITE_DESTACADOS = 8;
+
+// Administrador: todo. Vendedor: panel en solo lectura. Cliente: solo la tienda.
+export const ROLES = ['Administrador', 'Vendedor', 'Cliente'];

@@ -2,7 +2,7 @@ import { Outlet } from 'react-router';
 import Header from './Header.jsx';
 import Footer from './Footer.jsx';
 import AvisosGlobales from '../comunes/AvisosGlobales.jsx';
-import { useCambioDeRuta } from './useCambioDeRuta.js';
+import { useCambioDeRuta } from '../../hooks/useCambioDeRuta.js';
 
 // Estructura común de la tienda. Outlet muestra la página de la ruta.
 export default function Layout() {

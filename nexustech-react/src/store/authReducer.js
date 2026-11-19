@@ -6,6 +6,7 @@
 // ============================================================
 
 import { actualizar, crear, eliminar, obtener } from '../services/crud.js';
+import { conAviso } from './aviso.js';
 import { crearSesion } from '../services/persistencia.js';
 import { convertirUsuario, sinErrores, validarUsuario } from '../utils/validaciones.js';
 
@@ -21,10 +22,6 @@ export function crearEstadoAuth(usuarios = [], sesion = null) {
 export function buscarCredenciales(usuarios, correo, clave) {
   const buscado = String(correo).trim().toLowerCase();
   return usuarios.find((u) => u.correo.toLowerCase() === buscado && u.clave === clave) ?? null;
-}
-
-function conAviso(estado, texto, tipo = 'success') {
-  return { ...estado, aviso: { texto, tipo, id: (estado.aviso?.id ?? 0) + 1 } };
 }
 
 function registrar(estado, { datos }) {

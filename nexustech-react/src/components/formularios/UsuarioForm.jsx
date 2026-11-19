@@ -4,8 +4,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import CampoFormulario from './CampoFormulario.jsx';
 import SelectorRegionComuna from './SelectorRegionComuna.jsx';
-import { ROLES } from '../../data/usuariosIniciales.js';
-import { validarUsuario } from '../../utils/validaciones.js';
+import { ROLES } from '../../data/configuracion.js';
+import { TEXTO_CORREOS, validarUsuario } from '../../utils/validaciones.js';
 import { useFormulario } from '../../hooks/useFormulario.js';
 
 const USUARIO_VACIO = {
@@ -52,6 +52,7 @@ export default function UsuarioForm({
     onChange: cambiar,
     error: form.error(nombre),
     valido: form.valido(nombre),
+    className: '',
   });
 
   return (
@@ -65,27 +66,25 @@ export default function UsuarioForm({
             maxLength={9}
             placeholder="21456789K"
             disabled={modo === 'perfil'}
-            className=""
           />
         </Col>
         <Col md={6}>
-          <CampoFormulario {...campo('fechaNacimiento')} etiqueta="Fecha de nacimiento" ayuda="opcional" type="date" className="" />
+          <CampoFormulario {...campo('fechaNacimiento')} etiqueta="Fecha de nacimiento" ayuda="opcional" type="date" />
         </Col>
         <Col md={6}>
-          <CampoFormulario {...campo('nombre')} etiqueta="Nombre" ayuda="máx. 50" maxLength={50} autoComplete="given-name" className="" />
+          <CampoFormulario {...campo('nombre')} etiqueta="Nombre" ayuda="máx. 50" maxLength={50} autoComplete="given-name" />
         </Col>
         <Col md={6}>
-          <CampoFormulario {...campo('apellidos')} etiqueta="Apellidos" ayuda="máx. 100" maxLength={100} autoComplete="family-name" className="" />
+          <CampoFormulario {...campo('apellidos')} etiqueta="Apellidos" ayuda="máx. 100" maxLength={100} autoComplete="family-name" />
         </Col>
         <Col xs={12}>
           <CampoFormulario
             {...campo('correo')}
             etiqueta="Correo electrónico"
-            ayuda="@duoc.cl, @profesor.duoc.cl o @gmail.com"
+            ayuda={TEXTO_CORREOS}
             type="email"
             maxLength={100}
             autoComplete="email"
-            className=""
           />
         </Col>
         <Col md={6}>
@@ -96,7 +95,6 @@ export default function UsuarioForm({
             type="password"
             maxLength={10}
             autoComplete="new-password"
-            className=""
           />
         </Col>
         {modo === 'registro' && (
@@ -107,13 +105,12 @@ export default function UsuarioForm({
               type="password"
               maxLength={10}
               autoComplete="new-password"
-              className=""
             />
           </Col>
         )}
         {modo === 'admin' && (
           <Col md={6}>
-            <CampoFormulario {...campo('tipo')} etiqueta="Tipo de usuario" as="select" className="">
+            <CampoFormulario {...campo('tipo')} etiqueta="Tipo de usuario" as="select">
               <option value="">Selecciona el tipo</option>
               {ROLES.map((rol) => (
                 <option key={rol} value={rol}>
@@ -140,7 +137,6 @@ export default function UsuarioForm({
             maxLength={300}
             placeholder="Calle, número, departamento"
             autoComplete="street-address"
-            className=""
           />
         </Col>
         {modo === 'registro' && (

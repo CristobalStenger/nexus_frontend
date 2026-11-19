@@ -4,7 +4,7 @@ Tienda en línea de tecnología, componentes y gaming (Desarrollo Fullstack II).
 
 | Entrega | Carpeta | Tecnologías |
 | ------- | ------- | ----------- |
-| Evaluación 1 | raíz del repositorio (`index.html`, `css/`, `js/`, `admin/`...) | HTML, CSS, Bootstrap 5 y JavaScript |
+| Evaluación 1 | [`nexustech-html/`](nexustech-html/index.html) (`index.html`, `css/`, `js/`, `admin/`...) | HTML, CSS, Bootstrap 5 y JavaScript |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/README.md) | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 
 Para ejecutar la versión React:

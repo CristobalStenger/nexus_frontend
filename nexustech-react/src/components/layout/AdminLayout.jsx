@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import AdminSidebar from '../admin/AdminSidebar.jsx';
 import AvisosGlobales from '../comunes/AvisosGlobales.jsx';
 import { useAuth } from '../../hooks/useAuth.js';
-import { useCambioDeRuta } from './useCambioDeRuta.js';
+import { useCambioDeRuta } from '../../hooks/useCambioDeRuta.js';
 
 // Estructura del panel: barra superior oscura, menú lateral y contenido
 export default function AdminLayout() {

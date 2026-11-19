@@ -2,7 +2,7 @@
 // NexusTech - Filtros y orden del catálogo (funciones puras)
 // ============================================================
 
-import { normalizar, precioFinal } from './formatos.js';
+import { enOferta, normalizar, precioFinal } from './formatos.js';
 
 export const RANGOS_PRECIO = [
   { valor: 'todos', texto: 'Todos los precios' },
@@ -73,5 +73,5 @@ export function tiposDe(productos, categoria = '') {
 
 export const productosEnOferta = (productos) =>
   productos
-    .filter((p) => (p.descuento ?? 0) > 0)
+    .filter(enOferta)
     .sort((a, b) => b.descuento - a.descuento);
