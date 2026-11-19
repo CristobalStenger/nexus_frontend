@@ -29,6 +29,7 @@ describe('dashboard, órdenes y reportes', () => {
     expect(screen.getAllByRole('link', { name: /Ver boleta/ })).toHaveLength(1);
     await user.click(screen.getByRole('link', { name: 'Ver boleta 1003' }));
     expect(await titulo('Boleta #1003')).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByText(/Motivo: La tarjeta fue rechazada/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /Imprimir/ }));
     expect(window.print).toHaveBeenCalled();

@@ -47,6 +47,7 @@ export default function DetalleOrden() {
         icono={pagada ? 'bi-check-circle' : 'bi-x-circle'}
         claseIcono={pagada ? 'exito' : 'error'}
         titulo={pagada ? 'Compra' : 'Pago rechazado'}
+        etiquetaTitulo="h2"
       >
         {!pagada && <Alert variant="danger">Motivo: {orden.motivo}</Alert>}
       </ResultadoCompra>
