@@ -24,7 +24,7 @@ reemplaza a `fetch` por un servidor en memoria que responde como el API Gateway 
 `/api/v1`, JSON, códigos HTTP y datos iniciales), así no hace falta encender los microservicios.
 
 ```bash
-npm run test:run        # 177 pruebas en 19 archivos
+npm run test:run        # 178 pruebas en 19 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -47,7 +47,7 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `tests/unitarias/catalogo.test.js`           |       8 | Filtros combinados (texto, categoría, tipo, rango, disponibilidad) y los cuatro órdenes                              |
 | `tests/unitarias/reportes.test.js`           |       6 | Resumen de ventas, ventas por categoría y por día, más vendidos, inventario valorizado, historial por usuario        |
 | `tests/unitarias/crud.test.js`               |       2 | Obtener, crear, actualizar y eliminar sin mutar el arreglo original                                                  |
-| `tests/unitarias/api.test.js`                |       9 | Llamadas REST: URL `/api/v1`, JSON, token JWT, 204, errores del backend, 401/403, sin conexión y adaptadores         |
+| `tests/unitarias/api.test.js`                |      10 | Llamadas REST: URL `/api/v1`, JSON, token JWT, 204, errores del backend, 401/403, 5xx, sin conexión y adaptadores    |
 | `tests/unitarias/persistencia.test.js`       |       9 | Carrito y cupón en el navegador, sesión con token vigente y sin contraseña, mensajes de contacto                     |
 | `tests/unitarias/tiendaReducer.test.js`      |      22 | Carrito con límite de stock, cupón, totales, catálogo y órdenes del backend, boleta pagada y rechazada, CRUD         |
 | `tests/unitarias/authReducer.test.js`        |       8 | Sesión con JWT, sesión vencida, roles, lista de usuarios y perfil propio                                             |
@@ -61,7 +61,7 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 | `tests/integracion/admin.test.jsx`           |      16 | Dashboard, órdenes, reportes, CRUD de productos, categorías y usuarios contra la API, perfil, cerrar sesión          |
 | `tests/integracion/App.test.jsx`             |      23 | Navegación, 404, catálogo, rutas por rol, vista del vendedor, token vencido o rechazado, servidor caído              |
 | `tests/integracion/foco.test.jsx`            |       1 | Al abrir la app el foco no se mueve; al navegar pasa al contenido principal                                          |
-| **Total**                                    | **177** |                                                                                                                      |
+| **Total**                                    | **178** |                                                                                                                      |
 
 ## 4. Resultado de cobertura
 
@@ -69,10 +69,10 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 96,08 %   | 1154 / 1201  |
-| Ramas         | 91,61 %   | 798 / 871    |
+| Sentencias    | 96,08 %   | 1155 / 1202  |
+| Ramas         | 91,75 %   | 801 / 873    |
 | Funciones     | 95,68 %   | 421 / 440    |
-| Líneas        | 96,96 %   | 1023 / 1055  |
+| Líneas        | 96,96 %   | 1024 / 1056  |
 
 Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,1 %, `components` 90–100 % (`comunes` es la más baja),
 `pages/tienda` 96,9 %, `pages/admin` 92,2 %, `context` 93,4 %.
