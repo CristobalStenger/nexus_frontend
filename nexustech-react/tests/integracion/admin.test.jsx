@@ -218,16 +218,16 @@ describe('CRUD de usuarios y perfil', () => {
   });
 
   it('el perfil actualiza los datos de la sesión', async () => {
-    iniciarSesionComo('Vendedor');
+    iniciarSesionComo('Administrador');
     const user = userEvent.setup();
     renderApp('/admin/perfil');
     expect(screen.getByLabelText('RUN')).toBeDisabled();
     const nombre = screen.getByLabelText('Nombre');
     await user.clear(nombre);
-    await user.type(nombre, 'Valeria');
+    await user.type(nombre, 'Administradora');
     await user.click(screen.getByRole('button', { name: 'Guardar mis datos' }));
-    expect(await screen.findByText('Valeria (Vendedor)')).toBeInTheDocument();
-    expect(leer(CLAVES.sesion).nombre).toBe('Valeria');
+    expect(await screen.findByText('Administradora (Administrador)')).toBeInTheDocument();
+    expect(leer(CLAVES.sesion).nombre).toBe('Administradora');
   });
 
   it('cerrar sesión desde el panel vuelve a la tienda', async () => {

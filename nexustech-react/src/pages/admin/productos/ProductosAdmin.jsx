@@ -36,16 +36,18 @@ export default function ProductosAdmin() {
         acciones={
           <>
             {admin && (
-              <Link to="/admin/productos/nuevo" className="btn btn-nexus">
-                <i className="bi bi-plus-square me-1" aria-hidden="true"></i>Nuevo producto
-              </Link>
+              <>
+                <Link to="/admin/productos/nuevo" className="btn btn-nexus">
+                  <i className="bi bi-plus-square me-1" aria-hidden="true"></i>Nuevo producto
+                </Link>
+                <Link to="/admin/productos/criticos" className="btn btn-nexus-claro">
+                  Productos críticos
+                </Link>
+                <Link to="/admin/productos/reportes" className="btn btn-nexus-claro">
+                  Reportes
+                </Link>
+              </>
             )}
-            <Link to="/admin/productos/criticos" className="btn btn-nexus-claro">
-              Productos críticos
-            </Link>
-            <Link to="/admin/productos/reportes" className="btn btn-nexus-claro">
-              Reportes
-            </Link>
           </>
         }
       >
