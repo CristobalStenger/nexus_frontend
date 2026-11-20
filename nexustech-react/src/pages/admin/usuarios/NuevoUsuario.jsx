@@ -9,8 +9,8 @@ export default function NuevoUsuario() {
   const { usuarios, guardarUsuario } = useAuth();
   const navigate = useNavigate();
 
-  function guardar(datos) {
-    if (guardarUsuario(datos).ok) navigate('/admin/usuarios');
+  async function guardar(datos) {
+    if ((await guardarUsuario(datos)).ok) navigate('/admin/usuarios');
   }
 
   return (

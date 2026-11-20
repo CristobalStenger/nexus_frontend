@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import CampoFormulario from './CampoFormulario.jsx';
-import { iconosCategoria } from '../../data/categoriasIniciales.js';
+import { iconosCategoria } from '../../data/configuracion.js';
 import { crearSlug } from '../../utils/formatos.js';
 import { validarCategoria } from '../../utils/validaciones.js';
 import { useFormulario } from '../../hooks/useFormulario.js';

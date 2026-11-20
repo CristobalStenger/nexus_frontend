@@ -6,12 +6,11 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function NuevaCategoria() {
   useTitulo('Nueva categoría');
-  const { estado, dispatch } = useTienda();
+  const { estado, guardarCategoria } = useTienda();
   const navigate = useNavigate();
 
-  function guardar(datos) {
-    dispatch({ type: 'GUARDAR_CATEGORIA', id: null, datos });
-    navigate('/admin/categorias');
+  async function guardar(datos) {
+    if ((await guardarCategoria(datos)).ok) navigate('/admin/categorias');
   }
 
   return (

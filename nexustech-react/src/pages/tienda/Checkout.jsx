@@ -1,4 +1,4 @@
-import { startTransition } from 'react';
+import { startTransition, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -12,12 +12,7 @@ import TablaItemsCompra from '../../components/compra/TablaItemsCompra.jsx';
 import ResumenCompra from '../../components/compra/ResumenCompra.jsx';
 import { OPCIONES_ENTREGA, SUFIJO_TARJETA_RECHAZADA } from '../../data/configuracion.js';
 import { obtener } from '../../services/crud.js';
-import {
-  detalleCarrito,
-  evaluarPago,
-  resumenCarrito,
-  siguienteNumeroOrden,
-} from '../../store/tiendaReducer.js';
+import { detalleCarrito, resumenCarrito } from '../../store/tiendaReducer.js';
 import { precioCLP } from '../../utils/formatos.js';
 import { validarCheckout, validarTarjeta } from '../../utils/validaciones.js';
 import { useFormulario } from '../../hooks/useFormulario.js';
@@ -65,13 +60,15 @@ const validar = (valores) => ({ ...validarCheckout(valores), ...validarTarjeta(v
 
 export default function Checkout() {
   useTitulo('Checkout');
-  const { estado, dispatch } = useTienda();
+  const { estado, pagar, registrarCompra } = useTienda();
   const { sesion } = useAuth();
   const navigate = useNavigate();
   const { state } = useLocation();
   const ordenAnterior = state?.reintentoDe ? obtener(estado.ordenes, state.reintentoDe, 'numero') : null;
   const form = useFormulario(datosIniciales(ordenAnterior, sesion), validar);
   const { valores, cambiar } = form;
+  // Evita un segundo pago mientras el backend responde (en la nube puede tardar unos segundos)
+  const [pagando, setPagando] = useState(false);
 
   const detalle = detalleCarrito(estado);
   const resumen = resumenCarrito(estado, valores.entrega);
@@ -86,34 +83,40 @@ export default function Checkout() {
       </EstadoVacio>
     );
 
-  const pagar = form.enviar((v) => {
-    const numero = siguienteNumeroOrden(estado.ordenes);
-    const rechazo = evaluarPago(estado, v.numeroTarjeta);
-    // Pago y navegación en la misma transición: si no, se alcanza a ver el checkout con el carrito vacío
+  // pedido-service decide si el pago se aprueba o se rechaza y devuelve la boleta.
+  // El RUN del comprador lo toma del token, no de este formulario.
+  const enviarPago = form.enviar(async (v) => {
+    setPagando(true);
+    const resultado = await pagar({
+      cliente: {
+        nombre: v.nombre.trim(),
+        apellidos: v.apellidos.trim(),
+        correo: v.correo.trim().toLowerCase(),
+      },
+      entrega: {
+        tipo: v.entrega,
+        calle: v.calle.trim(),
+        departamento: v.departamento.trim(),
+        region: v.region,
+        comuna: v.comuna,
+        indicaciones: v.indicaciones.trim(),
+      },
+      pago: {
+        numeroTarjeta: v.numeroTarjeta.trim(),
+        titular: v.titular.trim(),
+        vencimiento: v.vencimiento.trim(),
+        cvv: v.cvv.trim(),
+      },
+    });
+    if (!resultado.ok) {
+      setPagando(false);
+      return;
+    }
+    const { orden } = resultado;
+    // Registrar la compra y navegar en la misma transición: si no, se alcanza a ver el checkout con el carrito vacío
     startTransition(() => {
-      dispatch({
-        type: 'PAGAR',
-        numero,
-        fecha: new Date().toISOString(),
-        datos: {
-          cliente: {
-            run: sesion?.run ?? '',
-            nombre: v.nombre.trim(),
-            apellidos: v.apellidos.trim(),
-            correo: v.correo.trim().toLowerCase(),
-          },
-          entrega: {
-            tipo: v.entrega,
-            calle: v.calle.trim(),
-            departamento: v.departamento.trim(),
-            region: v.region,
-            comuna: v.comuna,
-            indicaciones: v.indicaciones.trim(),
-          },
-          numeroTarjeta: v.numeroTarjeta,
-        },
-      });
-      navigate(`/compra/${rechazo ? 'error' : 'exitosa'}/${numero}`);
+      registrarCompra(orden);
+      navigate(`/compra/${orden.estado === 'pagada' ? 'exitosa' : 'error'}/${orden.numero}`);
     });
   });
 
@@ -145,7 +148,7 @@ export default function Checkout() {
             items={detalle.map((p) => ({ ...p, precio: p.precioUnitario }))}
           />
 
-          <Form noValidate onSubmit={pagar} className="mt-4">
+          <Form noValidate onSubmit={enviarPago} className="mt-4">
             <h2 className="h4 fw-bold">Información del cliente</h2>
             <p className="small">
               {sesion ? 'Datos completados desde tu cuenta.' : 'Completa la siguiente información.'}
@@ -241,8 +244,8 @@ export default function Checkout() {
               <Link to="/carrito" className="btn btn-nexus-claro">
                 <i className="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver al carrito
               </Link>
-              <Button type="submit" variant="success" className="px-4">
-                Pagar ahora {precioCLP(resumen.total)}
+              <Button type="submit" variant="success" className="px-4" disabled={pagando}>
+                {pagando ? 'Procesando el pago…' : `Pagar ahora ${precioCLP(resumen.total)}`}
               </Button>
             </div>
           </Form>

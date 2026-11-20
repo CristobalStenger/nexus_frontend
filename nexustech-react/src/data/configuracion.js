@@ -18,9 +18,6 @@ export const OPCIONES_ENTREGA = [
   },
 ];
 
-// Las órdenes se numeran en forma correlativa desde este valor
-export const NUMERO_ORDEN_INICIAL = 1000;
-
 // Tarjetas de prueba: las terminadas en estos dígitos son rechazadas
 export const SUFIJO_TARJETA_RECHAZADA = '0000';
 
@@ -28,3 +25,19 @@ export const LIMITE_DESTACADOS = 8;
 
 // Administrador: todo. Vendedor: ve productos y órdenes (lista y detalle). Cliente: solo la tienda.
 export const ROLES = ['Administrador', 'Vendedor', 'Cliente'];
+
+// Íconos de Bootstrap Icons que el administrador puede elegir
+export const iconosCategoria = [
+  'bi-cpu-fill',
+  'bi-mouse2-fill',
+  'bi-controller',
+  'bi-laptop',
+  'bi-headphones',
+  'bi-display',
+  'bi-keyboard',
+  'bi-phone',
+  'bi-router',
+  'bi-camera',
+  'bi-speaker',
+  'bi-tag',
+];

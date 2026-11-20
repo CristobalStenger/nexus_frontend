@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  buscarCupon,
   convertirProducto,
   convertirUsuario,
   correoEsValido,
@@ -102,6 +101,12 @@ describe('formularios de usuario', () => {
     expect(validarUsuario(usuarioValido, existentes, '21456789K')).toEqual({});
   });
 
+  it('al editar, la contraseña vacía es válida (se mantiene la actual)', () => {
+    expect(validarUsuario({ ...usuarioValido, clave: '' }, [], '21456789K')).toEqual({});
+    expect(validarUsuario({ ...usuarioValido, clave: '' }, [], null).clave).toBe('La contraseña es obligatoria.');
+    expect(validarUsuario({ ...usuarioValido, clave: 'abc' }, [], '21456789K').clave).toMatch(/entre 4 y 10/);
+  });
+
   it('rechaza fechas de nacimiento futuras y comunas de otra región', () => {
     const errores = validarUsuario(
       { ...usuarioValido, fechaNacimiento: '2999-01-01', comuna: 'Temuco' },
@@ -182,7 +187,7 @@ describe('formularios de productos y categorías', () => {
   });
 });
 
-describe('checkout, tarjeta y cupones', () => {
+describe('checkout y tarjeta', () => {
   const hoy = new Date('2026-10-08T12:00:00');
 
   it('exige datos del cliente y la dirección de entrega', () => {
@@ -202,12 +207,5 @@ describe('checkout, tarjeta y cupones', () => {
       'vencimiento',
       'cvv',
     ]);
-  });
-
-  it('busca cupones existentes solo si hay productos en el carrito', () => {
-    expect(buscarCupon('', [{ id: 1 }]).error).toBeDefined();
-    expect(buscarCupon('FELIZ18', []).error).toMatch(/Agrega productos/);
-    expect(buscarCupon('NOEXISTE', [{ id: 1 }]).error).toMatch(/no existe/);
-    expect(buscarCupon('feliz18', [{ id: 1 }]).cupon).toEqual({ codigo: 'FELIZ18', descuento: 10 });
   });
 });

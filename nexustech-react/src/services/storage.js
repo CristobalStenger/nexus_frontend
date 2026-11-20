@@ -4,15 +4,12 @@
 // (JSON corrupto, almacenamiento lleno o bloqueado).
 // ============================================================
 
-// Se mantienen los nombres de clave de la entrega 1
+// Productos, categorías, órdenes y usuarios viven en el backend (PostgreSQL).
+// En el navegador solo quedan estos datos (mismos nombres de clave de la entrega 1).
 export const CLAVES = {
-  productos: 'PRODUCTOS_NEXUSTECH',
-  categorias: 'CATEGORIAS_NEXUSTECH',
-  usuarios: 'USUARIOS_NEXUSTECH',
   sesion: 'USUARIO_ACTIVO',
   carrito: 'CARRITO_NEXUSTECH',
   cupon: 'CUPON_NEXUSTECH',
-  ordenes: 'ORDENES_NEXUSTECH',
   mensajes: 'MENSAJES_NEXUSTECH',
 };
 

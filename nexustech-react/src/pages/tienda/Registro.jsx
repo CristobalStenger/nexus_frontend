@@ -13,8 +13,8 @@ export default function Registro() {
 
   if (sesion) return <Navigate to="/" replace />;
 
-  function guardar(datos) {
-    if (registrar(datos).ok)
+  async function guardar(datos) {
+    if ((await registrar(datos)).ok)
       navigate('/login', { state: { registrado: true, correo: datos.correo.trim() } });
   }
 

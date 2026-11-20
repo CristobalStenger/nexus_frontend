@@ -9,7 +9,7 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 export default function EditarProducto() {
   useTitulo('Editar producto');
   const { id } = useParams();
-  const { estado, dispatch } = useTienda();
+  const { estado, guardarProducto } = useTienda();
   const navigate = useNavigate();
   const producto = obtener(estado.productos, Number(id));
 
@@ -20,9 +20,8 @@ export default function EditarProducto() {
       </EstadoVacio>
     );
 
-  function guardar(datos) {
-    dispatch({ type: 'GUARDAR_PRODUCTO', id: producto.id, datos });
-    navigate(`/admin/productos/${producto.id}`);
+  async function guardar(datos) {
+    if ((await guardarProducto(datos, producto.id)).ok) navigate(`/admin/productos/${producto.id}`);
   }
 
   return (

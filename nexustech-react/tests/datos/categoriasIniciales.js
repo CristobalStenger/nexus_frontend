@@ -1,6 +1,6 @@
 // ============================================================
-// NexusTech - Fuente de datos simulada: categorías
-// El "nombre" coincide con el campo categoria de cada producto.
+// NexusTech - Datos de prueba: categorías
+// Las mismas que carga el backend (producto-service, Flyway V2).
 // ============================================================
 
 export const categoriasIniciales = [
@@ -34,18 +34,3 @@ export const categoriasIniciales = [
   },
 ];
 
-// Íconos de Bootstrap Icons que el administrador puede elegir
-export const iconosCategoria = [
-  'bi-cpu-fill',
-  'bi-mouse2-fill',
-  'bi-controller',
-  'bi-laptop',
-  'bi-headphones',
-  'bi-display',
-  'bi-keyboard',
-  'bi-phone',
-  'bi-router',
-  'bi-camera',
-  'bi-speaker',
-  'bi-tag',
-];

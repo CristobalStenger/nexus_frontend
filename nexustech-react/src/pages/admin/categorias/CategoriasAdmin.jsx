@@ -11,7 +11,7 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function CategoriasAdmin() {
   useTitulo('Categorías');
-  const { estado, dispatch } = useTienda();
+  const { estado, eliminarCategoria } = useTienda();
   const { sesion } = useAuth();
   const admin = esAdministrador(sesion);
   const [eliminando, setEliminando] = useState(null);
@@ -20,7 +20,7 @@ export default function CategoriasAdmin() {
   const enUso = eliminando ? cantidadDe(eliminando) : 0;
 
   function confirmarEliminar() {
-    dispatch({ type: 'ELIMINAR_CATEGORIA', id: eliminando.id });
+    eliminarCategoria(eliminando.id);
     setEliminando(null);
   }
 

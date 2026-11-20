@@ -1,91 +1,61 @@
 // ============================================================
 // NexusTech - Reducer de usuarios y sesión
-// Estado: { usuarios, sesion, aviso }
-// Roles: Administrador (todo), Vendedor (solo lectura en el
-// panel) y Cliente (solo la tienda), como en la entrega 1.
+// Estado: { sesion, usuarios, usuariosListos, aviso }
+// La sesión incluye el token JWT que entrega el backend al iniciar
+// sesión. La lista de usuarios solo se carga para el administrador.
+// Roles: Administrador (todo), Vendedor (productos y órdenes, solo
+// lectura) y Cliente (solo la tienda).
 // ============================================================
 
 import { actualizar, crear, eliminar, obtener } from '../services/crud.js';
 import { conAviso } from './aviso.js';
 import { crearSesion } from '../services/persistencia.js';
-import { convertirUsuario, sinErrores, validarUsuario } from '../utils/validaciones.js';
 
 export const ROLES_PANEL = ['Administrador', 'Vendedor'];
 
 export const puedeVerPanel = (sesion) => ROLES_PANEL.includes(sesion?.tipo);
 export const esAdministrador = (sesion) => sesion?.tipo === 'Administrador';
 
-export function crearEstadoAuth(usuarios = [], sesion = null) {
-  return { usuarios, sesion, aviso: null };
+export function crearEstadoAuth(sesion = null) {
+  return { sesion, usuarios: [], usuariosListos: false, aviso: null };
 }
 
-export function buscarCredenciales(usuarios, correo, clave) {
-  const buscado = String(correo).trim().toLowerCase();
-  return usuarios.find((u) => u.correo.toLowerCase() === buscado && u.clave === clave) ?? null;
-}
+// Al salir se borra todo lo de la sesión anterior (incluida la lista de usuarios)
+const sinSesion = (estado, texto, tipo) => conAviso({ ...crearEstadoAuth(), aviso: estado.aviso }, texto, tipo);
 
-function registrar(estado, { datos }) {
-  const errores = validarUsuario(datos, estado.usuarios, null, {
-    confirmarClave: true,
-    conTerminos: true,
-  });
-  if (!sinErrores(errores)) return conAviso(estado, 'Revisa los datos del registro.', 'danger');
-  const usuario = { ...convertirUsuario(datos), tipo: 'Cliente' };
-  // Sin aviso emergente: el registro lleva al login, que ya confirma que se creó la cuenta
-  return { ...estado, usuarios: crear(estado.usuarios, usuario) };
-}
-
-function guardarUsuario(estado, { runOriginal = null, datos }) {
-  const errores = validarUsuario(datos, estado.usuarios, runOriginal, { conTipo: true, sesion: estado.sesion });
-  if (!sinErrores(errores)) return conAviso(estado, 'Revisa los datos del usuario.', 'danger');
-  if (runOriginal !== null && !obtener(estado.usuarios, runOriginal, 'run'))
-    return conAviso(estado, 'El usuario ya no existe.', 'warning');
-
-  const usuario = convertirUsuario(datos);
-  const usuarios =
-    runOriginal === null
-      ? crear(estado.usuarios, usuario)
-      : actualizar(estado.usuarios, runOriginal, usuario, 'run');
-  // Si el usuario editó su propia cuenta se actualiza la sesión abierta
+function usuarioGuardado(estado, { usuario, nuevo }) {
+  const usuarios = nuevo
+    ? crear(estado.usuarios, usuario)
+    : actualizar(estado.usuarios, usuario.id, usuario);
+  // Si la persona editó su propia cuenta se actualiza la sesión abierta (conserva el token)
   const sesion =
-    runOriginal !== null && estado.sesion?.run === runOriginal ? crearSesion(usuario) : estado.sesion;
-
+    estado.sesion?.id === usuario.id ? crearSesion(usuario, estado.sesion.token) : estado.sesion;
   return conAviso(
     { ...estado, usuarios, sesion },
-    runOriginal === null ? `Usuario "${usuario.nombre}" creado.` : `Usuario "${usuario.nombre}" actualizado.`,
-  );
-}
-
-function eliminarUsuario(estado, { run }) {
-  const usuario = obtener(estado.usuarios, run, 'run');
-  if (!usuario) return conAviso(estado, 'El usuario ya no existe.', 'warning');
-  if (estado.sesion?.run === run)
-    return conAviso(estado, 'No puedes eliminar tu propia cuenta mientras la estás usando.', 'danger');
-  return conAviso(
-    { ...estado, usuarios: eliminar(estado.usuarios, run, 'run') },
-    `Usuario "${usuario.nombre}" eliminado.`,
-    'info',
+    `Usuario "${usuario.nombre}" ${nuevo ? 'creado' : 'actualizado'}.`,
   );
 }
 
 export function authReducer(estado, accion) {
   switch (accion.type) {
-    case 'INGRESAR': {
-      const usuario = buscarCredenciales(estado.usuarios, accion.correo, accion.clave);
-      if (!usuario) return conAviso(estado, 'Correo o contraseña incorrectos.', 'danger');
-      return conAviso(
-        { ...estado, sesion: crearSesion(usuario) },
-        `Hola de nuevo, ${usuario.nombre}.`,
-      );
-    }
+    case 'INGRESAR':
+      return conAviso({ ...estado, sesion: accion.sesion }, `Hola de nuevo, ${accion.sesion.nombre}.`);
     case 'SALIR':
-      return conAviso({ ...estado, sesion: null }, 'Sesión cerrada. ¡Hasta pronto!', 'info');
-    case 'REGISTRAR':
-      return registrar(estado, accion);
-    case 'GUARDAR_USUARIO':
-      return guardarUsuario(estado, accion);
-    case 'ELIMINAR_USUARIO':
-      return eliminarUsuario(estado, accion);
+      return sinSesion(estado, 'Sesión cerrada. ¡Hasta pronto!', 'info');
+    case 'EXPIRADA':
+      return sinSesion(estado, 'Tu sesión expiró. Inicia sesión nuevamente.', 'warning');
+    case 'USUARIOS':
+      return { ...estado, usuarios: accion.usuarios, usuariosListos: true };
+    case 'USUARIO_GUARDADO':
+      return usuarioGuardado(estado, accion);
+    case 'USUARIO_ELIMINADO':
+      return conAviso(
+        { ...estado, usuarios: eliminar(estado.usuarios, accion.id) },
+        `Usuario "${obtener(estado.usuarios, accion.id)?.nombre}" eliminado.`,
+        'info',
+      );
+    case 'AVISO':
+      return conAviso(estado, accion.texto, accion.tipo);
     case 'CERRAR_AVISO':
       return { ...estado, aviso: null };
     default:
