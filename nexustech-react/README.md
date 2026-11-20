@@ -18,8 +18,10 @@ cp .env.example .env.local   # VITE_API_URL: dirección del API Gateway
 npm run dev                  # servidor de desarrollo en http://localhost:5173
 ```
 
-En Vercel, define `VITE_API_URL` con la URL del gateway en Cloud Run (*Settings → Environment
-Variables*) y vuelve a desplegar. `vercel.json` hace que todas las rutas respondan `index.html`.
+En Vercel, importa el repositorio con **Root Directory** `nexustech-react`, define
+`VITE_API_URL` con la URL del gateway en Cloud Run (*Settings → Environment Variables*) y vuelve
+a desplegar. `vercel.json` hace que todas las rutas respondan `index.html` y agrega cabeceras de
+seguridad. Luego autoriza ese dominio en el gateway (`FRONTEND_URL`, ver el README del backend).
 Las pruebas no necesitan el backend: usan un servidor falso (`tests/servidorFalso.js`).
 
 | Script                  | Qué hace                                               |

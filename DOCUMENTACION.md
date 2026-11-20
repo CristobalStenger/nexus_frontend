@@ -74,9 +74,9 @@ el proyecto de ejemplo de la guía del curso.
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **177 aprobadas** en 19 archivos                  |
+| Pruebas automatizadas     | **178 aprobadas** en 19 archivos                  |
 | Cobertura de líneas       | **96,96 %**                                       |
-| Cobertura de ramas        | **91,61 %**                                       |
+| Cobertura de ramas        | **91,75 %**                                       |
 | Prueba real con el backend | Aprobada (Playwright + 4 microservicios + PostgreSQL, sección 10.8) |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
@@ -119,7 +119,7 @@ Si `VITE_API_URL` no está definida se usa `http://localhost:8080`. En Vercel se
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 177 pruebas una vez (no necesitan backend) |
+| `npm run test:run`      | Ejecuta las 178 pruebas una vez (no necesitan backend) |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -985,11 +985,11 @@ integración completa sin encender los microservicios (sección 10.8).
 flowchart TB
   I["Integración (62)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
-  U["Unitarias puras (100)<br/>api, reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
+  U["Unitarias puras (101)<br/>api, reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
 ```
 
-1. **Funciones puras (100 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
+1. **Funciones puras (101 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
 3. **Integración (62 pruebas):** se monta la aplicación completa y se recorre como lo haría una
@@ -1082,7 +1082,7 @@ it('rechazada: registra la orden pero conserva carrito, cupón y stock', () => {
 | `tests/unitarias/catalogo.test.js`           | Unitaria    |       8 | Filtros combinados y los 4 órdenes del catálogo                                      |
 | `tests/unitarias/reportes.test.js`           | Unitaria    |       6 | Ventas, categorías, días, más vendidos, inventario e historial                       |
 | `tests/unitarias/crud.test.js`               | Unitaria    |       2 | CRUD sin mutar el arreglo original                                                   |
-| `tests/unitarias/api.test.js`                | Unitaria    |       9 | URL `/api/v1`, JSON y token, 204, errores del backend, 401/403, sin conexión y adaptadores |
+| `tests/unitarias/api.test.js`                | Unitaria    |      10 | URL `/api/v1`, JSON y token, 204, errores del backend, 401/403, 5xx, sin conexión y adaptadores |
 | `tests/unitarias/persistencia.test.js`       | Unitaria    |       9 | Carrito y cupón en el navegador, sesión con token vigente y sin contraseña, mensajes |
 | `tests/unitarias/tiendaReducer.test.js`      | Unitaria    |      22 | Carrito, cupón, totales, catálogo y órdenes del backend, boleta pagada y rechazada, CRUD |
 | `tests/unitarias/authReducer.test.js`        | Unitaria    |       8 | Sesión con JWT, sesión vencida, roles, lista de usuarios, perfil propio              |
@@ -1096,13 +1096,13 @@ it('rechazada: registra la orden pero conserva carrito, cupón y stock', () => {
 | `tests/integracion/compra.test.jsx`          | Integración |      15 | Carrito, cupón validado en el backend, checkout, boleta pagada y rechazada, servidor caído |
 | `tests/integracion/admin.test.jsx`           | Integración |      16 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios contra la API, perfil |
 | `tests/integracion/foco.test.jsx`            | Integración |       1 | El foco no se mueve al abrir la app y pasa al contenido al navegar                   |
-| **Total**                                    |             | **177** |                                                                                      |
+| **Total**                                    |             | **178** |                                                                                      |
 
 <details>
 <summary><strong>Pruebas nuevas o reescritas para la integración (clic para desplegar)</strong></summary>
 
-**`tests/unitarias/api.test.js`** (9, nuevo)
-- Arma la URL versionada y envía JSON con el token · un GET sin sesión no envía cuerpo ni token · 204 devuelve null · convierte los errores del backend (ProblemDetail) en `ErrorApi` · con errores de validación muestra el mensaje de cada campo · 401 y 403 sin cuerpo tienen un mensaje claro · sin conexión responde con estado 0
+**`tests/unitarias/api.test.js`** (10, nuevo)
+- Arma la URL versionada y envía JSON con el token · un GET sin sesión no envía cuerpo ni token · 204 devuelve null · convierte los errores del backend (ProblemDetail) en `ErrorApi` · con errores de validación muestra el mensaje de cada campo · 401 y 403 sin cuerpo tienen un mensaje claro · un 5xx sin detalle (servicio despertando) pide intentar de nuevo · sin conexión responde con estado 0
 - Adaptadores: las líneas de la boleta usan `id` como el carrito · una fecha de nacimiento null queda como texto vacío
 
 **`tests/unitarias/persistencia.test.js`** (9)
@@ -1143,10 +1143,10 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **96,08 %** | 1154 / 1201 |
-| Ramas      | **91,61 %** | 798 / 871   |
+| Sentencias | **96,08 %** | 1155 / 1202 |
+| Ramas      | **91,75 %** | 801 / 873   |
 | Funciones  | **95,68 %** | 421 / 440   |
-| Líneas     | **96,96 %** | 1023 / 1055 |
+| Líneas     | **96,96 %** | 1024 / 1056 |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |
@@ -1301,7 +1301,9 @@ flowchart LR
 | ----------------------- | ---------------------------------------- | ----------------------------------------------------------- |
 | Dirección del gateway   | `VITE_API_URL` (`.env.local` o Vercel)   | Local: `http://localhost:8080` (es el valor por defecto)    |
 | Orígenes permitidos     | `FRONTEND_URL` en el api-gateway         | Local: `http://localhost:5173`; en la nube, el dominio de Vercel |
+| Proyecto en Vercel      | *Root Directory*                         | `nexustech-react` (Vite se detecta solo)                    |
 | Rutas de la SPA         | `vercel.json` y `public/_redirects`      | Toda ruta responde `index.html`                             |
+| Cabeceras de seguridad  | `vercel.json`                            | `X-Content-Type-Options`, `X-Frame-Options` y `Referrer-Policy` |
 
 `VITE_API_URL` se lee al compilar: si cambia la URL del gateway, hay que volver a desplegar.
 
@@ -1316,7 +1318,8 @@ const producto = await api('/productos', { metodo: 'POST', datos, token });
 - **Encabezados:** `Content-Type: application/json` si hay cuerpo y `Authorization: Bearer <token>` si hay sesión.
 - **Errores:** si la respuesta no es 2xx lanza `ErrorApi` con el `status` y el mensaje del
   backend (`detail` o el mensaje de cada campo en `errores`). 401 y 403 sin cuerpo tienen un
-  mensaje propio, y sin conexión el `status` es 0.
+  mensaje propio, un 5xx sin detalle (por ejemplo, el gateway mientras un servicio despierta) pide
+  intentar de nuevo, y sin conexión el `status` es 0.
 - **Adaptadores:** `aOrden` (cada línea de la boleta trae `productoId`; las vistas usan `id`) y
   `aUsuario` (una fecha de nacimiento `null` pasa a texto vacío para el formulario).
 
