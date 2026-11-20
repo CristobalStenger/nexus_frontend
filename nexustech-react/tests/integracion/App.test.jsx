@@ -132,21 +132,42 @@ describe('rutas protegidas por rol', () => {
     expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
   });
 
-  it('el vendedor solo consulta: no ve acciones de escritura ni usuarios', () => {
+  it('el vendedor solo ve productos y órdenes, sin acciones de escritura', async () => {
     iniciarSesionComo('Vendedor');
-    renderApp('/admin/productos');
+    renderApp('/admin');
+    // No tiene dashboard: entra directo a la lista de productos
+    expect(await screen.findByRole('heading', { name: 'Productos', level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/Tu rol de vendedor solo permite consultar/)).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Nuevo producto/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Productos críticos' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Reportes' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^Eliminar/ })).not.toBeInTheDocument();
     const menu = screen.getByRole('navigation', { name: 'Menú de administración' });
-    expect(within(menu).queryByRole('link', { name: /Usuarios/ })).not.toBeInTheDocument();
+    const enlaces = within(menu).getAllByRole('link').map((enlace) => enlace.textContent.trim());
+    expect(enlaces).toEqual(['Órdenes', 'Productos', 'Tienda']);
   });
 
-  it('el vendedor ve acceso denegado al intentar crear productos', () => {
+  it('el vendedor ve el detalle de productos y órdenes', async () => {
     iniciarSesionComo('Vendedor');
-    renderApp('/admin/productos/nuevo');
-    expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
+    const user = userEvent.setup();
+    renderApp('/admin/productos');
+    await user.click(screen.getByRole('link', { name: 'Ver AMD Ryzen 5 7600X' }));
+    expect(await screen.findByRole('heading', { name: 'AMD Ryzen 5 7600X', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Editar producto/ })).not.toBeInTheDocument();
+    cleanup();
+    renderApp('/admin/ordenes');
+    await user.click(screen.getByRole('link', { name: 'Ver boleta 1001' }));
+    expect(await screen.findByRole('heading', { name: 'Boleta #1001', level: 1 })).toBeInTheDocument();
   });
+
+  it.each(['/admin/productos/nuevo', '/admin/categorias', '/admin/perfil', '/admin/usuarios', '/admin/productos/criticos'])(
+    'el vendedor ve acceso denegado en %s',
+    (ruta) => {
+      iniciarSesionComo('Vendedor');
+      renderApp(ruta);
+      expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
+    },
+  );
 
   it('restaura la sesión guardada al volver a montar la aplicación', () => {
     iniciarSesionComo('Administrador');
