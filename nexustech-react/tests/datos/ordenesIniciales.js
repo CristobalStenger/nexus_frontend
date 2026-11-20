@@ -1,11 +1,11 @@
 // ============================================================
-// NexusTech - Fuente de datos simulada: órdenes de ejemplo
+// NexusTech - Datos de prueba: órdenes de ejemplo (las mismas boletas del backend)
 // Sirven para que el dashboard, los reportes y el historial de
 // compras tengan información desde el primer uso.
 // ============================================================
 
 import { productosIniciales } from './productosIniciales.js';
-import { COSTO_DESPACHO } from './configuracion.js';
+import { COSTO_DESPACHO } from '../../src/data/configuracion.js';
 
 const cliente = {
   run: '21456789K',

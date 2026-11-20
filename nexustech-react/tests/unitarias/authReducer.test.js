@@ -1,42 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import { usuariosIniciales } from '../../src/data/usuariosIniciales.js';
-import {
-  authReducer,
-  buscarCredenciales,
-  crearEstadoAuth,
-  esAdministrador,
-  puedeVerPanel,
-} from '../../src/store/authReducer.js';
+import { authReducer, crearEstadoAuth, esAdministrador, puedeVerPanel } from '../../src/store/authReducer.js';
 
-const iniciar = (sesion = null) => crearEstadoAuth(usuariosIniciales.map((u) => ({ ...u })), sesion);
+const admin = { id: 1, run: '190110222', nombre: 'Admin', correo: 'admin@duoc.cl', tipo: 'Administrador' };
+const pedro = { id: 3, run: '21456789K', nombre: 'Pedro', correo: 'cliente@gmail.com', tipo: 'Cliente' };
+const sesionAdmin = { ...admin, token: 'jwt-admin' };
 
-const nuevo = {
-  run: '111111111',
-  nombre: 'Lucía',
-  apellidos: 'Pérez',
-  correo: 'lucia@gmail.com',
-  clave: 'clave1',
-  clave2: 'clave1',
-  fechaNacimiento: '',
-  tipo: 'Vendedor',
-  region: 'Región de Coquimbo',
-  comuna: 'La Serena',
-  direccion: 'Calle 1',
-  terminos: true,
-};
+const conUsuarios = (sesion = sesionAdmin) =>
+  authReducer(crearEstadoAuth(sesion), { type: 'USUARIOS', usuarios: [admin, pedro] });
 
 describe('sesión y roles', () => {
-  it('busca credenciales sin distinguir mayúsculas en el correo', () => {
-    expect(buscarCredenciales(usuariosIniciales, ' ADMIN@duoc.cl ', 'admin123')?.tipo).toBe('Administrador');
-    expect(buscarCredenciales(usuariosIniciales, 'admin@duoc.cl', 'otra')).toBeNull();
+  it('guarda la sesión que entrega el backend y la cierra', () => {
+    const conSesion = authReducer(crearEstadoAuth(), { type: 'INGRESAR', sesion: sesionAdmin });
+    expect(conSesion.sesion.token).toBe('jwt-admin');
+    expect(conSesion.aviso.texto).toBe('Hola de nuevo, Admin.');
+    const cerrada = authReducer(conUsuarios(), { type: 'SALIR' });
+    expect(cerrada.sesion).toBeNull();
+    // La lista de usuarios no queda en memoria para la próxima persona
+    expect(cerrada.usuarios).toEqual([]);
+    expect(cerrada.usuariosListos).toBe(false);
   });
 
-  it('inicia sesión sin guardar la clave y la cierra', () => {
-    const conSesion = authReducer(iniciar(), { type: 'INGRESAR', correo: 'cliente@gmail.com', clave: 'cliente123' });
-    expect(conSesion.sesion).toMatchObject({ nombre: 'Pedro', tipo: 'Cliente' });
-    expect(conSesion.sesion).not.toHaveProperty('clave');
-    expect(authReducer(conSesion, { type: 'SALIR' }).sesion).toBeNull();
-    expect(authReducer(iniciar(), { type: 'INGRESAR', correo: 'x@gmail.com', clave: '1234' }).sesion).toBeNull();
+  it('una sesión vencida se cierra con su propio aviso', () => {
+    const vencida = authReducer(conUsuarios(), { type: 'EXPIRADA' });
+    expect(vencida.sesion).toBeNull();
+    expect(vencida.aviso).toMatchObject({ texto: 'Tu sesión expiró. Inicia sesión nuevamente.', tipo: 'warning' });
   });
 
   it('distingue los permisos de cada rol', () => {
@@ -47,61 +34,41 @@ describe('sesión y roles', () => {
   });
 });
 
-describe('CRUD de usuarios', () => {
-  it('registra clientes nuevos aunque pidan otro rol', () => {
-    const estado = authReducer(iniciar(), { type: 'REGISTRAR', datos: { ...nuevo, tipo: 'Administrador' } });
-    expect(estado.usuarios).toHaveLength(4);
-    expect(estado.usuarios[3].tipo).toBe('Cliente');
+describe('usuarios que responde el backend', () => {
+  it('carga la lista y marca que ya está lista', () => {
+    const estado = conUsuarios();
+    expect(estado.usuarios).toHaveLength(2);
+    expect(estado.usuariosListos).toBe(true);
   });
 
-  it('rechaza registros inválidos o repetidos', () => {
-    expect(authReducer(iniciar(), { type: 'REGISTRAR', datos: { ...nuevo, terminos: false } }).usuarios).toHaveLength(3);
-    expect(authReducer(iniciar(), { type: 'REGISTRAR', datos: { ...nuevo, correo: 'admin@duoc.cl' } }).aviso.tipo).toBe('danger');
+  it('agrega un usuario nuevo y actualiza uno existente por id', () => {
+    const lucia = { id: 4, run: '111111111', nombre: 'Lucía', tipo: 'Vendedor' };
+    const creado = authReducer(conUsuarios(), { type: 'USUARIO_GUARDADO', usuario: lucia, nuevo: true });
+    expect(creado.usuarios).toHaveLength(3);
+    expect(creado.aviso.texto).toBe('Usuario "Lucía" creado.');
+    const editado = authReducer(creado, { type: 'USUARIO_GUARDADO', usuario: { ...lucia, nombre: 'Lucía Andrea' }, nuevo: false });
+    expect(editado.usuarios[2].nombre).toBe('Lucía Andrea');
+    expect(editado.usuarios).toHaveLength(3);
   });
 
-  it('el administrador crea y edita usuarios con su rol', () => {
-    const creado = authReducer(iniciar(), { type: 'GUARDAR_USUARIO', runOriginal: null, datos: nuevo });
-    expect(creado.usuarios[3].tipo).toBe('Vendedor');
-    const editado = authReducer(creado, { type: 'GUARDAR_USUARIO', runOriginal: '111111111', datos: { ...nuevo, nombre: 'Lucía Andrea' } });
-    expect(editado.usuarios[3].nombre).toBe('Lucía Andrea');
-    expect(editado.usuarios).toHaveLength(4);
-    expect(authReducer(iniciar(), { type: 'GUARDAR_USUARIO', runOriginal: '999', datos: nuevo }).aviso.tipo).toBe('warning');
-    expect(authReducer(iniciar(), { type: 'GUARDAR_USUARIO', runOriginal: null, datos: { ...nuevo, tipo: '' } }).aviso.tipo).toBe('danger');
-  });
-
-  it('actualiza la sesión cuando el usuario edita su propio perfil', () => {
-    const admin = usuariosIniciales[0];
-    const sesion = { run: admin.run, nombre: admin.nombre, tipo: admin.tipo };
-    const estado = authReducer(iniciar(sesion), {
-      type: 'GUARDAR_USUARIO',
-      runOriginal: admin.run,
-      datos: { ...admin, nombre: 'Administradora' },
+  it('al editar la cuenta propia actualiza la sesión y conserva el token', () => {
+    const estado = authReducer(conUsuarios(), {
+      type: 'USUARIO_GUARDADO',
+      usuario: { ...admin, nombre: 'Administradora' },
+      nuevo: false,
     });
-    expect(estado.sesion.nombre).toBe('Administradora');
+    expect(estado.sesion).toMatchObject({ nombre: 'Administradora', token: 'jwt-admin' });
   });
 
-  it('nadie puede cambiar su propio rol, así siempre queda un administrador', () => {
-    const admin = usuariosIniciales[0];
-    const estado = authReducer(iniciar({ run: admin.run, tipo: admin.tipo }), {
-      type: 'GUARDAR_USUARIO',
-      runOriginal: admin.run,
-      datos: { ...admin, tipo: 'Cliente' },
-    });
-    expect(estado.usuarios[0].tipo).toBe('Administrador');
-    expect(estado.aviso.tipo).toBe('danger');
+  it('elimina usuarios por id', () => {
+    const estado = authReducer(conUsuarios(), { type: 'USUARIO_ELIMINADO', id: 3 });
+    expect(estado.usuarios).toEqual([admin]);
+    expect(estado.aviso).toMatchObject({ texto: 'Usuario "Pedro" eliminado.', tipo: 'info' });
   });
 
-  it('elimina usuarios, pero nunca la cuenta en uso', () => {
-    const sesion = { run: '190110222', tipo: 'Administrador' };
-    expect(authReducer(iniciar(sesion), { type: 'ELIMINAR_USUARIO', run: '21456789K' }).usuarios).toHaveLength(2);
-    const propia = authReducer(iniciar(sesion), { type: 'ELIMINAR_USUARIO', run: '190110222' });
-    expect(propia.usuarios).toHaveLength(3);
-    expect(propia.aviso.tipo).toBe('danger');
-    expect(authReducer(iniciar(), { type: 'ELIMINAR_USUARIO', run: 'nadie' }).aviso.tipo).toBe('warning');
-  });
-
-  it('cierra avisos e ignora acciones desconocidas', () => {
-    const conAviso = authReducer(iniciar(), { type: 'SALIR' });
+  it('muestra y cierra avisos, e ignora acciones desconocidas', () => {
+    const conAviso = authReducer(crearEstadoAuth(), { type: 'AVISO', texto: 'Error', tipo: 'danger' });
+    expect(conAviso.aviso).toMatchObject({ texto: 'Error', tipo: 'danger' });
     expect(authReducer(conAviso, { type: 'CERRAR_AVISO' }).aviso).toBeNull();
     expect(authReducer(conAviso, { type: 'OTRA' })).toBe(conAviso);
   });

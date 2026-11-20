@@ -1,5 +1,5 @@
 // ============================================================
-// NexusTech - Cupones de descuento (los mismos de la entrega 1)
+// NexusTech - Datos de prueba: cupones (el backend valida los mismos en pedido-service)
 // ============================================================
 
 export const CUPONES = [

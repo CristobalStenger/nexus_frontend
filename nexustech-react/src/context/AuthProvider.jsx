@@ -1,64 +1,103 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import { AuthContext } from './contextos.js';
-import {
-  cargarSesion,
-  cargarUsuarios,
-  guardarAutenticacion,
-} from '../services/persistencia.js';
-import {
-  authReducer,
-  buscarCredenciales,
-  crearEstadoAuth,
-} from '../store/authReducer.js';
-import { sinErrores, validarUsuario } from '../utils/validaciones.js';
+import { api, aUsuario } from '../services/api.js';
+import { cargarSesion, crearSesion, guardarSesion } from '../services/persistencia.js';
+import { authReducer, crearEstadoAuth, esAdministrador } from '../store/authReducer.js';
+import { convertirUsuario } from '../utils/validaciones.js';
 
-function cargarAutenticacion() {
-  const usuarios = cargarUsuarios();
-  return crearEstadoAuth(usuarios, cargarSesion(usuarios));
-}
-
-// Comparte usuarios y sesión. Las funciones validan primero para
-// devolver los errores al formulario y luego despachan la acción.
+// Sesión (login con JWT) y gestión de usuarios contra usuario-service.
+// Los formularios ya validaron los datos; el backend los vuelve a validar.
 export function AuthProvider({ children }) {
-  const [estado, dispatch] = useReducer(authReducer, undefined, cargarAutenticacion);
+  const [estado, dispatch] = useReducer(authReducer, undefined, () => crearEstadoAuth(cargarSesion()));
   const [errorGuardado, setErrorGuardado] = useState(false);
   const { usuarios, sesion } = estado;
+  const token = sesion?.token;
+  const admin = esAdministrador(sesion);
 
   useEffect(() => {
-    setErrorGuardado(!guardarAutenticacion({ usuarios, sesion }));
-  }, [usuarios, sesion]);
+    setErrorGuardado(!guardarSesion(sesion));
+  }, [sesion]);
 
-  function ingresar(correo, clave) {
-    const usuario = buscarCredenciales(usuarios, correo, clave);
-    if (!usuario) return { ok: false, error: 'Correo o contraseña incorrectos. Revisa tus datos.' };
-    dispatch({ type: 'INGRESAR', correo, clave });
-    return { ok: true, usuario };
+  // Un 401 con sesión abierta significa que el token venció o ya no es válido
+  const expirarSesion = useCallback(() => dispatch({ type: 'EXPIRADA' }), []);
+
+  function fallo(error) {
+    if (error.status === 401 && sesion) expirarSesion();
+    else dispatch({ type: 'AVISO', texto: error.message, tipo: 'danger' });
+    return { ok: false, error };
   }
 
-  function registrar(datos) {
-    const errores = validarUsuario(datos, usuarios, null, {
-      confirmarClave: true,
-      conTerminos: true,
-    });
-    if (sinErrores(errores)) dispatch({ type: 'REGISTRAR', datos });
-    return { ok: sinErrores(errores), errores };
+  // El administrador trabaja con la lista de usuarios (panel, dashboard y RUN/correo repetidos)
+  useEffect(() => {
+    if (!admin) return undefined;
+    let vigente = true;
+    api('/usuarios', { token })
+      .then((lista) => vigente && dispatch({ type: 'USUARIOS', usuarios: lista.map(aUsuario) }))
+      .catch((error) => {
+        if (!vigente) return;
+        dispatch({ type: 'USUARIOS', usuarios: [] });
+        if (error.status === 401) expirarSesion();
+        else dispatch({ type: 'AVISO', texto: error.message, tipo: 'danger' });
+      });
+    return () => {
+      vigente = false;
+    };
+  }, [admin, token, expirarSesion]);
+
+  async function ingresar(correo, clave) {
+    try {
+      const respuesta = await api('/auth/login', { metodo: 'POST', datos: { correo, clave } });
+      const nueva = crearSesion(aUsuario(respuesta.usuario), respuesta.token);
+      dispatch({ type: 'INGRESAR', sesion: nueva });
+      return { ok: true, usuario: nueva };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
   }
 
-  function guardarUsuario(datos, runOriginal = null) {
-    const errores = validarUsuario(datos, usuarios, runOriginal, { conTipo: true, sesion });
-    if (sinErrores(errores)) dispatch({ type: 'GUARDAR_USUARIO', datos, runOriginal });
-    return { ok: sinErrores(errores), errores };
+  // Registro desde la tienda: el backend siempre lo crea como Cliente
+  async function registrar(datos) {
+    try {
+      await api('/auth/registro', { metodo: 'POST', datos: convertirUsuario(datos) });
+      return { ok: true };
+    } catch (error) {
+      return fallo(error);
+    }
   }
 
-  function eliminarUsuario(run) {
-    if (sesion?.run === run)
-      return { ok: false, error: 'No puedes eliminar tu propia cuenta mientras la estás usando.' };
-    dispatch({ type: 'ELIMINAR_USUARIO', run });
-    return { ok: true };
+  // runOriginal null: el administrador crea una cuenta.
+  // La cuenta propia se edita en /usuarios/me, donde el rol no cambia.
+  async function guardarUsuario(datos, runOriginal = null) {
+    const nuevo = runOriginal === null;
+    const ruta = nuevo
+      ? '/usuarios'
+      : runOriginal === sesion?.run
+        ? '/usuarios/me'
+        : `/usuarios/${usuarios.find((u) => u.run === runOriginal)?.id}`;
+    try {
+      const respuesta = await api(ruta, { metodo: nuevo ? 'POST' : 'PUT', datos: convertirUsuario(datos), token });
+      const usuario = aUsuario(respuesta);
+      dispatch({ type: 'USUARIO_GUARDADO', usuario, nuevo });
+      return { ok: true, usuario };
+    } catch (error) {
+      return fallo(error);
+    }
+  }
+
+  async function eliminarUsuario(run) {
+    const usuario = usuarios.find((u) => u.run === run);
+    try {
+      await api(`/usuarios/${usuario.id}`, { metodo: 'DELETE', token });
+      dispatch({ type: 'USUARIO_ELIMINADO', id: usuario.id });
+      return { ok: true };
+    } catch (error) {
+      return fallo(error);
+    }
   }
 
   const valor = {
     usuarios,
+    usuariosListos: estado.usuariosListos,
     sesion,
     aviso: estado.aviso,
     errorGuardado,
@@ -66,6 +105,7 @@ export function AuthProvider({ children }) {
     registrar,
     guardarUsuario,
     eliminarUsuario,
+    expirarSesion,
     cerrarSesion: () => dispatch({ type: 'SALIR' }),
     cerrarAviso: () => dispatch({ type: 'CERRAR_AVISO' }),
   };

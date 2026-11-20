@@ -4,6 +4,7 @@ import { TiendaProvider } from './context/TiendaProvider.jsx';
 import Layout from './components/layout/Layout.jsx';
 import AdminLayout from './components/layout/AdminLayout.jsx';
 import RutaProtegida from './components/layout/RutaProtegida.jsx';
+import CargaDatos from './components/layout/CargaDatos.jsx';
 import { ROLES_PANEL, esAdministrador } from './store/authReducer.js';
 import { useAuth } from './hooks/useAuth.js';
 import Inicio from './pages/tienda/Inicio.jsx';
@@ -55,54 +56,56 @@ export default function App() {
   return (
     <AuthProvider>
       <TiendaProvider>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<Inicio />} />
-            <Route path="productos" element={<Productos />} />
-            <Route path="productos/:id" element={<DetalleProducto />} />
-            <Route path="categorias" element={<Categorias />} />
-            <Route path="categorias/:slug" element={<Categorias />} />
-            <Route path="ofertas" element={<Ofertas />} />
-            <Route path="nosotros" element={<Nosotros />} />
-            <Route path="blogs" element={<Blogs />} />
-            <Route path="blogs/:id" element={<DetalleBlog />} />
-            <Route path="contacto" element={<Contacto />} />
-            <Route path="login" element={<Login />} />
-            <Route path="registro" element={<Registro />} />
-            <Route path="carrito" element={<Carrito />} />
-            <Route path="checkout" element={<Checkout />} />
-            <Route path="compra/exitosa/:numero" element={<CompraExitosa />} />
-            <Route path="compra/error/:numero" element={<CompraError />} />
-            <Route path="*" element={<NoEncontrada />} />
-          </Route>
-
-          <Route path="admin" element={<RutaProtegida roles={ROLES_PANEL} />}>
-            <Route element={<AdminLayout />}>
-              <Route index element={<InicioPanel />} />
-              <Route path="ordenes" element={<Ordenes />} />
-              <Route path="ordenes/:numero" element={<DetalleOrden />} />
-              <Route path="productos" element={<ProductosAdmin />} />
-              <Route path="productos/:id" element={<MostrarProducto />} />
-              <Route element={<RutaProtegida roles={SOLO_ADMIN} />}>
-                <Route path="productos/nuevo" element={<NuevoProducto />} />
-                <Route path="productos/criticos" element={<ProductosCriticos />} />
-                <Route path="productos/reportes" element={<ReportesProductos />} />
-                <Route path="productos/:id/editar" element={<EditarProducto />} />
-                <Route path="categorias" element={<CategoriasAdmin />} />
-                <Route path="categorias/nueva" element={<NuevaCategoria />} />
-                <Route path="categorias/:id/editar" element={<EditarCategoria />} />
-                <Route path="usuarios" element={<UsuariosAdmin />} />
-                <Route path="usuarios/nuevo" element={<NuevoUsuario />} />
-                <Route path="usuarios/:run" element={<MostrarUsuario />} />
-                <Route path="usuarios/:run/editar" element={<EditarUsuario />} />
-                <Route path="usuarios/:run/compras" element={<HistorialCompras />} />
-                <Route path="reportes" element={<Reportes />} />
-                <Route path="perfil" element={<Perfil />} />
-              </Route>
+        <CargaDatos>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index element={<Inicio />} />
+              <Route path="productos" element={<Productos />} />
+              <Route path="productos/:id" element={<DetalleProducto />} />
+              <Route path="categorias" element={<Categorias />} />
+              <Route path="categorias/:slug" element={<Categorias />} />
+              <Route path="ofertas" element={<Ofertas />} />
+              <Route path="nosotros" element={<Nosotros />} />
+              <Route path="blogs" element={<Blogs />} />
+              <Route path="blogs/:id" element={<DetalleBlog />} />
+              <Route path="contacto" element={<Contacto />} />
+              <Route path="login" element={<Login />} />
+              <Route path="registro" element={<Registro />} />
+              <Route path="carrito" element={<Carrito />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="compra/exitosa/:numero" element={<CompraExitosa />} />
+              <Route path="compra/error/:numero" element={<CompraError />} />
               <Route path="*" element={<NoEncontrada />} />
             </Route>
-          </Route>
-        </Routes>
+
+            <Route path="admin" element={<RutaProtegida roles={ROLES_PANEL} />}>
+              <Route element={<AdminLayout />}>
+                <Route index element={<InicioPanel />} />
+                <Route path="ordenes" element={<Ordenes />} />
+                <Route path="ordenes/:numero" element={<DetalleOrden />} />
+                <Route path="productos" element={<ProductosAdmin />} />
+                <Route path="productos/:id" element={<MostrarProducto />} />
+                <Route element={<RutaProtegida roles={SOLO_ADMIN} />}>
+                  <Route path="productos/nuevo" element={<NuevoProducto />} />
+                  <Route path="productos/criticos" element={<ProductosCriticos />} />
+                  <Route path="productos/reportes" element={<ReportesProductos />} />
+                  <Route path="productos/:id/editar" element={<EditarProducto />} />
+                  <Route path="categorias" element={<CategoriasAdmin />} />
+                  <Route path="categorias/nueva" element={<NuevaCategoria />} />
+                  <Route path="categorias/:id/editar" element={<EditarCategoria />} />
+                  <Route path="usuarios" element={<UsuariosAdmin />} />
+                  <Route path="usuarios/nuevo" element={<NuevoUsuario />} />
+                  <Route path="usuarios/:run" element={<MostrarUsuario />} />
+                  <Route path="usuarios/:run/editar" element={<EditarUsuario />} />
+                  <Route path="usuarios/:run/compras" element={<HistorialCompras />} />
+                  <Route path="reportes" element={<Reportes />} />
+                  <Route path="perfil" element={<Perfil />} />
+                </Route>
+                <Route path="*" element={<NoEncontrada />} />
+              </Route>
+            </Route>
+          </Routes>
+        </CargaDatos>
       </TiendaProvider>
     </AuthProvider>
   );

@@ -6,12 +6,11 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function NuevoProducto() {
   useTitulo('Nuevo producto');
-  const { estado, dispatch } = useTienda();
+  const { estado, guardarProducto } = useTienda();
   const navigate = useNavigate();
 
-  function guardar(datos) {
-    dispatch({ type: 'GUARDAR_PRODUCTO', id: null, datos });
-    navigate('/admin/productos');
+  async function guardar(datos) {
+    if ((await guardarProducto(datos)).ok) navigate('/admin/productos');
   }
 
   return (

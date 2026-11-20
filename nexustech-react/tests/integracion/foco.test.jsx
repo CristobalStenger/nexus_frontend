@@ -7,7 +7,7 @@ import { renderApp } from '../utilidades.jsx';
 describe('foco al cambiar de página', () => {
   it('al abrir la app no mueve el foco y al navegar lo lleva al contenido', async () => {
     const user = userEvent.setup();
-    renderApp('/');
+    await renderApp('/');
     // Así el primer Tab llega a "Saltar al contenido"
     expect(document.body).toHaveFocus();
     await user.click(within(screen.getByRole('navigation', { name: 'Navegación principal' })).getByRole('link', { name: 'Productos' }));

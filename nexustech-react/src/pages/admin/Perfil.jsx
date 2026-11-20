@@ -13,9 +13,9 @@ export default function Perfil() {
   const navigate = useNavigate();
   const usuario = obtener(usuarios, sesion.run, 'run');
 
-  function guardar(datos) {
+  async function guardar(datos) {
     // El RUN y el rol no cambian desde el perfil
-    if (guardarUsuario({ ...datos, run: usuario.run, tipo: usuario.tipo }, usuario.run).ok) navigate('/admin');
+    if ((await guardarUsuario({ ...datos, run: usuario.run, tipo: usuario.tipo }, usuario.run)).ok) navigate('/admin');
   }
 
   return (

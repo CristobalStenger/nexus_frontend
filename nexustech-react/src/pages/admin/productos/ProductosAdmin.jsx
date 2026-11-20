@@ -14,7 +14,7 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 
 export default function ProductosAdmin() {
   useTitulo('Productos');
-  const { estado, dispatch } = useTienda();
+  const { estado, eliminarProducto } = useTienda();
   const { sesion } = useAuth();
   const admin = esAdministrador(sesion);
   const [texto, setTexto] = useState('');
@@ -25,7 +25,7 @@ export default function ProductosAdmin() {
   );
 
   function confirmarEliminar() {
-    dispatch({ type: 'ELIMINAR_PRODUCTO', id: eliminando.id });
+    eliminarProducto(eliminando.id);
     setEliminando(null);
   }
 

@@ -1,82 +1,16 @@
 // ============================================================
-// NexusTech - Base de datos simulada en localStorage
-// Carga cada colección validando su estructura. Si el JSON está
-// corrupto o tiene datos inválidos se usan los datos iniciales
-// de src/data. También limpia referencias que ya no existen.
+// NexusTech - Lo que se guarda en el navegador (localStorage)
+// Productos, categorías, órdenes y usuarios se piden al backend.
+// Aquí solo quedan el carrito, el cupón, la sesión (con su token
+// JWT) y los mensajes de contacto, validando su estructura.
 // ============================================================
 
-import { productosIniciales } from '../data/productosIniciales.js';
-import { categoriasIniciales } from '../data/categoriasIniciales.js';
-import { usuariosIniciales } from '../data/usuariosIniciales.js';
 import { ROLES } from '../data/configuracion.js';
-import { ordenesIniciales } from '../data/ordenesIniciales.js';
-import { CUPONES } from '../data/cupones.js';
 import { CLAVES, guardarJSON, leerJSON } from './storage.js';
 
-const esTexto = (v) => typeof v === 'string';
-const esEnteroNoNegativo = (v) => Number.isInteger(v) && v >= 0;
-
-export function productoValido(p) {
-  return Boolean(
-    p &&
-      Number.isInteger(p.id) &&
-      p.id > 0 &&
-      esTexto(p.codigo) &&
-      esTexto(p.nombre) &&
-      esTexto(p.categoria) &&
-      esTexto(p.tipo) &&
-      esTexto(p.imagen) &&
-      esEnteroNoNegativo(p.precio) &&
-      esEnteroNoNegativo(p.stock) &&
-      esEnteroNoNegativo(p.stockCritico) &&
-      esEnteroNoNegativo(p.descuento ?? 0),
-  );
-}
-
-function categoriaValida(c) {
-  return Boolean(
-    c && Number.isInteger(c.id) && esTexto(c.nombre) && esTexto(c.slug) && esTexto(c.icono),
-  );
-}
-
-export function usuarioValido(u) {
-  return Boolean(
-    u &&
-      esTexto(u.run) &&
-      esTexto(u.nombre) &&
-      esTexto(u.correo) &&
-      esTexto(u.clave) &&
-      ROLES.includes(u.tipo),
-  );
-}
-
-function ordenValida(o) {
-  return Boolean(
-    o &&
-      Number.isInteger(o.numero) &&
-      ['pagada', 'rechazada'].includes(o.estado) &&
-      o.cliente &&
-      Array.isArray(o.items) &&
-      Number.isFinite(o.total),
-  );
-}
-
-// Copia profunda para no compartir objetos con los datos iniciales
-const copiar = (datos) => JSON.parse(JSON.stringify(datos));
-
-// Devuelve la colección guardada si es un arreglo válido y sin claves repetidas
-function cargarColeccion(clave, semilla, esValido, campo = 'id', { permitirVacia = true } = {}) {
-  const guardada = leerJSON(clave, null);
-  const valida =
-    Array.isArray(guardada) &&
-    (permitirVacia || guardada.length > 0) &&
-    guardada.every(esValido) &&
-    new Set(guardada.map((e) => e[campo])).size === guardada.length;
-  return valida ? guardada : copiar(semilla);
-}
-
-// El carrito solo guarda { id, cantidad } de productos que existan
-function limpiarCarrito(candidato, productos) {
+// Conserva solo filas { id, cantidad } válidas y sin repetir.
+// Los productos que ya no existen se quitan cuando llega el catálogo.
+function limpiarCarrito(candidato) {
   const ids = new Set();
   return (Array.isArray(candidato) ? candidato : [])
     .filter((item) => {
@@ -85,69 +19,62 @@ function limpiarCarrito(candidato, productos) {
         Number.isInteger(item.id) &&
         !ids.has(item.id) &&
         Number.isInteger(item.cantidad) &&
-        item.cantidad > 0 &&
-        productos.some((p) => p.id === item.id);
+        item.cantidad > 0;
       if (valido) ids.add(item.id);
       return valido;
     })
     .map((item) => ({ id: item.id, cantidad: item.cantidad }));
 }
 
-function cargarCupon() {
-  const guardado = leerJSON(CLAVES.cupon, null);
-  return CUPONES.find((c) => c.codigo === guardado?.codigo) ?? null;
-}
+// El backend vuelve a validar el cupón al pagar; aquí solo se revisa su forma
+const cuponValido = (cupon) =>
+  Boolean(cupon && typeof cupon.codigo === 'string' && Number.isInteger(cupon.descuento) && cupon.descuento > 0);
 
 export function cargarTienda() {
-  // Un catálogo vacío es válido: no se restauran productos que el admin eliminó
-  const productos = cargarColeccion(CLAVES.productos, productosIniciales, productoValido);
-  const categorias = cargarColeccion(CLAVES.categorias, categoriasIniciales, categoriaValida);
-  const ordenes = cargarColeccion(CLAVES.ordenes, ordenesIniciales, ordenValida, 'numero');
-  const carrito = limpiarCarrito(leerJSON(CLAVES.carrito, []), productos);
-  const cupon = carrito.length ? cargarCupon() : null;
-  return { productos, categorias, ordenes, carrito, cupon };
+  const carrito = limpiarCarrito(leerJSON(CLAVES.carrito, []));
+  const cupon = leerJSON(CLAVES.cupon, null);
+  return { carrito, cupon: carrito.length && cuponValido(cupon) ? cupon : null };
 }
 
-export function guardarTienda({ productos, categorias, ordenes, carrito, cupon }) {
-  const resultados = [
-    guardarJSON(CLAVES.productos, productos),
-    guardarJSON(CLAVES.categorias, categorias),
-    guardarJSON(CLAVES.ordenes, ordenes),
-    guardarJSON(CLAVES.carrito, carrito),
-    guardarJSON(CLAVES.cupon, cupon),
-  ];
-  return resultados.every(Boolean);
+export function guardarTienda({ carrito, cupon }) {
+  const carritoOk = guardarJSON(CLAVES.carrito, carrito);
+  const cuponOk = guardarJSON(CLAVES.cupon, cupon);
+  return carritoOk && cuponOk;
 }
 
-// ---------- Usuarios y sesión ----------
+// ---------- Sesión ----------
 
-export function cargarUsuarios() {
-  // Siempre debe existir al menos una cuenta (como crearAdministradorInicial)
-  return cargarColeccion(CLAVES.usuarios, usuariosIniciales, usuarioValido, 'run', {
-    permitirVacia: false,
-  });
+// La sesión guarda el token JWT y los datos del usuario, nunca la contraseña
+export function crearSesion(usuario, token) {
+  const { id, run, nombre, apellidos, correo, tipo, region, comuna, direccion } = usuario;
+  return { token, id, run, nombre, apellidos, correo, tipo, region, comuna, direccion };
 }
 
-// La sesión nunca guarda la contraseña
-export function crearSesion(usuario) {
-  const { run, nombre, apellidos, correo, tipo, region, comuna, direccion } = usuario;
-  return { run, nombre, apellidos, correo, tipo, region, comuna, direccion };
+// El token indica hasta cuándo vale ("exp", en segundos). Uno vencido o ilegible no sirve.
+export function tokenVigente(token) {
+  try {
+    const datos = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    return datos.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
 }
 
-// Solo se restaura una sesión que corresponda a un usuario existente
-export function cargarSesion(usuarios) {
-  const guardada = leerJSON(CLAVES.sesion, null);
-  const usuario = usuarios.find((u) => u.run === guardada?.run && u.tipo === guardada?.tipo);
-  return usuario ? crearSesion(usuario) : null;
+// Solo se restaura una sesión bien formada y con el token vigente
+export function cargarSesion() {
+  const sesion = leerJSON(CLAVES.sesion, null);
+  const valida =
+    sesion &&
+    typeof sesion.token === 'string' &&
+    Number.isInteger(sesion.id) &&
+    ROLES.includes(sesion.tipo) &&
+    tokenVigente(sesion.token);
+  return valida ? sesion : null;
 }
 
-export function guardarAutenticacion({ usuarios, sesion }) {
-  const usuariosOk = guardarJSON(CLAVES.usuarios, usuarios);
-  const sesionOk = guardarJSON(CLAVES.sesion, sesion);
-  return usuariosOk && sesionOk;
-}
+export const guardarSesion = (sesion) => guardarJSON(CLAVES.sesion, sesion);
 
-// ---------- Mensajes de contacto ----------
+// ---------- Mensajes de contacto (sin backend: quedan en el navegador) ----------
 
 export function guardarMensaje(mensaje) {
   const mensajes = leerJSON(CLAVES.mensajes, []);
