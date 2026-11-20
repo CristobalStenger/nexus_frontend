@@ -42,7 +42,12 @@ export async function api(ruta, { metodo = 'GET', datos, token } = {}) {
   if (!respuesta.ok) {
     const errores = cuerpo?.errores ?? {};
     const mensaje = Object.values(errores).join(' ') || cuerpo?.detail || MENSAJES[respuesta.status];
-    throw new ErrorApi(respuesta.status, mensaje || `El servidor respondió con un error (${respuesta.status}).`, errores);
+    // Un 5xx sin detalle suele ser un servicio que aún despierta o se demoró (el gateway responde 502/504)
+    const porDefecto =
+      respuesta.status >= 500
+        ? 'El servidor no pudo responder. Inténtalo nuevamente en unos segundos.'
+        : `No se pudo completar la solicitud (error ${respuesta.status}).`;
+    throw new ErrorApi(respuesta.status, mensaje || porDefecto, errores);
   }
   return cuerpo;
 }

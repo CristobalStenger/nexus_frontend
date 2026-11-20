@@ -53,6 +53,16 @@ describe('api: comunicación REST con el gateway', () => {
     await expect(api('/usuarios')).rejects.toMatchObject({ status: 403, message: 'No tienes permiso para realizar esta acción.' });
   });
 
+  it('un 5xx sin detalle (servicio despertando) pide intentar de nuevo', async () => {
+    vi.stubGlobal('fetch', responder(504, { status: 504, error: 'Gateway Timeout' }));
+    await expect(api('/productos')).rejects.toMatchObject({
+      status: 504,
+      message: 'El servidor no pudo responder. Inténtalo nuevamente en unos segundos.',
+    });
+    vi.stubGlobal('fetch', responder(418, null));
+    await expect(api('/productos')).rejects.toMatchObject({ message: 'No se pudo completar la solicitud (error 418).' });
+  });
+
   it('si no hay conexión responde con estado 0', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('Failed to fetch'))));
     await expect(api('/productos')).rejects.toMatchObject({ status: 0, message: expect.stringMatching(/No se pudo conectar/) });
