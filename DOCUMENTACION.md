@@ -76,7 +76,7 @@ el proyecto de ejemplo de la guía del curso.
 | ------------------------- | ------------------------------------------------- |
 | Pruebas automatizadas     | **178 aprobadas** en 19 archivos                  |
 | Cobertura de líneas       | **96,96 %**                                       |
-| Cobertura de ramas        | **91,75 %**                                       |
+| Cobertura de ramas        | **91,63 %**                                       |
 | Prueba real con el backend | Aprobada (Playwright + 4 microservicios + PostgreSQL, sección 10.8) |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
@@ -1144,7 +1144,7 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
 | Sentencias | **96,08 %** | 1155 / 1202 |
-| Ramas      | **91,75 %** | 801 / 873   |
+| Ramas      | **91,63 %** | 800 / 873   |
 | Funciones  | **95,68 %** | 421 / 440   |
 | Líneas     | **96,96 %** | 1024 / 1056 |
 
