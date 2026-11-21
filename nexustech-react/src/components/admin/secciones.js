@@ -13,7 +13,7 @@ const SECCIONES = [
 // Accesos de la cuenta: en el menú van separados de las secciones
 export const ENLACES_CUENTA = [
   { ruta: '/admin/perfil', texto: 'Perfil', icono: 'bi-person-circle', soloAdmin: true, descripcion: 'Tu información personal y datos de la cuenta.' },
-  { ruta: '/', texto: 'Tienda', icono: 'bi-shop', descripcion: 'Visualiza la tienda tal como la ven los clientes.' },
+  { ruta: '/', texto: 'Tienda', icono: 'bi-shop', soloAdmin: true, descripcion: 'Visualiza la tienda tal como la ven los clientes.' },
 ];
 
 export const seccionesVisibles = (sesion, lista = SECCIONES) =>
