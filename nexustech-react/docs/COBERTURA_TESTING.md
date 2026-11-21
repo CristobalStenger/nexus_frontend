@@ -70,7 +70,7 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
 | Sentencias    | 96,08 %   | 1155 / 1202  |
-| Ramas         | 91,75 %   | 801 / 873    |
+| Ramas         | 91,63 %   | 800 / 873    |
 | Funciones     | 95,68 %   | 421 / 440    |
 | Líneas        | 96,96 %   | 1024 / 1056  |
 
