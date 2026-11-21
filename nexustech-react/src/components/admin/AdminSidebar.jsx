@@ -27,7 +27,7 @@ export default function AdminSidebar() {
     <nav className="menu-lateral" aria-label="Menú de administración">
       <h2 className="mb-3">Menú</h2>
       {seccionesVisibles(sesion).map(enlace)}
-      {ENLACES_CUENTA.map((s) => (
+      {seccionesVisibles(sesion, ENLACES_CUENTA).map((s) => (
         <Fragment key={s.ruta}>
           <div className="separador"></div>
           {enlace(s)}

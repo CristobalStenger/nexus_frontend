@@ -1,16 +1,30 @@
 import { describe, expect, it, vi } from 'vitest';
-import { productosIniciales } from '../../src/data/productosIniciales.js';
-import { usuariosIniciales } from '../../src/data/usuariosIniciales.js';
 import { CLAVES, guardarJSON, leerJSON } from '../../src/services/storage.js';
 import {
   cargarSesion,
   cargarTienda,
-  cargarUsuarios,
   crearSesion,
-  guardarAutenticacion,
   guardarMensaje,
+  guardarSesion,
   guardarTienda,
+  tokenVigente,
 } from '../../src/services/persistencia.js';
+
+// JWT de prueba que vence en "segundos" (el frontend solo lee "exp")
+const token = (segundos) =>
+  `x.${btoa(JSON.stringify({ sub: '1', exp: Math.floor(Date.now() / 1000) + segundos }))}.firma`;
+const usuario = {
+  id: 1,
+  run: '190110222',
+  nombre: 'Admin',
+  apellidos: 'NexusTech',
+  correo: 'admin@duoc.cl',
+  clave: 'admin123',
+  tipo: 'Administrador',
+  region: 'Región Metropolitana',
+  comuna: 'Santiago',
+  direccion: 'Av. Principal 1234',
+};
 
 describe('almacenamiento seguro', () => {
   it('lee la alternativa si la clave no existe o el JSON está corrupto', () => {
@@ -31,70 +45,56 @@ describe('almacenamiento seguro', () => {
   });
 });
 
-describe('persistencia de la tienda', () => {
-  it('parte con los datos iniciales y recupera lo guardado', () => {
-    const inicial = cargarTienda();
-    expect(inicial.productos).toHaveLength(40);
-    expect(inicial.categorias).toHaveLength(4);
-    expect(inicial.ordenes.length).toBeGreaterThan(0);
-    expect(guardarTienda({ ...inicial, carrito: [{ id: 1, cantidad: 2 }], cupon: { codigo: 'FELIZ18', descuento: 10 } })).toBe(true);
-    const recuperada = cargarTienda();
-    expect(recuperada.carrito).toEqual([{ id: 1, cantidad: 2 }]);
-    expect(recuperada.cupon).toEqual({ codigo: 'FELIZ18', descuento: 10 });
+describe('carrito y cupón (lo único de la tienda que queda en el navegador)', () => {
+  it('guarda y recupera el carrito con su cupón', () => {
+    expect(guardarTienda({ carrito: [{ id: 1, cantidad: 2 }], cupon: { codigo: 'FELIZ18', descuento: 10 } })).toBe(true);
+    expect(cargarTienda()).toEqual({ carrito: [{ id: 1, cantidad: 2 }], cupon: { codigo: 'FELIZ18', descuento: 10 } });
   });
 
-  it('se recupera de JSON corrupto y de estructuras inválidas', () => {
-    localStorage.setItem(CLAVES.productos, '{invalido');
-    expect(cargarTienda().productos).toHaveLength(40);
-    localStorage.setItem(CLAVES.productos, JSON.stringify([{ id: 'x' }]));
-    localStorage.setItem(CLAVES.carrito, JSON.stringify('incorrecto'));
-    expect(cargarTienda().productos).toHaveLength(40);
+  it('limpia cantidades inválidas, filas repetidas y cupones mal formados', () => {
+    localStorage.setItem(
+      CLAVES.carrito,
+      JSON.stringify([{ id: 1, cantidad: 2 }, { id: 1, cantidad: 2 }, { id: 'x', cantidad: 1 }, { id: 2, cantidad: -1 }]),
+    );
+    localStorage.setItem(CLAVES.cupon, JSON.stringify({ codigo: 'FALSO', descuento: 'mucho' }));
+    expect(cargarTienda()).toEqual({ carrito: [{ id: 1, cantidad: 2 }], cupon: null });
+    localStorage.setItem(CLAVES.carrito, '"incorrecto"');
     expect(cargarTienda().carrito).toEqual([]);
   });
 
-  it('respeta un catálogo vacío y rechaza ids repetidos', () => {
-    localStorage.setItem(CLAVES.productos, JSON.stringify([]));
-    expect(cargarTienda().productos).toEqual([]);
-    localStorage.setItem(CLAVES.productos, JSON.stringify([productosIniciales[0], productosIniciales[0]]));
-    expect(cargarTienda().productos).toHaveLength(40);
-  });
-
-  it('limpia productos inexistentes, cantidades inválidas, filas duplicadas y cupones falsos', () => {
-    localStorage.setItem(
-      CLAVES.carrito,
-      JSON.stringify([
-        { id: 1, cantidad: 2 },
-        { id: 1, cantidad: 2 },
-        { id: 999, cantidad: 1 },
-        { id: 2, cantidad: -1 },
-      ]),
-    );
-    localStorage.setItem(CLAVES.cupon, JSON.stringify({ codigo: 'FALSO', descuento: 99 }));
-    const estado = cargarTienda();
-    expect(estado.carrito).toEqual([{ id: 1, cantidad: 2 }]);
-    expect(estado.cupon).toBeNull();
+  it('sin productos en el carrito no conserva el cupón', () => {
+    localStorage.setItem(CLAVES.cupon, JSON.stringify({ codigo: 'FELIZ18', descuento: 10 }));
+    expect(cargarTienda().cupon).toBeNull();
   });
 });
 
-describe('usuarios, sesión y mensajes', () => {
-  it('si la lista de cuentas queda vacía vuelve a las cuentas iniciales', () => {
-    localStorage.setItem(CLAVES.usuarios, JSON.stringify([]));
-    expect(cargarUsuarios()).toHaveLength(usuariosIniciales.length);
+describe('sesión con token JWT', () => {
+  it('la sesión guarda el token y nunca la contraseña', () => {
+    const sesion = crearSesion(usuario, 'abc');
+    expect(sesion).toMatchObject({ id: 1, token: 'abc', tipo: 'Administrador' });
+    expect(sesion).not.toHaveProperty('clave');
   });
 
-  it('la sesión nunca guarda la contraseña', () => {
-    expect(crearSesion(usuariosIniciales[0])).not.toHaveProperty('clave');
+  it('sabe si un token sigue vigente', () => {
+    expect(tokenVigente(token(60))).toBe(true);
+    expect(tokenVigente(token(-60))).toBe(false);
+    expect(tokenVigente('no-es-un-jwt')).toBe(false);
   });
 
-  it('solo restaura una sesión que corresponda a un usuario existente', () => {
-    const usuarios = cargarUsuarios();
-    guardarAutenticacion({ usuarios, sesion: crearSesion(usuarios[0]) });
-    expect(cargarSesion(usuarios)?.correo).toBe('admin@duoc.cl');
-    localStorage.setItem(CLAVES.sesion, JSON.stringify({ run: '190110222', tipo: 'Cliente' }));
-    expect(cargarSesion(usuarios)).toBeNull();
+  it('solo restaura una sesión bien formada y con el token vigente', () => {
+    guardarSesion(crearSesion(usuario, token(60)));
+    expect(cargarSesion()?.correo).toBe('admin@duoc.cl');
+    guardarSesion(crearSesion(usuario, token(-60)));
+    expect(cargarSesion()).toBeNull();
+    guardarSesion({ ...crearSesion(usuario, token(60)), tipo: 'Jefe' });
+    expect(cargarSesion()).toBeNull();
+    guardarSesion(null);
+    expect(localStorage.getItem(CLAVES.sesion)).toBeNull();
   });
+});
 
-  it('acumula los mensajes de contacto', () => {
+describe('mensajes de contacto', () => {
+  it('acumula los mensajes en el navegador', () => {
     guardarMensaje({ nombre: 'Ana' });
     guardarMensaje({ nombre: 'Luis' });
     expect(leerJSON(CLAVES.mensajes)).toHaveLength(2);

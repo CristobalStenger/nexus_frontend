@@ -1,5 +1,5 @@
 // ============================================================
-// NexusTech - Fuente de datos simulada: catálogo inicial
+// NexusTech - Datos de prueba: catálogo inicial (el mismo del backend)
 // Los 40 productos de la entrega 1 (nexustech-html/js/catalogo.js, commit 948ceaf) con el campo
 // nuevo "descuento" (porcentaje) que usa la vista de Ofertas y los textos con sus tildes.
 // ============================================================

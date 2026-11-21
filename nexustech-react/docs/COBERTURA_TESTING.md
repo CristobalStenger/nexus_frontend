@@ -19,8 +19,12 @@ Configuración: `vite.config.js` (`test.environment = 'jsdom'`, `setupFiles`) y
 `tests/setup.js`, que limpia `localStorage`, desmonta los componentes y restaura los espías
 entre pruebas para que ninguna dependa de otra.
 
+Desde la entrega 3 la aplicación usa la API REST del backend. En las pruebas, `tests/servidorFalso.js`
+reemplaza a `fetch` por un servidor en memoria que responde como el API Gateway (mismas rutas
+`/api/v1`, JSON, códigos HTTP y datos iniciales), así no hace falta encender los microservicios.
+
 ```bash
-npm run test:run        # 164 pruebas en 18 archivos
+npm run test:run        # 178 pruebas en 19 archivos
 npm run test:coverage   # reporte en consola y en coverage/index.html
 ```
 
@@ -38,25 +42,26 @@ npm run test:coverage   # reporte en consola y en coverage/index.html
 
 | Archivo                                      | Pruebas | Qué verifica                                                                                                         |
 | -------------------------------------------- | ------: | -------------------------------------------------------------------------------------------------------------------- |
-| `tests/unitarias/validaciones.test.js`       |      25 | RUN (módulo 11), dominios de correo, contraseña, registro, contacto, producto, categoría, checkout, tarjeta, cupones |
+| `tests/unitarias/validaciones.test.js`       |      25 | RUN (módulo 11), dominios de correo, contraseña (opcional al editar), registro, contacto, producto, categoría, checkout y tarjeta |
 | `tests/unitarias/formatos.test.js`           |      11 | Formato CLP, FREE, precio con descuento, normalización, slugs, fechas, estados de stock                              |
 | `tests/unitarias/catalogo.test.js`           |       8 | Filtros combinados (texto, categoría, tipo, rango, disponibilidad) y los cuatro órdenes                              |
 | `tests/unitarias/reportes.test.js`           |       6 | Resumen de ventas, ventas por categoría y por día, más vendidos, inventario valorizado, historial por usuario        |
-| `tests/unitarias/crud.test.js`               |       3 | Obtener, id correlativo, crear, actualizar y eliminar sin mutar el arreglo original                                  |
-| `tests/unitarias/persistencia.test.js`       |      10 | JSON corrupto, datos inválidos, catálogo vacío, ids repetidos, limpieza del carrito, sesión sin contraseña           |
-| `tests/unitarias/tiendaReducer.test.js`      |      25 | Carrito con límite de stock, cupones, totales con envío, pago aprobado y rechazado, CRUD de productos y categorías   |
-| `tests/unitarias/authReducer.test.js`        |      10 | Login, logout, roles, registro, CRUD de usuarios, perfil y reglas "no eliminar la propia cuenta" y "no cambiar el propio rol" |
+| `tests/unitarias/crud.test.js`               |       2 | Obtener, crear, actualizar y eliminar sin mutar el arreglo original                                                  |
+| `tests/unitarias/api.test.js`                |      10 | Llamadas REST: URL `/api/v1`, JSON, token JWT, 204, errores del backend, 401/403, 5xx, sin conexión y adaptadores    |
+| `tests/unitarias/persistencia.test.js`       |       9 | Carrito y cupón en el navegador, sesión con token vigente y sin contraseña, mensajes de contacto                     |
+| `tests/unitarias/tiendaReducer.test.js`      |      22 | Carrito con límite de stock, cupón, totales, catálogo y órdenes del backend, boleta pagada y rechazada, CRUD         |
+| `tests/unitarias/authReducer.test.js`        |       8 | Sesión con JWT, sesión vencida, roles, lista de usuarios y perfil propio                                             |
 | `tests/componentes/ProductoCard.test.jsx`    |       6 | Props, evento de clic, botón deshabilitado sin stock, precio con oferta y FREE                                       |
 | `tests/componentes/ProductoGrid.test.jsx`    |       2 | Renderizado de listas y estado vacío                                                                                 |
 | `tests/componentes/FiltrosCatalogo.test.jsx` |       2 | Componente controlado: informa cambios al padre y limpia filtros                                                     |
 | `tests/componentes/ConfirmarModal.test.jsx`  |       2 | Modal abierto/cerrado y funciones confirmar/cancelar                                                                 |
 | `tests/componentes/CampoFormulario.test.jsx` |       3 | Etiqueta asociada, error con `aria-describedby`, variante select                                                     |
-| `tests/integracion/formularios.test.jsx`     |       7 | Login, registro completo y Contacto con validación en vivo                                                           |
-| `tests/integracion/compra.test.jsx`          |      13 | Carrito, cupones, modal de vaciar, checkout, compra exitosa, pago rechazado, reintento, stock insuficiente           |
-| `tests/integracion/admin.test.jsx`           |      15 | Dashboard, órdenes y boleta, reportes, CRUD de productos, categorías y usuarios, historial, perfil, cerrar sesión    |
-| `tests/integracion/App.test.jsx`             |      15 | Navegación con NavLink, 404, buscador, categorías, ofertas, detalle, rutas protegidas por rol, sesión restaurada     |
+| `tests/integracion/formularios.test.jsx`     |       7 | Login (mensaje 401 del backend), registro completo (409 si el correo existe) y Contacto                              |
+| `tests/integracion/compra.test.jsx`          |      15 | Carrito, cupón validado en el backend, checkout, boleta pagada y rechazada, reintento, servidor caído                 |
+| `tests/integracion/admin.test.jsx`           |      16 | Dashboard, órdenes, reportes, CRUD de productos, categorías y usuarios contra la API, perfil, cerrar sesión          |
+| `tests/integracion/App.test.jsx`             |      23 | Navegación, 404, catálogo, rutas por rol, vista del vendedor, token vencido o rechazado, servidor caído              |
 | `tests/integracion/foco.test.jsx`            |       1 | Al abrir la app el foco no se mueve; al navegar pasa al contenido principal                                          |
-| **Total**                                    | **164** |                                                                                                                      |
+| **Total**                                    | **178** |                                                                                                                      |
 
 ## 4. Resultado de cobertura
 
@@ -64,13 +69,13 @@ Se mide solo `src/` (las pruebas viven en `tests/`) y se excluyen `main.jsx` y l
 
 | Métrica       | Cobertura | Detalle      |
 | ------------- | --------: | ------------ |
-| Sentencias    | 97,13 %   | 1117 / 1150  |
-| Ramas         | 92,13 %   | 820 / 890    |
-| Funciones     | 95,81 %   | 412 / 430    |
-| Líneas        | 97,51 %   | 980 / 1005   |
+| Sentencias    | 96,08 %   | 1155 / 1202  |
+| Ramas         | 91,75 %   | 801 / 873    |
+| Funciones     | 95,68 %   | 421 / 440    |
+| Líneas        | 96,96 %   | 1024 / 1056  |
 
-Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `components` 90–100 % (`comunes` es la más baja),
-`pages/tienda` 96,9 %, `pages/admin` 92,3 %, `context` 93,9 %.
+Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,1 %, `components` 90–100 % (`comunes` es la más baja),
+`pages/tienda` 96,9 %, `pages/admin` 92,2 %, `context` 93,4 %.
 
 ## 5. Análisis
 
@@ -82,7 +87,8 @@ Por carpeta (líneas): `services` 100 %, `store` 100 %, `utils` 99,5 %, `compone
   interfaz y no contienen reglas de negocio.
 - **Riesgos que las pruebas no cubren:** jsdom no dibuja estilos, así que el diseño responsive se
   revisó manualmente en Chromium a 390 px y 1280 px; las imágenes externas de los productos no se
-  cargan en las pruebas; el login, los roles y el pago son simulaciones de frontend.
+  cargan en las pruebas; el servidor falso imita al backend, por eso la integración también se
+  probó con los microservicios reales y Playwright (DOCUMENTACION.md, sección 10.8).
 - **Cobertura no es ausencia de errores:** indica qué código se ejecutó, no que todos los casos
   posibles estén verificados. Por eso las pruebas comprueban comportamientos visibles (textos,
   botones, valores guardados) y no detalles internos de los componentes.

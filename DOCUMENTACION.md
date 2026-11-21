@@ -1,6 +1,6 @@
 # NexusTech: documentación completa del proyecto
 
-> **Asignatura:** Desarrollo Fullstack II · **Evaluación 2** (30 %)
+> **Asignatura:** Desarrollo Fullstack II · **Evaluación 2** (30 %) y **Evaluación 3** (integración con el backend)
 > **Equipo:** Cristóbal Stenger y Xavier Marin
 > **Repositorio:** `CristobalStenger/nexus_frontend`
 
@@ -10,6 +10,9 @@ Este documento explica todo el proyecto NexusTech, con tres focos:
 2. **Las funciones y pestañas nuevas** que pide la Evaluación 2: categorías, ofertas, checkout,
    pago exitoso y con error, y el panel de administración completo.
 3. **Las pruebas unitarias**: cómo están configuradas, qué verifican y cuánto código cubren.
+4. **La integración con el backend** (Evaluación 3): el frontend usa la API REST de los
+   microservicios con `fetch` y JWT, en lugar de simular la base de datos en `localStorage`
+   (sección 10).
 
 ---
 
@@ -25,6 +28,7 @@ Este documento explica todo el proyecto NexusTech, con tres focos:
 7. [Verificación manual](#7-verificación-manual)
 8. [Limitaciones y trabajo futuro](#8-limitaciones-y-trabajo-futuro)
 9. [Preguntas frecuentes para la defensa](#9-preguntas-frecuentes-para-la-defensa)
+10. [Integración con el backend (Evaluación 3)](#10-integración-con-el-backend-evaluación-3)
 
 ---
 
@@ -33,7 +37,9 @@ Este documento explica todo el proyecto NexusTech, con tres focos:
 **NexusTech** es una tienda en línea chilena de tecnología: componentes de PC, periféricos,
 consolas y notebooks. La entrega 1 era un sitio de páginas HTML estáticas con lógica en
 JavaScript. En la entrega 2 se convirtió en una **aplicación de una sola página (SPA)** hecha con
-React y se agregaron nuevos flujos de compra y administración.
+React y se agregaron nuevos flujos de compra y administración. En la entrega 3 la SPA se conectó
+al backend: productos, categorías, órdenes y usuarios ahora viven en PostgreSQL y se consultan
+por una API REST protegida con JWT.
 
 ### Las dos entregas dentro del repositorio
 
@@ -41,6 +47,7 @@ React y se agregaron nuevos flujos de compra y administración.
 | ------------ | ------------------------------------------------ | --------------------------------------------------------- |
 | Evaluación 1 | [`nexustech-html/`](https://github.com/CristobalStenger/nexus_frontend/tree/948ceaf472d32a08d28bb0cf4581a54355025353/nexustech-html) (commit `948ceaf`) | HTML5, CSS3, Bootstrap 5 (CDN), JavaScript |
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/)           | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
+| Evaluación 3 | `nexustech-react/` + repositorio [`nexus_backend`](https://github.com/CristobalStenger/nexus_backend) | Lo anterior + API REST con `fetch` y JWT; backend Spring Boot y PostgreSQL |
 
 La carpeta `nexustech-html/` de la entrega 1 se quitó de `main` para aligerar el repositorio. Se
 conserva sin cambios en el commit `948ceaf`; para recuperarla en local basta con
@@ -57,7 +64,9 @@ el proyecto de ejemplo de la guía del curso.
 | **React Bootstrap 2 + Bootstrap 5** | Diseño responsivo con componentes React (Navbar, Modal, Carousel, Toast, Form…) |
 | **Bootstrap Icons**               | Íconos de la interfaz                                                             |
 | **Context + useReducer**          | Estado global de la tienda y de la sesión                                         |
-| **localStorage**                  | Persistencia de productos, carrito, usuarios, órdenes y sesión                    |
+| **`fetch` + API REST** (entrega 3) | Productos, categorías, órdenes y usuarios vienen del backend (`services/api.js`)  |
+| **JWT** (entrega 3)               | Token que entrega el login y se envía en cada operación protegida                 |
+| **localStorage**                  | Solo el carrito, el cupón, la sesión (con su token) y los mensajes de contacto    |
 | **Vitest 4 + Testing Library**    | Pruebas unitarias, de componentes y de integración                                |
 | **ESLint**                        | Revisión automática de calidad del código                                         |
 
@@ -65,9 +74,10 @@ el proyecto de ejemplo de la guía del curso.
 
 | Comprobación              | Resultado                                         |
 | ------------------------- | ------------------------------------------------- |
-| Pruebas automatizadas     | **164 aprobadas** en 18 archivos                  |
-| Cobertura de líneas       | **97,51 %**                                       |
-| Cobertura de ramas        | **92,13 %**                                       |
+| Pruebas automatizadas     | **178 aprobadas** en 19 archivos                  |
+| Cobertura de líneas       | **96,96 %**                                       |
+| Cobertura de ramas        | **91,75 %**                                       |
+| Prueba real con el backend | Aprobada (Playwright + 4 microservicios + PostgreSQL, sección 10.8) |
 | ESLint                    | Sin errores ni advertencias                       |
 | Compilación (`npm run build`) | Aprobada                                      |
 
@@ -84,13 +94,19 @@ el proyecto de ejemplo de la guía del curso.
 
 ## 2. Cómo ejecutar el proyecto
 
-Requisito: **Node.js 20.19 o superior** (comprueba con `node -v`).
+Requisitos: **Node.js 20.19 o superior** (comprueba con `node -v`) y el **backend encendido**
+(repositorio [`nexus_backend`](https://github.com/CristobalStenger/nexus_backend), sección
+"Ejecutar en local"; su API Gateway queda en `http://localhost:8080`).
 
 ```bash
 cd nexustech-react
-npm ci          # instala las versiones exactas guardadas en package-lock.json
-npm run dev     # abre http://localhost:5173
+npm ci                       # instala las versiones exactas guardadas en package-lock.json
+cp .env.example .env.local   # VITE_API_URL: dirección del API Gateway
+npm run dev                  # abre http://localhost:5173
 ```
+
+Si `VITE_API_URL` no está definida se usa `http://localhost:8080`. En Vercel se configura en
+*Settings → Environment Variables* con la URL del gateway en Cloud Run.
 
 > **En Windows (PowerShell):** si la ruta tiene espacios o paréntesis, escríbela entre comillas:
 > `cd "C:\Users\...\nexus_frontend-main\nexustech-react"`.
@@ -103,7 +119,7 @@ npm run dev     # abre http://localhost:5173
 | `npm run preview`       | Sirve la compilación de `dist/`                        |
 | `npm run lint`          | Revisa el código con ESLint                            |
 | `npm test`              | Vitest en modo observación                             |
-| `npm run test:run`      | Ejecuta las 164 pruebas una vez                        |
+| `npm run test:run`      | Ejecuta las 178 pruebas una vez (no necesitan backend) |
 | `npm run test:coverage` | Pruebas + reporte de cobertura (`coverage/index.html`) |
 
 ### Cuentas de prueba
@@ -111,11 +127,12 @@ npm run dev     # abre http://localhost:5173
 | Rol           | Correo              | Contraseña   | Qué puede hacer                                     |
 | ------------- | ------------------- | ------------ | --------------------------------------------------- |
 | Administrador | `admin@duoc.cl`     | `admin123`   | Tienda + panel completo (crear, editar y eliminar)  |
-| Vendedor      | `vendedor@duoc.cl`  | `vende123`   | Tienda + panel en modo solo lectura                 |
+| Vendedor      | `vendedor@duoc.cl`  | `vende123`   | Tienda + panel con solo Productos y Órdenes (lista y detalle) |
 | Cliente       | `cliente@gmail.com` | `cliente123` | Solo la tienda (el checkout se completa solo)       |
 
-Para volver a los datos iniciales, borra las claves `*_NEXUSTECH` y `USUARIO_ACTIVO` en
-**DevTools → Application → Local Storage**.
+Los datos viven en la base del backend. Para volver a los datos iniciales se recrea la base
+(script `db/crear-schemas.sql` del backend): al arrancar, Flyway vuelve a cargar los 40
+productos, 4 categorías, 3 usuarios y 5 boletas de ejemplo.
 
 ---
 
@@ -189,13 +206,15 @@ nexustech-react/
 ├── index.html                 Única página HTML: <div id="root">
 ├── vite.config.js             Configuración de Vite y de las pruebas (Vitest)
 ├── public/_redirects          Regla para que el hosting sirva index.html en todas las rutas
+├── vercel.json                La misma regla para Vercel (entrega 3)
+├── .env.example               VITE_API_URL: dirección del API Gateway (entrega 3)
 ├── docs/COBERTURA_TESTING.md  Documento de cobertura de pruebas
 ├── src/                       Código de la aplicación
     ├── main.jsx               Monta <App /> dentro de BrowserRouter e importa los estilos
     ├── App.jsx                Providers y definición de todas las rutas
     ├── styles.css             Estilos de la entrega 1 + estilos nuevos
-    ├── data/                  Fuente de datos simulada (base de datos inicial)
-    ├── services/              CRUD genérico y persistencia en localStorage
+    ├── data/                  Datos fijos: configuración, regiones, blogs y portada
+    ├── services/              api.js (REST con el backend), CRUD genérico y lo que guarda el navegador
     ├── store/                 Reducers: reglas de negocio puras
     ├── context/               Providers que comparten el estado
     ├── hooks/                 Hooks propios (useTienda, useAuth, useFormulario, useTitulo, useCambioDeRuta)
@@ -206,7 +225,9 @@ nexustech-react/
                                por sección (ordenes/, productos/, categorias/, usuarios/)
 └── tests/                     Pruebas, separadas por nivel (sección 6.2)
     ├── setup.js               Limpieza antes y después de cada prueba
-    ├── utilidades.jsx         renderApp, iniciarSesionComo, guardarCarrito...
+    ├── utilidades.jsx         renderApp, iniciarSesionComo, guardarCarrito, db, ultimoEnvio...
+    ├── servidorFalso.js       Reemplaza a fetch y responde como el API Gateway (entrega 3)
+    ├── datos/                 Datos iniciales del backend (productos, usuarios, órdenes, cupones)
     ├── unitarias/             Funciones puras: reducers, servicios y utils
     ├── componentes/           Un componente con props controladas
     └── integracion/           La aplicación completa recorrida como una persona
@@ -214,15 +235,16 @@ nexustech-react/
 
 | Carpeta                  | Contenido                                                                                                                                 |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `data/`                  | `productosIniciales` (40 productos), `categoriasIniciales`, `usuariosIniciales`, `ordenesIniciales`, `blogs`, `regiones`, `cupones`, `portada`, `configuracion` |
+| `data/`                  | `blogs`, `regiones`, `portada` y `configuracion` (costo de despacho, roles, íconos de categoría). Los datos iniciales de productos, usuarios y órdenes pasaron al backend y a `tests/datos/` |
+| `services/api.js`        | Llamadas REST al API Gateway con `fetch`: URL `/api/v1`, token JWT y errores del backend (sección 10.3) |
 | `services/storage.js`    | `leerJSON` y `guardarJSON` con `try/catch`, y los nombres de las claves                                                                   |
-| `services/crud.js`       | Funciones CRUD puras: `obtener`, `siguienteId`, `crear`, `actualizar`, `eliminar`                                                         |
-| `services/persistencia.js` | "Base de datos" en localStorage: carga cada colección, la valida y la guarda                                                            |
-| `store/tiendaReducer.js` | Carrito, cupones, pago simulado y CRUD de productos y categorías                                                                          |
-| `store/authReducer.js`   | Sesión, registro, CRUD de usuarios y roles                                                                                                |
+| `services/crud.js`       | Funciones CRUD puras sobre arreglos: `obtener`, `crear`, `actualizar`, `eliminar`                                                         |
+| `services/persistencia.js` | Lo que se guarda en el navegador: carrito, cupón, sesión con su token y mensajes de contacto, validando su forma                        |
+| `store/tiendaReducer.js` | Carrito, cupón y las respuestas del backend: catálogo, órdenes, boleta de la compra y CRUD de productos y categorías                      |
+| `store/authReducer.js`   | Sesión (con el JWT), lista de usuarios del administrador y roles                                                                          |
 | `store/aviso.js`         | `conAviso`: agrega al estado el aviso emergente; lo usan los dos reducers                                                                 |
-| `context/`               | `TiendaProvider` y `AuthProvider`                                                                                                         |
-| `components/layout/`     | `Header`, `Footer`, `Layout`, `AdminLayout`, `RutaProtegida`, `BuscadorHeader`, `ZonaUsuario`, `BotonCarrito`, `AccesoDenegado`           |
+| `context/`               | `TiendaProvider` y `AuthProvider`: hacen las llamadas a la API y despachan lo que responde el backend                                    |
+| `components/layout/`     | `Header`, `Footer`, `Layout`, `AdminLayout`, `RutaProtegida`, `BuscadorHeader`, `ZonaUsuario`, `BotonCarrito`, `AccesoDenegado`, `CargaDatos` (espera los datos del backend) |
 | `components/producto/`   | `ProductoCard`, `ProductoGrid`, `FiltrosCatalogo`, `PrecioProducto`, `StockBadge`, `CategoriaCard`                                        |
 | `components/compra/`     | `FilaCarrito`, `TablaItemsCompra`, `ResumenCompra`, `DatosOrden`, `ResultadoCompra`                                                       |
 | `components/formularios/` | `CampoFormulario`, `SelectorRegionComuna`, `UsuarioForm`, `ProductoForm`, `CategoriaForm`                                               |
@@ -597,10 +619,11 @@ muestran, sin estado propio. Eso los hace simples de entender, de reutilizar y d
 | Tipo de dato                                              | Dónde vive                               | Ejemplos                                                                                   |
 | --------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Lo comparten varias pantallas                             | **Context + `useReducer`** (global)      | Productos, categorías, órdenes, carrito, cupón (`TiendaProvider`); usuarios y sesión (`AuthProvider`) |
+| Lo comparten todas las personas                           | **Backend (PostgreSQL)**, vía `api.js`   | Productos, categorías, órdenes y usuarios: se piden al cargar y se cambian con POST, PUT y DELETE |
 | Solo afecta a una pantalla                                | **`useState`** en la página              | Filtros del catálogo, cupón escrito en el carrito, modal abierto, texto de búsqueda en las tablas, "boleta enviada" |
 | Valores y errores de un formulario                        | **`useFormulario`** (hook propio)        | Login, registro, contacto, checkout y formularios del panel                                |
 | Debe poder compartirse o recargarse                       | **La URL**                               | `/productos/7` (parámetro `:id`), `/productos?q=ryzen` (parámetro de búsqueda)             |
-| Debe sobrevivir al cerrar la página                       | **`localStorage`** (vía `persistencia.js`) | Todo lo global                                                                           |
+| Debe sobrevivir al cerrar la página en este navegador     | **`localStorage`** (vía `persistencia.js`) | Carrito, cupón y sesión (con su token JWT)                                              |
 | Se puede calcular a partir de otro dato                   | **No se guarda: se calcula**             | Total del carrito, unidades, precio con descuento, estado del stock, métricas del dashboard |
 
 **Patrones usados**
@@ -646,13 +669,13 @@ vive en el reducer, y el contador de la cabecera se actualiza solo porque lee el
 
 | Hook o provider       | Archivo                              | Qué entrega o hace                                                                                                 |
 | --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `useTienda()`         | `hooks/useTienda.js`                 | `{ estado, dispatch, errorGuardado }` del estado global de la tienda. Falla con un mensaje claro si se usa fuera de `TiendaProvider` |
-| `useAuth()`           | `hooks/useAuth.js`                   | `usuarios`, `sesion` y las funciones `ingresar`, `registrar`, `guardarUsuario`, `eliminarUsuario`, `cerrarSesion`  |
+| `useTienda()`         | `hooks/useTienda.js`                 | `estado`, `dispatch` (carrito) y las funciones que llaman al backend: `guardarProducto`, `eliminarProducto`, `guardarCategoria`, `eliminarCategoria`, `aplicarCupon`, `pagar`. Falla con un mensaje claro si se usa fuera de `TiendaProvider` |
+| `useAuth()`           | `hooks/useAuth.js`                   | `usuarios`, `sesion` y las funciones `ingresar`, `registrar`, `guardarUsuario`, `eliminarUsuario`, `cerrarSesion` (todas asíncronas, devuelven `{ ok }`) |
 | `useFormulario()`     | `hooks/useFormulario.js`             | `valores`, `errores`, `error(campo)`, `valido(campo)`, `cambiar`, `actualizar`, `enviar`, `reiniciar`. Muestra un error solo si el campo fue tocado o se intentó enviar |
 | `useTitulo(titulo)`   | `hooks/useTitulo.js`                 | Cambia el título de la pestaña del navegador en cada página                                                        |
 | `useCambioDeRuta()`   | `hooks/useCambioDeRuta.js`             | Al cambiar de página sube al inicio y mueve el foco al contenido principal (accesibilidad). Al abrir la app no lo mueve, para que el primer Tab llegue a "Saltar al contenido" |
-| `TiendaProvider`      | `context/TiendaProvider.jsx`         | Crea el estado con `useReducer(tiendaReducer, undefined, () => crearEstado(cargarTienda()))` y guarda cada cambio con `useEffect`       |
-| `AuthProvider`        | `context/AuthProvider.jsx`           | Igual para usuarios y sesión; además valida los formularios antes de despachar la acción                           |
+| `TiendaProvider`      | `context/TiendaProvider.jsx`         | Pide el catálogo (y las órdenes si el rol entra al panel), llama a producto-service y pedido-service y despacha cada respuesta. Guarda el carrito con `useEffect` |
+| `AuthProvider`        | `context/AuthProvider.jsx`           | Login y registro contra usuario-service, guarda la sesión con su token y, para el administrador, carga los usuarios |
 | `contextos.js`        | `context/contextos.js`               | Crea `TiendaContext` y `AuthContext` en un archivo sin componentes, para que Vite recargue sin perder el estado    |
 
 **Regla de los hooks:** solo se llaman en el nivel superior de un componente o de otro hook,
@@ -670,45 +693,40 @@ filtros con `useState`, calcula la lista visible con `filtrarProductos` y se la 
 
 ```mermaid
 flowchart LR
-  D[src/data<br/>datos iniciales] --> P[persistencia.js<br/>carga y valida]
-  LS[(localStorage)] <--> P
-  P --> TP[TiendaProvider<br/>useReducer]
-  P --> AP[AuthProvider<br/>useReducer]
-  TP -- useTienda --> V[Páginas y componentes]
-  AP -- useAuth --> V
-  V -- dispatch acción --> R[Reducers<br/>reglas de negocio]
-  R -- usan --> C[crud.js + validaciones.js]
-  R -- estado nuevo --> TP
-  TP -- useEffect guarda --> LS
+  API[(API Gateway<br/>/api/v1)] -- JSON --> PR[TiendaProvider y AuthProvider<br/>llaman con api.js]
+  PR -- dispatch respuesta --> R[Reducers<br/>funciones puras]
+  R -- estado nuevo --> PR
+  PR -- useTienda / useAuth --> V[Páginas y componentes]
+  V -- guardarProducto, pagar, ingresar... --> PR
+  PR -- POST / PUT / DELETE + JWT --> API
+  LS[(localStorage<br/>carrito, cupón, sesión)] <--> PR
 ```
 
-1. `src/data` entrega los datos iniciales: es la "base de datos" simulada.
-2. `persistencia.js` carga lo guardado en `localStorage`. Si no hay datos válidos, usa los iniciales.
-3. `TiendaProvider` y `AuthProvider` crean el estado con `useReducer` y lo comparten por Context.
-4. Las páginas leen el estado con `useTienda()` o `useAuth()` y envían acciones con `dispatch`.
-5. Los reducers aplican las reglas con las funciones de `crud.js` y `validaciones.js`.
-6. Un `useEffect` guarda cada cambio. La interfaz se actualiza al instante, sin recargar.
+1. Al abrir la app, `TiendaProvider` pide productos y categorías; si la sesión es del panel,
+   también las órdenes, y `AuthProvider` pide los usuarios al administrador.
+2. Mientras llegan, `CargaDatos` muestra "Conectando con NexusTech…" (o el error con "Reintentar").
+3. Las páginas leen el estado con `useTienda()` o `useAuth()`.
+4. Para cambiar datos llaman a una función del provider (`guardarProducto`, `pagar`…), que envía
+   la petición con el token y, si el backend acepta, despacha su respuesta al reducer.
+5. El carrito se maneja en el navegador con `dispatch` y un `useEffect` lo guarda en `localStorage`.
 
-### 4.7 Persistencia
+### 4.7 Persistencia en el navegador
+
+Desde la entrega 3, lo que comparten todas las personas (productos, categorías, órdenes y
+usuarios) lo guarda el backend en PostgreSQL. En `localStorage` quedan solo estas claves:
 
 | Clave                  | Contenido                                                     |
 | ---------------------- | ------------------------------------------------------------- |
-| `PRODUCTOS_NEXUSTECH`  | Catálogo con stock actualizado                                |
-| `CATEGORIAS_NEXUSTECH` | Categorías (nueva en la entrega 2)                            |
-| `USUARIOS_NEXUSTECH`   | Cuentas y roles                                               |
-| `USUARIO_ACTIVO`       | Sesión abierta, **sin la contraseña**                         |
+| `USUARIO_ACTIVO`       | Sesión abierta con su **token JWT**, **sin la contraseña**    |
 | `CARRITO_NEXUSTECH`    | Carrito normalizado: solo `{ id, cantidad }`                  |
-| `CUPON_NEXUSTECH`      | Cupón aplicado                                                |
-| `ORDENES_NEXUSTECH`    | Órdenes pagadas y rechazadas (nueva en la entrega 2)          |
-| `MENSAJES_NEXUSTECH`   | Mensajes del formulario de contacto                           |
+| `CUPON_NEXUSTECH`      | Cupón aplicado (el backend lo vuelve a validar al pagar)      |
+| `MENSAJES_NEXUSTECH`   | Mensajes del formulario de contacto (no tiene backend)        |
 
-Se mantienen los nombres de clave de la entrega 1. Al cargar, `persistencia.js`:
+Al cargar, `persistencia.js`:
 
-- usa los datos iniciales si el JSON está corrupto o la estructura es inválida;
-- rechaza colecciones con ids repetidos;
-- respeta un catálogo vacío, para no restaurar productos que el administrador eliminó;
-- limpia del carrito los productos que ya no existen, las cantidades inválidas y las filas repetidas;
-- descarta cupones que no existen y sesiones que no corresponden a un usuario real;
+- limpia del carrito las cantidades inválidas y las filas repetidas; los productos que ya no
+  existen se quitan cuando llega el catálogo del backend;
+- descarta cupones mal formados y sesiones sin token o con el token vencido;
 - si el navegador rechaza la escritura (por ejemplo, almacenamiento lleno), muestra un aviso y la
   tienda sigue funcionando mientras la página esté abierta.
 
@@ -722,7 +740,11 @@ Se mantienen los nombres de clave de la entrega 1. Al cargar, `persistencia.js`:
 - Stock crítico por producto, marcado en rojo en el panel.
 - Código de producto único.
 - Cupones `FELIZ18` (10 %), `CUTURRUFO70` (25 %), `BOOTSTRAP` (5 %) y `XAVICRIS` (15 %).
-- Roles Administrador, Vendedor (solo lectura) y Cliente. Nadie puede eliminar su propia cuenta.
+- Roles Administrador, Vendedor (solo productos y órdenes, en lectura) y Cliente. Nadie puede eliminar su propia cuenta.
+
+Desde la entrega 3 el backend vuelve a validar todas estas reglas: los formularios avisan antes
+de enviar y el servidor tiene la última palabra (por ejemplo, un código de producto repetido
+que otra persona creó mientras tanto).
 
 ---
 
@@ -844,22 +866,22 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 | ------------------------------------------- | ------------------------------------------------------------------ |
 | Sin sesión                                  | Redirige a `/login` y, al entrar, vuelve a la página pedida        |
 | Cliente                                     | "Acceso denegado"                                                  |
-| Vendedor                                    | Puede consultar; no ve botones para crear, editar ni eliminar      |
-| Vendedor que escribe a mano una ruta de edición | "Acceso denegado"                                              |
+| Vendedor                                    | Solo ve Productos y Órdenes (lista y detalle), sin botones para crear, editar ni eliminar; al entrar a `/admin` va directo a Productos |
+| Vendedor que escribe a mano cualquier otra ruta del panel | "Acceso denegado"                                    |
 | Administrador                               | Acceso total                                                       |
 
 | Ruta                                | Vista                        | Acceso        | Qué hace                                                                                                                |
 | ----------------------------------- | ---------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `/admin`                            | Dashboard 🆕                 | Admin, Vendedor | 4 métricas (compras y ventas, productos e inventario, usuarios, stock crítico), accesos a los módulos y últimas órdenes |
+| `/admin`                            | Dashboard 🆕                 | Admin         | 4 métricas (compras y ventas, productos e inventario, usuarios, stock crítico), accesos a los módulos y últimas órdenes |
 | `/admin/ordenes`                    | Órdenes / boletas 🆕         | Admin, Vendedor | Listado con búsqueda y filtro por estado                                                                              |
 | `/admin/ordenes/:numero`            | Mostrar boleta 🆕            | Admin, Vendedor | Detalle completo de la orden, motivo si fue rechazada y botón imprimir                                                |
 | `/admin/productos`                  | Listado de productos ♻️      | Admin, Vendedor | Tabla con búsqueda, filas críticas en rojo, descuento visible y acciones                                              |
 | `/admin/productos/:id`              | Mostrar producto 🆕          | Admin, Vendedor | Ficha con todos los datos y las unidades vendidas                                                                     |
 | `/admin/productos/nuevo`            | Nuevo producto ♻️            | Admin         | Formulario con validación en vivo y vista previa del precio con descuento                                              |
 | `/admin/productos/:id/editar`       | Editar producto ♻️           | Admin         | Mismo formulario precargado; el id se conserva                                                                         |
-| `/admin/productos/criticos`         | Productos críticos 🆕        | Admin, Vendedor | Productos con stock menor o igual al crítico y acceso para reponer                                                    |
-| `/admin/productos/reportes`         | Reporte de productos 🆕      | Admin, Vendedor | Inventario valorizado por categoría, productos sin stock, en oferta y más vendidos                                    |
-| `/admin/categorias`                 | Categorías 🆕                | Admin, Vendedor | Listado con la cantidad de productos de cada una                                                                      |
+| `/admin/productos/criticos`         | Productos críticos 🆕        | Admin         | Productos con stock menor o igual al crítico y acceso para reponer                                                    |
+| `/admin/productos/reportes`         | Reporte de productos 🆕      | Admin         | Inventario valorizado por categoría, productos sin stock, en oferta y más vendidos                                    |
+| `/admin/categorias`                 | Categorías 🆕                | Admin         | Listado con la cantidad de productos de cada una                                                                      |
 | `/admin/categorias/nueva`           | Nueva categoría 🆕           | Admin         | Nombre, descripción e ícono; la dirección (slug) se genera sola                                                       |
 | `/admin/categorias/:id/editar`      | Editar categoría 🆕          | Admin         | Al renombrarla se actualizan sus productos                                                                            |
 | `/admin/usuarios`                   | Usuarios ♻️                  | Admin         | Búsqueda, filtro por rol y acciones                                                                                   |
@@ -868,9 +890,9 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 | `/admin/usuarios/:run/editar`       | Editar usuario ♻️            | Admin         | La cuenta propia se edita desde Perfil, sin cambiar el RUN ni el rol                                                  |
 | `/admin/usuarios/:run/compras`      | Historial de compras 🆕      | Admin         | Órdenes del usuario (por RUN o correo), total gastado y pagos rechazados                                              |
 | `/admin/reportes`                   | Reportes 🆕                  | Admin         | Ventas totales, ticket promedio, unidades, % de pagos aprobados, ventas por categoría y por día, tipo de entrega       |
-| `/admin/perfil`                     | Perfil 🆕                    | Admin, Vendedor | La persona edita sus datos; el RUN y el rol no se cambian desde aquí                                                  |
+| `/admin/perfil`                     | Perfil 🆕                    | Admin         | La persona edita sus datos; el RUN y el rol no se cambian desde aquí                                                  |
 
-**Reglas del CRUD que aplica el reducer** (aunque la vista falle, el reducer vuelve a validar):
+**Reglas del CRUD** (el formulario las revisa antes de enviar y el backend las vuelve a validar):
 
 - **Productos:** código único, precio entero ≥ 0, stock entero ≥ 0, descuento de 0 a 90 % y URL
   de imagen `http`/`https`. Al eliminar un producto, también sale del carrito.
@@ -882,7 +904,7 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 
 ### 5.4 Otras mejoras
 
-- **Datos de ejemplo:** 5 órdenes iniciales, para que el dashboard y los reportes tengan
+- **Datos de ejemplo** (desde la entrega 3 los carga el backend con Flyway): 5 órdenes iniciales, para que el dashboard y los reportes tengan
   información desde el primer uso; un vendedor y un cliente de prueba; y 10 productos con
   descuento para la vista de ofertas.
 - **Accesibilidad:** enlace "Saltar al contenido", etiquetas asociadas a cada campo, errores
@@ -892,7 +914,7 @@ rol del usuario, un menú lateral y el contenido. Está protegido por `RutaProte
 - **Diseño responsivo:** grillas de Bootstrap en todas las vistas, menú colapsable y menú del
   panel en filas en pantallas pequeñas. Se revisó a 390 px y a 1280 px.
 - **Publicación:** `public/_redirects` hace que el hosting sirva `index.html` en cualquier ruta,
-  así se puede recargar `/productos/7` sin error 404.
+  así se puede recargar `/productos/7` sin error 404. En Vercel cumple la misma función `vercel.json`.
 
 ---
 
@@ -948,23 +970,31 @@ afterEach(() => {
 ```
 
 **`tests/utilidades.jsx`**: funciones de apoyo como `renderApp(ruta)` (toda la app con
-`MemoryRouter`), `iniciarSesionComo('Administrador')` y `guardarCarrito([...])`.
+`MemoryRouter`, esperando a que lleguen los datos del backend), `iniciarSesionComo('Administrador')`
+(deja una sesión con token), `guardarCarrito([...])`, `db()` (los datos del servidor falso) y
+`ultimoEnvio('POST', '/boletas')` (el JSON que envió el frontend).
+
+**`tests/servidorFalso.js`** (entrega 3): antes de cada prueba reemplaza a `fetch` por un servidor
+en memoria con las mismas rutas `/api/v1`, JSON, códigos HTTP y mensajes que el API Gateway, y
+con los mismos datos iniciales que carga el backend (`tests/datos/`). Así las pruebas recorren la
+integración completa sin encender los microservicios (sección 10.8).
 
 ### 6.2 Tres niveles de prueba
 
 ```mermaid
 flowchart TB
-  I["Integración (51)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
+  I["Integración (62)<br/>App, compra, formularios, admin, foco<br/>la app completa como la usa una persona"]
   C["Componentes (15)<br/>ProductoCard, ProductoGrid, FiltrosCatalogo,<br/>ConfirmarModal, CampoFormulario"]
-  U["Unitarias puras (98)<br/>reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
+  U["Unitarias puras (101)<br/>api, reducers, CRUD, persistencia, validaciones,<br/>formatos, filtros, reportes"]
   I --- C --- U
 ```
 
-1. **Funciones puras (98 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
+1. **Funciones puras (101 pruebas):** las reglas de negocio se prueban sin renderizar nada. Son
    rápidas y precisas: una entrada y el resultado esperado.
 2. **Componentes (15 pruebas):** cada componente se renderiza por separado con props controladas.
-3. **Integración (51 pruebas):** se monta la aplicación completa y se recorre como lo haría una
-   persona: escribir, hacer clic, navegar y revisar lo que se ve y lo que se guarda.
+3. **Integración (62 pruebas):** se monta la aplicación completa y se recorre como lo haría una
+   persona: escribir, hacer clic, navegar y revisar lo que se ve, lo que se envía al backend y lo
+   que queda guardado en él (servidor falso).
 
 Todas siguen el patrón **Preparar → Actuar → Comprobar**.
 
@@ -1034,12 +1064,12 @@ expect(screen.getByRole('link', { name: 'Carrito (2)' })).toHaveTextContent('$49
 
 ```js
 // tests/unitarias/tiendaReducer.test.js
-it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', () => {
-  const inicial = iniciar({ carrito: [{ id: 1, cantidad: 1 }] });
-  const final = tiendaReducer(inicial, { type: 'PAGAR', numero: 1001, datos: datosPago('4242424242420000') });
-  expect(final.ordenes[0].estado).toBe('rechazada');
-  expect(final.productos).toEqual(inicial.productos);
+it('rechazada: registra la orden pero conserva carrito, cupón y stock', () => {
+  const inicial = iniciar({ carrito: [{ id: 1, cantidad: 2 }], cupon: { codigo: 'FELIZ18', descuento: 10 } });
+  const final = tiendaReducer(inicial, { type: 'COMPRA', orden: orden('rechazada') });
+  expect(final.ordenes).toHaveLength(1);
   expect(final.carrito).toEqual(inicial.carrito);
+  expect(final.productos[0].stock).toBe(2);
 });
 ```
 
@@ -1047,102 +1077,62 @@ it('rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito', (
 
 | Archivo                                      | Nivel       | Pruebas | Qué verifica                                                                         |
 | -------------------------------------------- | ----------- | ------: | ------------------------------------------------------------------------------------ |
-| `tests/unitarias/validaciones.test.js`       | Unitaria    |      25 | RUN, correos, registro, contacto, producto, categoría, checkout, tarjeta y cupones   |
+| `tests/unitarias/validaciones.test.js`       | Unitaria    |      25 | RUN, correos, registro, contraseña opcional al editar, contacto, producto, categoría, checkout y tarjeta |
 | `tests/unitarias/formatos.test.js`           | Unitaria    |      11 | CLP, FREE, descuentos, normalización, slugs, fechas y estados de stock               |
 | `tests/unitarias/catalogo.test.js`           | Unitaria    |       8 | Filtros combinados y los 4 órdenes del catálogo                                      |
 | `tests/unitarias/reportes.test.js`           | Unitaria    |       6 | Ventas, categorías, días, más vendidos, inventario e historial                       |
-| `tests/unitarias/crud.test.js`               | Unitaria    |       3 | CRUD sin mutar el arreglo original                                                   |
-| `tests/unitarias/persistencia.test.js`       | Unitaria    |      10 | Recuperación ante datos corruptos, limpieza del carrito, sesión sin contraseña       |
-| `tests/unitarias/tiendaReducer.test.js`      | Unitaria    |      25 | Carrito, cupones, totales, pago aprobado y rechazado, CRUD de productos y categorías |
-| `tests/unitarias/authReducer.test.js`        | Unitaria    |      10 | Login, roles, registro, CRUD de usuarios, perfil y rol propio fijo                   |
+| `tests/unitarias/crud.test.js`               | Unitaria    |       2 | CRUD sin mutar el arreglo original                                                   |
+| `tests/unitarias/api.test.js`                | Unitaria    |      10 | URL `/api/v1`, JSON y token, 204, errores del backend, 401/403, 5xx, sin conexión y adaptadores |
+| `tests/unitarias/persistencia.test.js`       | Unitaria    |       9 | Carrito y cupón en el navegador, sesión con token vigente y sin contraseña, mensajes |
+| `tests/unitarias/tiendaReducer.test.js`      | Unitaria    |      22 | Carrito, cupón, totales, catálogo y órdenes del backend, boleta pagada y rechazada, CRUD |
+| `tests/unitarias/authReducer.test.js`        | Unitaria    |       8 | Sesión con JWT, sesión vencida, roles, lista de usuarios, perfil propio              |
 | `tests/componentes/ProductoCard.test.jsx`    | Componente  |       6 | Props, clic, botón deshabilitado, precio con oferta y FREE                           |
 | `tests/componentes/ProductoGrid.test.jsx`    | Componente  |       2 | Renderizado de listas y estado vacío                                                 |
 | `tests/componentes/FiltrosCatalogo.test.jsx` | Componente  |       2 | Componente controlado que informa sus cambios                                        |
 | `tests/componentes/ConfirmarModal.test.jsx`  | Componente  |       2 | Abierto/cerrado, confirmar y cancelar                                                |
 | `tests/componentes/CampoFormulario.test.jsx` | Componente  |       3 | Etiqueta, error accesible y variante select                                          |
-| `tests/integracion/App.test.jsx`             | Integración |      15 | Navegación, 404, buscador, catálogo, categorías, ofertas, detalle, rutas por rol     |
-| `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login, registro y contacto                                                           |
-| `tests/integracion/compra.test.jsx`          | Integración |      13 | Carrito, cupones, checkout, pago correcto, pago rechazado y reintento                |
-| `tests/integracion/admin.test.jsx`           | Integración |      15 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios, perfil       |
+| `tests/integracion/App.test.jsx`             | Integración |      23 | Navegación, catálogo, rutas por rol, vista del vendedor, token vencido o rechazado, servidor caído |
+| `tests/integracion/formularios.test.jsx`     | Integración |       7 | Login (401 del backend), registro (409 si el correo existe) y contacto              |
+| `tests/integracion/compra.test.jsx`          | Integración |      15 | Carrito, cupón validado en el backend, checkout, boleta pagada y rechazada, servidor caído |
+| `tests/integracion/admin.test.jsx`           | Integración |      16 | Dashboard, boletas, reportes, CRUD de productos, categorías y usuarios contra la API, perfil |
 | `tests/integracion/foco.test.jsx`            | Integración |       1 | El foco no se mueve al abrir la app y pasa al contenido al navegar                   |
-| **Total**                                    |             | **164** |                                                                                      |
+| **Total**                                    |             | **178** |                                                                                      |
 
 <details>
-<summary><strong>Listado completo de las 164 pruebas (clic para desplegar)</strong></summary>
+<summary><strong>Pruebas nuevas o reescritas para la integración (clic para desplegar)</strong></summary>
 
-**`tests/unitarias/validaciones.test.js`** (25)
-- RUN y correo: acepta los RUN válidos `21456789K`, `190110222`, `123456785` y `111111111` (4) · rechaza `21456789`, `2145678A9`, `123` y `1234567890` (4) · explica por qué un RUN es inválido · solo acepta los dominios permitidos por el cliente
-- Formularios de usuario: valida el login con correo y contraseña de 4 a 10 caracteres · acepta un registro completo · informa todos los errores del registro a la vez · rechaza RUN y correo repetidos, salvo al editar el mismo usuario · rechaza fechas de nacimiento futuras y comunas de otra región · convierte los datos del formulario · valida el formulario de contacto con correo opcional
-- Productos y categorías: acepta un producto válido con precio y stock cero · informa todos los campos incorrectos · rechaza códigos repetidos y categorías inexistentes · convierte números y valores opcionales · valida categorías sin nombres duplicados
-- Checkout, tarjeta y cupones: exige datos del cliente y la dirección de entrega · acepta una tarjeta vigente y rechaza formatos inválidos o vencidos · busca cupones existentes solo si hay productos en el carrito
+**`tests/unitarias/api.test.js`** (10, nuevo)
+- Arma la URL versionada y envía JSON con el token · un GET sin sesión no envía cuerpo ni token · 204 devuelve null · convierte los errores del backend (ProblemDetail) en `ErrorApi` · con errores de validación muestra el mensaje de cada campo · 401 y 403 sin cuerpo tienen un mensaje claro · un 5xx sin detalle (servicio despertando) pide intentar de nuevo · sin conexión responde con estado 0
+- Adaptadores: las líneas de la boleta usan `id` como el carrito · una fecha de nacimiento null queda como texto vacío
 
-**`tests/unitarias/formatos.test.js`** (11)
-- Formatea pesos chilenos sin decimales · muestra FREE cuando el precio es cero · aplica el descuento de la oferta y redondea
-- Normaliza tildes, mayúsculas y espacios · crea slugs para las URL de categorías · enmascara la tarjeta y arma el nombre completo · formatea fechas en horario de Chile
-- Clasifica el stock como "Sin stock", "Últimas N unidades", "Última unidad" y "Disponible" (4)
-
-**`tests/unitarias/catalogo.test.js`** (8)
-- Sin filtros devuelve todos los productos sin modificar el arreglo · busca por nombre sin importar tildes, también por tipo y código · combina categoría, tipo, rango de precio final y disponibilidad · ordena por A–Z, Z–A, menor y mayor precio (4) · lista los tipos y las ofertas ordenadas por descuento
-
-**`tests/unitarias/reportes.test.js`** (6)
-- Resume solo las órdenes pagadas · agrupa ventas por categoría con su porcentaje · agrupa ventas por día y lista los más vendidos · cuenta entregas e historial por RUN o correo · valoriza el stock por categoría · lista los productos en stock crítico del menor al mayor stock
-
-**`tests/unitarias/crud.test.js`** (3)
-- Obtiene por clave y responde null si no existe · calcula el siguiente id correlativo · crea, actualiza y elimina sin mutar el arreglo original
-
-**`tests/unitarias/persistencia.test.js`** (10)
+**`tests/unitarias/persistencia.test.js`** (9)
 - Lee la alternativa si la clave no existe o el JSON está corrupto · guarda, borra con null e informa si el navegador rechaza la escritura
-- Parte con los datos iniciales y recupera lo guardado · se recupera de JSON corrupto y de estructuras inválidas · respeta un catálogo vacío y rechaza ids repetidos · limpia productos inexistentes, cantidades inválidas, filas duplicadas y cupones falsos
-- Si la lista de cuentas queda vacía vuelve a las cuentas iniciales · la sesión nunca guarda la contraseña · solo restaura una sesión que corresponda a un usuario existente · acumula los mensajes de contacto
+- Guarda y recupera el carrito con su cupón · limpia cantidades inválidas, filas repetidas y cupones mal formados · sin productos en el carrito no conserva el cupón
+- La sesión guarda el token y nunca la contraseña · sabe si un token sigue vigente · solo restaura una sesión bien formada y con el token vigente · acumula los mensajes de contacto
 
-**`tests/unitarias/tiendaReducer.test.js`** (25)
-- Carrito: acumula cantidades sin duplicar productos ni mutar el estado anterior · agrega varias unidades desde el detalle y respeta el stock · impide agregar productos inexistentes o cantidades inválidas · rechaza las cantidades inválidas -1, 1.5, 3 y NaN (4) · cambia cantidades y retira el producto (y el cupón) al llegar a cero · quita un producto y vacía el carrito · calcula subtotal con ofertas, cupón y envío según la entrega · aplica y quita cupones válidos
-- Pago simulado: numera las órdenes en forma correlativa · descuenta stock, vacía el carrito y registra una orden pagada · rechaza el pago con tarjeta terminada en 0000 sin tocar stock ni carrito · rechaza el pago completo si un producto perdió stock · no crea órdenes con el carrito vacío y evita números repetidos
-- CRUD de productos: crea un producto con id único y convierte los números del formulario · actualiza manteniendo el id y el carrito usa el precio nuevo · rechaza datos inválidos, códigos repetidos y productos inexistentes · elimina el producto del catálogo y del carrito
-- CRUD de categorías: crea una categoría con slug e ícono por defecto · al renombrar actualiza también los productos de la categoría · rechaza duplicados y categorías inexistentes · no elimina una categoría con productos, pero sí una vacía · cierra avisos e ignora acciones desconocidas
+**`tests/unitarias/tiendaReducer.test.js`** (22)
+- Carrito: acumula cantidades sin duplicar ni mutar · respeta el stock · impide productos inexistentes y cantidades inválidas (5) · cambia cantidades y retira el cupón al quedar vacío · quita un producto y vacía el carrito · calcula subtotal, cupón y envío · aplica el cupón que validó el backend y lo quita
+- Datos del backend: el catálogo llega y se quitan del carrito los productos que ya no existen · sin carrito se descarta el cupón · las órdenes del panel se cargan y se olvidan al salir · guarda el error de carga
+- Boleta de pedido-service: pagada (registra, vacía el carrito y refleja el stock) · rechazada (conserva carrito, cupón y stock)
+- CRUD con la respuesta del backend: agrega y reemplaza productos · al eliminar un producto lo saca del carrito · al renombrar una categoría actualiza sus productos · crea y elimina categorías · avisos y acciones desconocidas
 
-**`tests/unitarias/authReducer.test.js`** (10)
-- Busca credenciales sin distinguir mayúsculas en el correo · inicia sesión sin guardar la clave y la cierra · distingue los permisos de cada rol
-- Registra clientes nuevos aunque pidan otro rol · rechaza registros inválidos o repetidos · el administrador crea y edita usuarios con su rol · actualiza la sesión cuando el usuario edita su propio perfil · nadie puede cambiar su propio rol, así siempre queda un administrador · elimina usuarios, pero nunca la cuenta en uso · cierra avisos e ignora acciones desconocidas
+**`tests/unitarias/authReducer.test.js`** (8)
+- Guarda la sesión que entrega el backend y la cierra (sin dejar usuarios en memoria) · una sesión vencida se cierra con su propio aviso · distingue los permisos de cada rol
+- Carga la lista de usuarios · agrega y actualiza por id · al editar la cuenta propia actualiza la sesión y conserva el token · elimina por id · avisos
 
-**`tests/componentes/ProductoCard.test.jsx`** (6)
-- Muestra los datos recibidos por props · llama a la función onClick recibida con el id del producto · deshabilita el botón cuando no hay stock
-- PrecioProducto: sin oferta muestra solo el precio · con oferta muestra el precio anterior tachado y el porcentaje · muestra FREE cuando el precio final es cero
+**`tests/integracion/App.test.jsx`** (23): además de la navegación y el catálogo de la entrega 2:
+- El vendedor solo ve Productos y Órdenes, sin acciones de escritura (menú: solo Órdenes y Productos) · ve el detalle de productos y órdenes · ve "Acceso denegado" en nuevo producto, categorías, perfil, usuarios y productos críticos (5)
+- No restaura una sesión con el token vencido · si el backend rechaza el token cierra la sesión y lo avisa · si el servidor no responde lo avisa y permite reintentar
 
-**`tests/componentes/ProductoGrid.test.jsx`** (2)
-- Renderiza una tarjeta por cada elemento del arreglo · muestra el mensaje vacío solo cuando no hay productos
+**`tests/integracion/compra.test.jsx`** (15)
+- Carrito: agrega, cambia cantidades y elimina · se conserva al volver a montar · descarta los productos que ya no existen en el backend · valida los cupones en el backend · vacía tras confirmar · bloquea la compra si el stock cambió
+- Checkout: envía solo el carrito y el cupón y el backend calcula la boleta · sin productos no hay formulario · valida antes de llamar al backend · autocompleta con la sesión · compra exitosa (stock descontado en el backend y RUN tomado del token) · pago rechazado y reintento · stock insuficiente · servidor caído: avisa y deja reintentar · resultados redirigen según el estado y las órdenes no son públicas
 
-**`tests/componentes/FiltrosCatalogo.test.jsx`** (2)
-- Informa cada cambio al padre y limpia los filtros · puede ocultar el filtro de categoría
-
-**`tests/componentes/ConfirmarModal.test.jsx`** (2)
-- No muestra nada mientras está cerrado · al abrirse muestra el contenido y ejecuta confirmar o cancelar
-
-**`tests/componentes/CampoFormulario.test.jsx`** (3)
-- Asocia la etiqueta y no muestra error si no lo hay · muestra el mensaje de error solo cuando recibe uno · marca el campo válido y puede ser un select
-
-**`tests/integracion/App.test.jsx`** (15)
-- Navegación: cambia de página con NavLink, marca el enlace activo y actualiza el título · muestra la página 404 para direcciones desconocidas · el inicio muestra categorías, ofertas y productos destacados · el buscador de la cabecera lleva al catálogo filtrado · muestra blogs, su detalle y la página nosotros
-- Catálogo: combina búsqueda, categoría, tipo, rango y orden, y puede limpiar los filtros · separa los productos por categoría y avisa si la categoría no existe · la vista de ofertas muestra solo productos con descuento · el detalle permite elegir cantidad sin superar el stock · avisa cuando el producto no existe
-- Rutas protegidas: sin sesión el panel redirige al login y luego vuelve al panel · un cliente no puede entrar al panel · el vendedor solo consulta: no ve acciones de escritura ni usuarios · el vendedor ve acceso denegado al intentar crear productos · restaura la sesión guardada al volver a montar la aplicación
-
-**`tests/integracion/formularios.test.jsx`** (7)
-- Login: el estado del formulario cambia cuando el usuario escribe · muestra errores de formato al tocar los campos y al enviar · el mensaje de credenciales incorrectas aparece solo si hay error · el cliente entra a la tienda y ve su nombre en la cabecera
-- Registro: valida todos los campos, crea la cuenta y permite iniciar sesión · no permite registrar un correo que ya existe
-- Contacto: cuenta los caracteres, valida y guarda el mensaje
-
-**`tests/integracion/compra.test.jsx`** (13)
-- Carrito: agrega desde el catálogo, cambia cantidades y elimina productos · conserva el carrito al desmontar y volver a montar la aplicación · aplica cupones válidos, rechaza los inexistentes y permite quitarlos · vacía el carrito solo después de confirmar en el modal · bloquea la compra si el stock cambió
-- Checkout: el cupón guardado sigue aplicado al recargar y se descuenta en la orden · sin productos no muestra el formulario de pago · valida los datos del cliente, la dirección y la tarjeta · autocompleta los datos del cliente con sesión iniciada y suma el envío elegido · compra exitosa: descuenta stock, vacía el carrito y muestra la boleta · pago rechazado: conserva carrito y stock, y permite reintentar con los datos precargados · pago rechazado por stock insuficiente · redirige entre las vistas de resultado según el estado de la orden
-
-**`tests/integracion/admin.test.jsx`** (14)
-- El dashboard muestra métricas y accesos a cada módulo · filtra órdenes por estado y muestra la boleta · muestra reportes de ventas e inventario · lista los productos críticos
-- Productos: crea, muestra y edita un producto conservando su id · rechaza un código repetido · cancela y confirma la eliminación, retirando el producto del carrito · busca productos en la tabla · Cancelar en editar producto o usuario vuelve a su ficha, aunque se abra directo
-- Categorías: crea una categoría, la renombra y no elimina una categoría con productos
-- Usuarios y perfil: crea un vendedor, lo muestra, lo edita y lo elimina · protege la propia cuenta y filtra por rol · muestra el historial de compras de un cliente · el perfil actualiza los datos de la sesión · cerrar sesión desde el panel vuelve a la tienda
-
-**`tests/integracion/foco.test.jsx`** (1)
-- Al abrir la app no mueve el foco y al navegar lo lleva al contenido
+**`tests/integracion/admin.test.jsx`** (16)
+- Dashboard, boletas, reportes y críticos con los datos de pedido-service
+- Productos: crea (envía `categoriaId`), muestra y edita · rechaza código repetido · elimina y lo saca del carrito · si el backend rechaza el cambio muestra su mensaje · busca · Cancelar vuelve a la ficha
+- Categorías: crea, renombra y no elimina una con productos
+- Usuarios: crea, edita sin cambiar la contraseña y elimina · protege la propia cuenta · historial · perfil en `/usuarios/me` · cerrar sesión borra el token
 
 </details>
 
@@ -1153,28 +1143,29 @@ se excluyen `main.jsx` y los datos iniciales (`src/data`).
 
 | Métrica    | Cobertura   | Detalle     |
 | ---------- | ----------: | ----------- |
-| Sentencias | **97,13 %** | 1117 / 1150 |
-| Ramas      | **92,13 %** | 820 / 890   |
-| Funciones  | **95,81 %** | 412 / 430   |
-| Líneas     | **97,51 %** | 980 / 1005  |
+| Sentencias | **96,08 %** | 1155 / 1202 |
+| Ramas      | **91,75 %** | 801 / 873   |
+| Funciones  | **95,68 %** | 421 / 440   |
+| Líneas     | **96,96 %** | 1024 / 1056 |
 
 | Carpeta                                   | Líneas cubiertas |
 | ----------------------------------------- | ---------------: |
-| `services/` (CRUD y persistencia)         | 100 %            |
+| `services/` (api, CRUD y persistencia)    | 100 %            |
 | `store/` (reducers)                       | 100 %            |
-| `utils/` (validaciones, formatos…)        | 99,5 %           |
+| `utils/` (validaciones, formatos…)        | 99,1 %           |
 | `components/`                             | 90–100 %         |
 | `pages/tienda/`                           | 96,9 %           |
-| `context/`                                | 93,9 %           |
-| `pages/admin/`                            | 92,3 %           |
+| `context/` (llamadas a la API)            | 93,4 %           |
+| `pages/admin/`                            | 92,2 %           |
 
 **Análisis:**
 
 - **La lógica de negocio está cubierta casi al 100 %.** Los reducers, servicios y utilidades
   concentran las reglas (stock, cupones, pago y validaciones) y se prueban como funciones puras.
 - **Lo que queda sin cubrir** son, sobre todo, ramas defensivas: abrir una página de edición con
-  un id que no existe, cerrar a mano un aviso emergente y los errores de los hooks usados fuera
-  de su provider. No contienen reglas de negocio.
+  un id que no existe, cerrar a mano un aviso emergente, los errores de los hooks usados fuera
+  de su provider y algunos errores del backend poco probables (por ejemplo, que falle la carga de
+  usuarios del administrador). No contienen reglas de negocio.
 - **Lo que las pruebas no garantizan:** jsdom no dibuja estilos, por eso el diseño responsivo se
   revisó a mano en el navegador (sección 7). Las imágenes externas de los productos no se cargan
   durante las pruebas.
@@ -1202,18 +1193,25 @@ Además de las pruebas automatizadas, la aplicación se recorrió en **Chromium*
    usuario, editar usuario, historial, reportes y perfil.
 7. Revisar el menú colapsable de la tienda y el panel en el celular.
 
+En la entrega 3 se repitió el recorrido **contra el backend real** (4 microservicios + PostgreSQL)
+con un script de Playwright: catálogo desde producto-service, cupón inexistente y `FELIZ18`,
+compra sin sesión (boleta creada por pedido-service con el mismo total que mostraba el
+checkout), login del administrador con JWT, crear y eliminar un producto, editar un usuario sin
+escribir su contraseña, menú del vendedor (solo Órdenes y Productos, con "Acceso denegado"
+en categorías) y login con clave incorrecta. Todo sin errores en la consola (sección 10.8).
+
 ---
 
 ## 8. Limitaciones y trabajo futuro
 
-| Limitación actual                                                                                  | Próximo paso con backend                                                         |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Login, roles y contraseñas viven en `localStorage`: cualquier persona puede modificarlos           | Autenticación en el servidor (por ejemplo, JWT) y autorización en cada operación |
-| Pago simulado con reglas fijas                                                                     | Pasarela de pago real (Webpay, Mercado Pago…)                                    |
-| Los datos solo existen en el navegador de cada persona                                             | API REST y base de datos compartida                                              |
-| El envío de la boleta por correo es simulado                                                       | Servicio de correo desde el backend                                              |
-| Imágenes de productos enlazadas desde sitios externos                                             | Imágenes propias en un almacenamiento de archivos                                |
-| Pruebas en jsdom                                                                                   | Pruebas de extremo a extremo en navegador real (Playwright o Cypress)            |
+| Estado                                                                                              | Detalle                                                                          |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| ✅ **Resuelto en la entrega 3:** login, roles y datos en el navegador                                | Autenticación con JWT en usuario-service, autorización por rol en cada microservicio y datos compartidos en PostgreSQL |
+| Pago simulado con reglas fijas (tarjetas terminadas en `0000` rechazadas)                           | Pasarela de pago real (Webpay, Mercado Pago…)                                    |
+| El envío de la boleta por correo es simulado                                                        | Servicio de correo desde el backend                                              |
+| El token se guarda en `localStorage` (un script malicioso en la página podría leerlo)               | Cookie `HttpOnly` y protección CSRF                                              |
+| La página de resultado de una compra solo existe durante la visita (las órdenes no son públicas)    | Endpoint para que el cliente vea sus propias boletas                             |
+| Imágenes de productos enlazadas desde sitios externos                                              | Imágenes propias en un almacenamiento de archivos                                |
 
 ---
 
@@ -1241,8 +1239,25 @@ Permite que React identifique cada elemento de forma estable y actualice solo lo
 Se usa el `id` del producto, nunca la posición en el arreglo.
 
 **¿Dónde debe validarse la autorización en un sistema real?**
-En el backend. React decide qué pantalla mostrar, pero una persona puede editar `localStorage`.
-Por eso `RutaProtegida` es una protección visual y el README lo advierte.
+En el backend, y desde la entrega 3 así funciona: React decide qué pantalla mostrar
+(`RutaProtegida`, menú del vendedor), pero cada microservicio revisa el rol del token JWT y
+responde 403 si no corresponde. Cambiar `localStorage` a mano no da más permisos: el token está
+firmado por el servidor.
+
+**¿Cómo viaja la sesión entre el frontend y el backend?**
+`POST /api/v1/auth/login` devuelve `{ token, usuario }`. El frontend guarda la sesión con el
+token y lo envía como `Authorization: Bearer <token>` en cada operación protegida. Si el token
+vence o el servidor lo rechaza (401), la sesión se cierra con un aviso.
+
+**¿Por qué el frontend no envía los precios al pagar?**
+Porque se podrían alterar en el navegador. Solo envía los ids y cantidades del carrito, el cupón
+y los datos del formulario; pedido-service consulta los precios y el stock en producto-service y
+calcula la boleta. El resumen del checkout usa las mismas fórmulas, por eso coinciden.
+
+**¿Cómo se prueban las llamadas sin encender el backend?**
+Con `tests/servidorFalso.js`, que reemplaza a `fetch` y responde como el API Gateway. Las pruebas
+revisan qué JSON se envió (`ultimoEnvio`) y qué quedó guardado (`db()`). Además, se hizo una prueba
+real con Playwright contra los microservicios.
 
 **¿Por qué un `Link` se comporta distinto que un `<a href>` externo?**
 `Link` cambia la URL con el historial del navegador y React Router muestra otra vista sin
@@ -1255,3 +1270,137 @@ jsdom simula el DOM pero no dibuja CSS. El diseño responsivo se revisa en un na
 Cada componente hace una sola cosa: `ProductoCard` muestra un producto, `PrecioProducto` solo
 el precio, `StockBadge` solo el estado del stock y `ConfirmarModal` solo pide confirmación.
 Por eso se reutilizan en la tienda y en el panel, y se prueban por separado.
+
+---
+
+## 10. Integración con el backend (Evaluación 3)
+
+En la Evaluación 3 el frontend dejó de simular la base de datos en `localStorage`. Ahora consume
+la API REST del backend NexusTech (repositorio
+[`nexus_backend`](https://github.com/CristobalStenger/nexus_backend)): 4 microservicios en Spring
+Boot con PostgreSQL y seguridad JWT. Allí están documentados el modelo de datos, cada endpoint
+y Swagger.
+
+### 10.1 Arquitectura
+
+```mermaid
+flowchart LR
+  B["Navegador<br/>React (Vercel)"] -- "fetch + JWT<br/>/api/v1/..." --> G["api-gateway<br/>CORS, JWT, rutas"]
+  G --> U["usuario-service<br/>login, registro, usuarios"]
+  G --> P["producto-service<br/>productos, categorías, stock"]
+  G --> O["pedido-service<br/>boletas, cupones"]
+  O -- "precios y stock" --> P
+  U --> DB[("PostgreSQL (Neon)<br/>un schema por servicio")]
+  P --> DB
+  O --> DB
+```
+
+### 10.2 Configuración
+
+| Qué                     | Dónde                                    | Valor                                                       |
+| ----------------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| Dirección del gateway   | `VITE_API_URL` (`.env.local` o Vercel)   | Local: `http://localhost:8080` (es el valor por defecto)    |
+| Orígenes permitidos     | `FRONTEND_URL` en el api-gateway         | Local: `http://localhost:5173`; en la nube, el dominio de Vercel |
+| Proyecto en Vercel      | *Root Directory*                         | `nexustech-react` (Vite se detecta solo)                    |
+| Rutas de la SPA         | `vercel.json` y `public/_redirects`      | Toda ruta responde `index.html`                             |
+| Cabeceras de seguridad  | `vercel.json`                            | `X-Content-Type-Options`, `X-Frame-Options` y `Referrer-Policy` |
+
+`VITE_API_URL` se lee al compilar: si cambia la URL del gateway, hay que volver a desplegar.
+
+### 10.3 Cómo se llama a la API: `src/services/api.js`
+
+```js
+// Arma la URL versionada, envía JSON y el token, y convierte los errores del backend
+const producto = await api('/productos', { metodo: 'POST', datos, token });
+```
+
+- **URL:** `${VITE_API_URL}/api/v1${ruta}`.
+- **Encabezados:** `Content-Type: application/json` si hay cuerpo y `Authorization: Bearer <token>` si hay sesión.
+- **Errores:** si la respuesta no es 2xx lanza `ErrorApi` con el `status` y el mensaje del
+  backend (`detail` o el mensaje de cada campo en `errores`). 401 y 403 sin cuerpo tienen un
+  mensaje propio, un 5xx sin detalle (por ejemplo, el gateway mientras un servicio despierta) pide
+  intentar de nuevo, y sin conexión el `status` es 0.
+- **Adaptadores:** `aOrden` (cada línea de la boleta trae `productoId`; las vistas usan `id`) y
+  `aUsuario` (una fecha de nacimiento `null` pasa a texto vacío para el formulario).
+
+### 10.4 Qué endpoint usa cada pantalla
+
+| Pantalla o momento                    | Método y ruta                                     | Quién puede          | Servicio         |
+| ------------------------------------- | ------------------------------------------------- | -------------------- | ---------------- |
+| Al abrir la app (tienda y panel)      | `GET /productos` · `GET /categorias`              | Público              | producto-service |
+| Panel: dashboard, órdenes, reportes   | `GET /boletas`                                    | Administrador, Vendedor | pedido-service |
+| Panel: usuarios y dashboard           | `GET /usuarios`                                   | Administrador        | usuario-service  |
+| Login                                 | `POST /auth/login`                                | Público              | usuario-service  |
+| Registro                              | `POST /auth/registro`                             | Público              | usuario-service  |
+| Carrito: aplicar cupón                | `GET /cupones/{codigo}`                           | Público              | pedido-service   |
+| Checkout: pagar                       | `POST /boletas`                                   | Público (con o sin sesión) | pedido-service |
+| Nuevo / editar / eliminar producto    | `POST /productos` · `PUT` y `DELETE /productos/{id}` | Administrador     | producto-service |
+| Nueva / editar / eliminar categoría   | `POST /categorias` · `PUT` y `DELETE /categorias/{id}` | Administrador   | producto-service |
+| Nuevo / editar / eliminar usuario     | `POST /usuarios` · `PUT` y `DELETE /usuarios/{id}` | Administrador       | usuario-service  |
+| Mi perfil                             | `PUT /usuarios/me`                                | Con sesión           | usuario-service  |
+
+Ejemplo de lo que envía el checkout. El frontend no envía precios: el backend los consulta.
+
+```json
+{
+  "cliente": { "nombre": "Pedro", "apellidos": "Soto Fuentes", "correo": "cliente@gmail.com" },
+  "entrega": { "tipo": "despacho", "calle": "Los Crisantemos 789", "departamento": "",
+               "region": "Región Metropolitana", "comuna": "Providencia", "indicaciones": "" },
+  "items": [{ "productoId": 1, "cantidad": 2 }],
+  "cupon": "FELIZ18",
+  "pago": { "numeroTarjeta": "4242 4242 4242 4242", "titular": "Pedro Soto", "vencimiento": "12/30", "cvv": "123" }
+}
+```
+
+### 10.5 Sesión y JWT
+
+1. `ingresar()` llama a `POST /auth/login` y guarda en `USUARIO_ACTIVO` los datos del usuario
+   junto con el **token** (nunca la contraseña).
+2. Cada operación protegida envía `Authorization: Bearer <token>`.
+3. Al abrir la app solo se restaura una sesión cuyo token siga vigente (se lee su campo `exp`).
+4. Si el backend responde 401 con una sesión abierta (token vencido o inválido), la sesión se
+   cierra y aparece el aviso "Tu sesión expiró. Inicia sesión nuevamente."
+5. Al cerrar sesión se borran el token y los datos del panel que había en memoria.
+
+### 10.6 Qué cambió en el estado
+
+- **Los providers hacen las llamadas** y despachan lo que responde el backend. Los reducers
+  siguen siendo funciones puras: ya no inventan ids ni calculan el pago, solo aplican la
+  respuesta (`CATALOGO`, `ORDENES`, `COMPRA`, `PRODUCTO_GUARDADO`, `USUARIO_GUARDADO`…).
+- **Las funciones devuelven `{ ok }`:** la página navega solo si el backend aceptó el cambio; si
+  no, se muestra su mensaje en un aviso (por ejemplo, "Ya existe un producto con ese código.").
+- **Pantalla de carga:** `CargaDatos` espera el catálogo (y las órdenes o usuarios si el rol los
+  necesita). Si el servidor no responde, muestra el error y un botón "Reintentar". En la nube la
+  primera carga puede tardar unos segundos mientras los servicios despiertan.
+- **Pago:** el botón se deshabilita mientras pedido-service responde, para no enviar la misma
+  compra dos veces. Con la boleta pagada, el carrito se vacía y el stock local se descuenta con
+  las mismas cantidades que descontó el backend.
+- **Contraseña al editar:** el backend nunca devuelve contraseñas. Al editar un usuario o el
+  perfil, dejarla vacía mantiene la actual.
+
+### 10.7 Lo que ve cada rol (requisito de la pauta)
+
+| Rol           | Panel                                                                                          | Backend                                   |
+| ------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Administrador | Todo: dashboard, órdenes, productos, categorías, usuarios, reportes y perfil                   | Acceso total                              |
+| Vendedor      | Solo **Productos** y **Órdenes** (lista y detalle). Al entrar a `/admin` va directo a Productos; cualquier otra ruta del panel muestra "Acceso denegado" | `GET` de productos y boletas; lo demás, 403 |
+| Cliente       | No entra al panel: solo la tienda                                                              | Comprar, registrarse y su perfil          |
+
+### 10.8 Pruebas de la integración
+
+- **Automáticas (sin backend):** `tests/servidorFalso.js` responde como el gateway con los mismos
+  datos iniciales del backend. Las pruebas revisan lo que envía el frontend, cómo muestra las
+  respuestas y los errores (400, 401, 403, 404, 409 y sin conexión), la sesión vencida, el
+  servidor caído y la vista del vendedor. `tests/unitarias/api.test.js` prueba `api.js` por separado.
+- **Real (con backend):** con los 4 microservicios y PostgreSQL encendidos, un script de
+  Playwright recorrió la tienda y el panel. Llamadas observadas: `GET /productos`,
+  `GET /categorias`, `GET /cupones/{codigo}`, `POST /boletas`, `POST /auth/login`, `GET /boletas`,
+  `GET /usuarios`, `POST /productos`, `DELETE /productos/{id}` y `PUT /usuarios/{id}`. Todos los
+  pasos pasaron y la consola quedó sin errores.
+
+### 10.9 Ejecutar todo en local
+
+1. Backend: crear la base con `db/crear-schemas.sql`, completar el `.env` de cada servicio y
+   levantar usuario, producto, pedido y gateway (`./mvnw spring-boot:run`). Ver el README de `nexus_backend`.
+2. Frontend: `cp .env.example .env.local` y `npm run dev`.
+3. Abrir `http://localhost:5173` y entrar con las cuentas de prueba de la sección 2.

@@ -83,7 +83,7 @@ export default function UsuarioForm({
           <CampoFormulario
             {...campo('clave')}
             etiqueta="Contraseña"
-            ayuda="entre 4 y 10"
+            ayuda={runOriginal === null ? 'entre 4 y 10' : 'déjala vacía para no cambiarla'}
             type="password"
             maxLength={10}
             autoComplete="new-password"

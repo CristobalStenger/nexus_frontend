@@ -6,11 +6,11 @@
 //   - RUN: sin puntos ni guion, entre 7 y 9 caracteres (módulo 11)
 // Cada función devuelve un objeto { campo: mensaje }.
 // Un objeto vacío significa que no hay errores.
+// El backend vuelve a validar lo mismo: aquí sirven para avisar antes de enviar.
 // ============================================================
 
 import { ROLES } from '../data/configuracion.js';
 import { comunasDe } from '../data/regiones.js';
-import { CUPONES } from '../data/cupones.js';
 import { crearSlug } from './formatos.js';
 
 const CORREOS_PERMITIDOS = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
@@ -125,7 +125,8 @@ export function validarUsuario(
     nombre: mensajeObligatorio(datos.nombre, 50, 'El nombre'),
     apellidos: mensajeObligatorio(datos.apellidos, 100, 'El apellido'),
     correo: mensajeCorreo(correo),
-    clave: mensajeClave(datos.clave),
+    // Al editar, una contraseña vacía mantiene la actual (el backend no la devuelve)
+    clave: runOriginal !== null && !datos.clave ? '' : mensajeClave(datos.clave),
     direccion: mensajeObligatorio(datos.direccion, 300, 'La dirección'),
     ...mensajeRegionComuna(datos.region, datos.comuna),
   };
@@ -295,15 +296,4 @@ export function validarTarjeta(datos, hoy = new Date()) {
 
   if (!/^\d{3,4}$/.test(texto(datos.cvv))) errores.cvv = 'El CVV tiene 3 o 4 dígitos.';
   return errores;
-}
-
-// ---------- Cupones ----------
-
-export function buscarCupon(codigo, carrito) {
-  const escrito = texto(codigo).toUpperCase();
-  if (escrito === '') return { error: 'Escribe un código de descuento.' };
-  if (!carrito.length) return { error: 'Agrega productos antes de usar un cupón.' };
-  const cupon = CUPONES.find((c) => c.codigo === escrito);
-  if (!cupon) return { error: `El cupón "${escrito}" no existe.` };
-  return { cupon: { ...cupon } };
 }

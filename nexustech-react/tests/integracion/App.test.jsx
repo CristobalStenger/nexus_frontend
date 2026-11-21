@@ -1,30 +1,30 @@
 import { describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CLAVES } from '../../src/services/storage.js';
-import { productosIniciales } from '../../src/data/productosIniciales.js';
-import { iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
+import { productosIniciales } from '../datos/productosIniciales.js';
+import { db, iniciarSesionComo, leer, renderApp } from '../utilidades.jsx';
 
 const navegacion = () => screen.getByRole('navigation', { name: 'Navegación principal' });
 
 describe('navegación de la tienda', () => {
   it('cambia de página con NavLink, marca el enlace activo y actualiza el título', async () => {
     const user = userEvent.setup();
-    renderApp('/');
+    await renderApp('/');
     await user.click(within(navegacion()).getByRole('link', { name: 'Productos' }));
     expect(await screen.findByRole('heading', { name: 'Catálogo NexusTech' })).toBeInTheDocument();
     expect(within(navegacion()).getByRole('link', { name: 'Productos' })).toHaveAttribute('aria-current', 'page');
     expect(document.title).toBe('Productos | NexusTech');
   });
 
-  it('muestra la página 404 para direcciones desconocidas', () => {
-    renderApp('/ruta-inexistente');
+  it('muestra la página 404 para direcciones desconocidas', async () => {
+    await renderApp('/ruta-inexistente');
     expect(screen.getByRole('heading', { name: 'Página no encontrada' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Volver al inicio' })).toHaveAttribute('href', '/');
   });
 
-  it('el inicio muestra categorías, ofertas y productos destacados', () => {
-    renderApp('/');
+  it('el inicio muestra categorías, ofertas y productos destacados', async () => {
+    await renderApp('/');
     expect(screen.getByRole('heading', { name: 'Nuestras categorías' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Productos en oferta' })).toBeInTheDocument();
     // 4 ofertas + 8 destacados
@@ -33,7 +33,7 @@ describe('navegación de la tienda', () => {
 
   it('el buscador de la cabecera lleva al catálogo filtrado', async () => {
     const user = userEvent.setup();
-    renderApp('/nosotros');
+    await renderApp('/nosotros');
     await user.type(screen.getByLabelText('Buscar productos'), 'ryzen');
     await user.click(screen.getByRole('button', { name: 'Buscar' }));
     expect(await screen.findByRole('heading', { name: 'Catálogo NexusTech' })).toBeInTheDocument();
@@ -43,14 +43,14 @@ describe('navegación de la tienda', () => {
 
   it('muestra blogs, su detalle y la página nosotros', async () => {
     const user = userEvent.setup();
-    renderApp('/blogs');
+    await renderApp('/blogs');
     await user.click(screen.getByRole('link', { name: 'Leer más: Cómo elegir tu primera tarjeta de video' }));
     expect(await screen.findByRole('heading', { name: 'Cómo elegir tu primera tarjeta de video' })).toBeInTheDocument();
     cleanup();
-    renderApp('/blogs/99');
+    await renderApp('/blogs/99');
     expect(screen.getByText('El artículo no existe.')).toBeInTheDocument();
     cleanup();
-    renderApp('/nosotros');
+    await renderApp('/nosotros');
     expect(screen.getByRole('heading', { name: 'El equipo de desarrollo' })).toBeInTheDocument();
   });
 });
@@ -58,7 +58,7 @@ describe('navegación de la tienda', () => {
 describe('catálogo, categorías y ofertas', () => {
   it('combina búsqueda, categoría, tipo, rango y orden, y puede limpiar los filtros', async () => {
     const user = userEvent.setup();
-    renderApp('/productos');
+    await renderApp('/productos');
     expect(screen.getAllByRole('article')).toHaveLength(40);
     await user.selectOptions(screen.getByLabelText('Categoría'), 'Periféricos');
     await user.selectOptions(screen.getByLabelText('Tipo'), 'Teclado');
@@ -76,17 +76,17 @@ describe('catálogo, categorías y ofertas', () => {
 
   it('separa los productos por categoría y avisa si la categoría no existe', async () => {
     const user = userEvent.setup();
-    renderApp('/categorias');
+    await renderApp('/categorias');
     await user.click(screen.getByRole('link', { name: /Consolas PlayStation/ }));
     expect(await screen.findByText('6 producto(s) encontrado(s)')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Consolas PlayStation/ })).toHaveAttribute('aria-current', 'page');
     cleanup();
-    renderApp('/categorias/inventada');
+    await renderApp('/categorias/inventada');
     expect(screen.getByText('La categoría no existe.')).toBeInTheDocument();
   });
 
-  it('la vista de ofertas muestra solo productos con descuento', () => {
-    renderApp('/ofertas');
+  it('la vista de ofertas muestra solo productos con descuento', async () => {
+    await renderApp('/ofertas');
     const ofertas = productosIniciales.filter((p) => p.descuento > 0);
     expect(screen.getAllByRole('article')).toHaveLength(ofertas.length);
     expect(screen.getByText('-30%')).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe('catálogo, categorías y ofertas', () => {
 
   it('el detalle permite elegir cantidad sin superar el stock', async () => {
     const user = userEvent.setup();
-    renderApp('/productos/7');
+    await renderApp('/productos/7');
     expect(screen.getByRole('heading', { name: 'NVIDIA GeForce RTX 4080 Super 16GB' })).toBeInTheDocument();
     expect(screen.getByText('Últimas 2 unidades')).toBeInTheDocument();
     // Una cantidad con decimales (por ejemplo, pegada) se trunca al entero
@@ -109,16 +109,16 @@ describe('catálogo, categorías y ofertas', () => {
     expect(leer(CLAVES.carrito)).toEqual([{ id: 7, cantidad: 2 }]);
   });
 
-  it('avisa cuando el producto no existe', () => {
-    renderApp('/productos/999');
+  it('avisa cuando el producto no existe', async () => {
+    await renderApp('/productos/999');
     expect(screen.getByText('Producto no encontrado.')).toBeInTheDocument();
   });
 });
 
-describe('rutas protegidas por rol', () => {
+describe('rutas protegidas por rol (JWT)', () => {
   it('sin sesión el panel redirige al login y luego vuelve al panel', async () => {
     const user = userEvent.setup();
-    renderApp('/admin/productos');
+    await renderApp('/admin/productos');
     expect(await screen.findByText('Inicia sesión para continuar.')).toBeInTheDocument();
     await user.type(screen.getByLabelText('Correo electrónico'), 'admin@duoc.cl');
     await user.type(screen.getByLabelText('Contraseña'), 'admin123');
@@ -126,31 +126,80 @@ describe('rutas protegidas por rol', () => {
     expect(await screen.findByRole('heading', { name: 'Productos', level: 1 })).toBeInTheDocument();
   });
 
-  it('un cliente no puede entrar al panel', () => {
+  it('un cliente no puede entrar al panel', async () => {
     iniciarSesionComo('Cliente');
-    renderApp('/admin');
+    await renderApp('/admin');
     expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
   });
 
-  it('el vendedor solo consulta: no ve acciones de escritura ni usuarios', () => {
+  it('el vendedor solo ve productos y órdenes, sin acciones de escritura', async () => {
     iniciarSesionComo('Vendedor');
-    renderApp('/admin/productos');
+    await renderApp('/admin');
+    // No tiene dashboard: entra directo a la lista de productos
+    expect(await screen.findByRole('heading', { name: 'Productos', level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/Tu rol de vendedor solo permite consultar/)).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Nuevo producto/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Productos críticos' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Reportes' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^Eliminar/ })).not.toBeInTheDocument();
     const menu = screen.getByRole('navigation', { name: 'Menú de administración' });
-    expect(within(menu).queryByRole('link', { name: /Usuarios/ })).not.toBeInTheDocument();
+    const enlaces = within(menu).getAllByRole('link').map((enlace) => enlace.textContent.trim());
+    // Pauta: "todos los demás accesos no deben aparecer en la vista del vendedor"
+    expect(enlaces).toEqual(['Órdenes', 'Productos']);
   });
 
-  it('el vendedor ve acceso denegado al intentar crear productos', () => {
+  it('el vendedor ve el detalle de productos y órdenes', async () => {
     iniciarSesionComo('Vendedor');
-    renderApp('/admin/productos/nuevo');
-    expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
+    const user = userEvent.setup();
+    await renderApp('/admin/productos');
+    await user.click(screen.getByRole('link', { name: 'Ver AMD Ryzen 5 7600X' }));
+    expect(await screen.findByRole('heading', { name: 'AMD Ryzen 5 7600X', level: 1 })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Editar producto/ })).not.toBeInTheDocument();
+    cleanup();
+    await renderApp('/admin/ordenes');
+    await user.click(screen.getByRole('link', { name: 'Ver boleta 1001' }));
+    expect(await screen.findByRole('heading', { name: 'Boleta #1001', level: 1 })).toBeInTheDocument();
   });
 
-  it('restaura la sesión guardada al volver a montar la aplicación', () => {
+  it.each(['/admin/productos/nuevo', '/admin/categorias', '/admin/perfil', '/admin/usuarios', '/admin/productos/criticos'])(
+    'el vendedor ve acceso denegado en %s',
+    async (ruta) => {
+      iniciarSesionComo('Vendedor');
+      await renderApp(ruta);
+      expect(screen.getByText('Acceso denegado')).toBeInTheDocument();
+    },
+  );
+
+  it('restaura la sesión guardada al volver a montar la aplicación', async () => {
     iniciarSesionComo('Administrador');
-    renderApp('/admin');
+    await renderApp('/admin');
     expect(screen.getByRole('heading', { name: 'Dashboard', level: 1 })).toBeInTheDocument();
+  });
+
+  it('no restaura una sesión con el token vencido', async () => {
+    iniciarSesionComo('Administrador', -60);
+    await renderApp('/admin');
+    expect(await screen.findByText('Inicia sesión para continuar.')).toBeInTheDocument();
+  });
+
+  it('si el backend rechaza el token cierra la sesión y lo avisa', async () => {
+    iniciarSesionComo('Administrador');
+    db().rechazarTokens = true;
+    await renderApp('/admin');
+    expect(await screen.findByText('Tu sesión expiró. Inicia sesión nuevamente.')).toBeInTheDocument();
+    expect(await screen.findByText('Inicia sesión para continuar.')).toBeInTheDocument();
+    await waitFor(() => expect(leer(CLAVES.sesion)).toBeNull());
+  });
+});
+
+describe('conexión con el backend', () => {
+  it('si el servidor no responde lo avisa y permite reintentar', async () => {
+    db().caido = true;
+    const user = userEvent.setup();
+    await renderApp('/');
+    expect(screen.getByText(/No se pudo conectar con el servidor/)).toBeInTheDocument();
+    db().caido = false;
+    await user.click(screen.getByRole('button', { name: 'Reintentar' }));
+    expect(await screen.findByRole('heading', { name: 'Nuestras categorías' })).toBeInTheDocument();
   });
 });

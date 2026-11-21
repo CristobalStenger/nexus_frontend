@@ -13,13 +13,12 @@ import ConfirmarModal from '../../components/comunes/ConfirmarModal.jsx';
 import FilaCarrito from '../../components/compra/FilaCarrito.jsx';
 import ResumenCompra from '../../components/compra/ResumenCompra.jsx';
 import { detalleCarrito, resumenCarrito } from '../../store/tiendaReducer.js';
-import { buscarCupon } from '../../utils/validaciones.js';
 import { useTienda } from '../../hooks/useTienda.js';
 import { useTitulo } from '../../hooks/useTitulo.js';
 
 export default function Carrito() {
   useTitulo('Carrito');
-  const { estado, dispatch } = useTienda();
+  const { estado, dispatch, aplicarCupon } = useTienda();
   const navigate = useNavigate();
   const [codigo, setCodigo] = useState('');
   const [errorCupon, setErrorCupon] = useState('');
@@ -30,11 +29,10 @@ export default function Carrito() {
   const stockCambio = detalle.some((p) => p.cantidad > p.stock);
 
   // El error es local; el cupón aplicado se lee del estado global (sobrevive a recargas)
-  function aplicarCupon(evento) {
+  async function enviarCupon(evento) {
     evento.preventDefault();
-    const { error } = buscarCupon(codigo, estado.carrito);
+    const { error } = await aplicarCupon(codigo);
     setErrorCupon(error ?? '');
-    if (!error) dispatch({ type: 'APLICAR_CUPON', codigo });
   }
 
   function quitarCupon() {
@@ -100,7 +98,7 @@ export default function Carrito() {
               <ResumenCompra {...resumen} envio={undefined} cupon={estado.cupon} />
               <p className="small text-muted mt-2">El costo de envío se calcula en el checkout.</p>
 
-              <Form onSubmit={aplicarCupon} className="mb-3">
+              <Form onSubmit={enviarCupon} className="mb-3">
                 <Form.Label htmlFor="cupon">¿Tienes un cupón?</Form.Label>
                 <InputGroup>
                   <Form.Control

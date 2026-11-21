@@ -1,9 +1,7 @@
 // ============================================================
-// NexusTech - Fuente de datos simulada: usuarios
-// El administrador es el mismo de la entrega 1 (nexustech-html/js/main.js, commit 948ceaf).
-// Se agregan un vendedor y un cliente para probar los roles.
-// Las claves quedan en texto plano solo porque es una simulación
-// académica: un backend real nunca debe guardarlas así.
+// NexusTech - Datos de prueba: usuarios (los mismos del backend)
+// Las claves van en texto plano solo para que el servidor falso de
+// las pruebas valide el login; el backend real las guarda con BCrypt.
 // ============================================================
 
 export const usuariosIniciales = [

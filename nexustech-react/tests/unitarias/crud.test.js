@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { actualizar, crear, eliminar, obtener, siguienteId } from '../../src/services/crud.js';
+import { actualizar, crear, eliminar, obtener } from '../../src/services/crud.js';
 
 const lista = [
   { id: 1, nombre: 'A' },
@@ -11,12 +11,6 @@ describe('CRUD genérico', () => {
     expect(obtener(lista, 4)).toEqual({ id: 4, nombre: 'B' });
     expect(obtener(lista, 'B', 'nombre').id).toBe(4);
     expect(obtener(lista, 99)).toBeNull();
-  });
-
-  it('calcula el siguiente id correlativo', () => {
-    expect(siguienteId(lista)).toBe(5);
-    expect(siguienteId([])).toBe(1);
-    expect(siguienteId([], 'numero', 1001)).toBe(1001);
   });
 
   it('crea, actualiza y elimina sin mutar el arreglo original', () => {

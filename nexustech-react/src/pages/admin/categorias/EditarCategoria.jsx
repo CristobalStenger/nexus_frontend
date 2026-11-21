@@ -9,7 +9,7 @@ import { useTitulo } from '../../../hooks/useTitulo.js';
 export default function EditarCategoria() {
   useTitulo('Editar categoría');
   const { id } = useParams();
-  const { estado, dispatch } = useTienda();
+  const { estado, guardarCategoria } = useTienda();
   const navigate = useNavigate();
   const categoria = obtener(estado.categorias, Number(id));
 
@@ -20,9 +20,8 @@ export default function EditarCategoria() {
       </EstadoVacio>
     );
 
-  function guardar(datos) {
-    dispatch({ type: 'GUARDAR_CATEGORIA', id: categoria.id, datos });
-    navigate('/admin/categorias');
+  async function guardar(datos) {
+    if ((await guardarCategoria(datos, categoria.id)).ok) navigate('/admin/categorias');
   }
 
   return (

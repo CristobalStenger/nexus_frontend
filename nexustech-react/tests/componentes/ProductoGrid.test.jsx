@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import ProductoGrid from '../../src/components/producto/ProductoGrid.jsx';
-import { productosIniciales } from '../../src/data/productosIniciales.js';
+import { productosIniciales } from '../datos/productosIniciales.js';
 
 describe('ProductoGrid (renderizado de listas)', () => {
   it('renderiza una tarjeta por cada elemento del arreglo', () => {

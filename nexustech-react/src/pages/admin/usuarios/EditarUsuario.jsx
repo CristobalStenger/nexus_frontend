@@ -23,8 +23,8 @@ export default function EditarUsuario() {
   // La cuenta propia se edita desde el perfil, donde el RUN y el rol no se cambian
   if (usuario.run === sesion.run) return <Navigate to="/admin/perfil" replace />;
 
-  function guardar(datos) {
-    if (guardarUsuario(datos, usuario.run).ok) navigate(`/admin/usuarios/${datos.run.trim().toUpperCase()}`);
+  async function guardar(datos) {
+    if ((await guardarUsuario(datos, usuario.run)).ok) navigate(`/admin/usuarios/${datos.run.trim().toUpperCase()}`);
   }
 
   return (

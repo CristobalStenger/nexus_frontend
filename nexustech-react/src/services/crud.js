@@ -10,12 +10,6 @@
 export const obtener = (coleccion, valor, campo = 'id') =>
   coleccion.find((elemento) => elemento[campo] === valor) ?? null;
 
-// Id correlativo: el mayor existente + 1
-export const siguienteId = (coleccion, campo = 'id', inicial = 1) =>
-  coleccion.length
-    ? Math.max(...coleccion.map((elemento) => elemento[campo])) + 1
-    : inicial;
-
 // Crear: agrega al final
 export const crear = (coleccion, elemento) => [...coleccion, elemento];
 

@@ -29,8 +29,8 @@ export default function Login() {
 
   if (sesion) return <Navigate to={destinoPara(sesion, state?.desde)} replace />;
 
-  const enviar = form.enviar(({ correo, clave }) => {
-    const resultado = ingresar(correo, clave);
+  const enviar = form.enviar(async ({ correo, clave }) => {
+    const resultado = await ingresar(correo, clave);
     if (resultado.ok) navigate(destinoPara(resultado.usuario, state?.desde), { replace: true });
     else setError(resultado.error);
   });
