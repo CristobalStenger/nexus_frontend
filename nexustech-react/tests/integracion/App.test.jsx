@@ -144,7 +144,8 @@ describe('rutas protegidas por rol (JWT)', () => {
     expect(screen.queryByRole('button', { name: /^Eliminar/ })).not.toBeInTheDocument();
     const menu = screen.getByRole('navigation', { name: 'Menú de administración' });
     const enlaces = within(menu).getAllByRole('link').map((enlace) => enlace.textContent.trim());
-    expect(enlaces).toEqual(['Órdenes', 'Productos', 'Tienda']);
+    // Pauta: "todos los demás accesos no deben aparecer en la vista del vendedor"
+    expect(enlaces).toEqual(['Órdenes', 'Productos']);
   });
 
   it('el vendedor ve el detalle de productos y órdenes', async () => {

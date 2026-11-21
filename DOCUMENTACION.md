@@ -1121,7 +1121,7 @@ it('rechazada: registra la orden pero conserva carrito, cupón y stock', () => {
 - Carga la lista de usuarios · agrega y actualiza por id · al editar la cuenta propia actualiza la sesión y conserva el token · elimina por id · avisos
 
 **`tests/integracion/App.test.jsx`** (23): además de la navegación y el catálogo de la entrega 2:
-- El vendedor solo ve Productos y Órdenes, sin acciones de escritura (menú: Órdenes, Productos, Tienda) · ve el detalle de productos y órdenes · ve "Acceso denegado" en nuevo producto, categorías, perfil, usuarios y productos críticos (5)
+- El vendedor solo ve Productos y Órdenes, sin acciones de escritura (menú: solo Órdenes y Productos) · ve el detalle de productos y órdenes · ve "Acceso denegado" en nuevo producto, categorías, perfil, usuarios y productos críticos (5)
 - No restaura una sesión con el token vencido · si el backend rechaza el token cierra la sesión y lo avisa · si el servidor no responde lo avisa y permite reintentar
 
 **`tests/integracion/compra.test.jsx`** (15)
@@ -1197,7 +1197,7 @@ En la entrega 3 se repitió el recorrido **contra el backend real** (4 microserv
 con un script de Playwright: catálogo desde producto-service, cupón inexistente y `FELIZ18`,
 compra sin sesión (boleta creada por pedido-service con el mismo total que mostraba el
 checkout), login del administrador con JWT, crear y eliminar un producto, editar un usuario sin
-escribir su contraseña, menú del vendedor (solo Órdenes, Productos y Tienda, con "Acceso denegado"
+escribir su contraseña, menú del vendedor (solo Órdenes y Productos, con "Acceso denegado"
 en categorías) y login con clave incorrecta. Todo sin errores en la consola (sección 10.8).
 
 ---
