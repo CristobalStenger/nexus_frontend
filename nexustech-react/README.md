@@ -6,6 +6,12 @@ React Bootstrap, Context + `useReducer` y pruebas con Vitest + Testing Library. 
 entrega 3 los datos vienen del backend ([`nexus_backend`](https://github.com/CristobalStenger/nexus_backend)):
 API REST con `fetch` y autenticación JWT.
 
+**En producción:**
+
+- Sitio (Vercel): <https://nexus-frontend-nu-gray.vercel.app>
+- API Gateway (Google Cloud Run): <https://api-gateway-ujq3ppjm5a-rj.a.run.app>
+- Swagger: <https://api-gateway-ujq3ppjm5a-rj.a.run.app/swagger-ui.html>
+
 ## Puesta en marcha
 
 Requiere Node.js 20.19 o superior y el backend encendido (su API Gateway queda en

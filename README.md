@@ -8,6 +8,12 @@ Tienda en línea de tecnología, componentes y gaming (Desarrollo Fullstack II).
 | Evaluación 2 | [`nexustech-react/`](nexustech-react/README.md) | React 19, Vite 7, React Router 7, React Bootstrap, Vitest |
 | Evaluación 3 | `nexustech-react/` + backend [`nexus_backend`](https://github.com/CristobalStenger/nexus_backend) | Integración por API REST (`fetch` + JWT) con 4 microservicios Spring Boot y PostgreSQL |
 
+**En producción:**
+
+- Sitio (Vercel): <https://nexus-frontend-nu-gray.vercel.app>
+- API Gateway (Google Cloud Run): <https://api-gateway-ujq3ppjm5a-rj.a.run.app>
+- Swagger: <https://api-gateway-ujq3ppjm5a-rj.a.run.app/swagger-ui.html>
+
 Para ejecutar la versión React, primero levanta el backend (ver su README) y luego:
 
 ```bash

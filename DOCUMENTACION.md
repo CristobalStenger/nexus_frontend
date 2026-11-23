@@ -3,6 +3,7 @@
 > **Asignatura:** Desarrollo Fullstack II · **Evaluación 2** (30 %) y **Evaluación 3** (integración con el backend)
 > **Equipo:** Cristóbal Stenger y Xavier Marin
 > **Repositorio:** `CristobalStenger/nexus_frontend`
+> **En producción:** sitio <https://nexus-frontend-nu-gray.vercel.app> · API <https://api-gateway-ujq3ppjm5a-rj.a.run.app>
 
 Este documento explica todo el proyecto NexusTech, con tres focos:
 
